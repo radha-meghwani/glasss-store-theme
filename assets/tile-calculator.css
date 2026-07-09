@@ -1,53 +1,329 @@
-.tile-calculator{
-    margin-top:20px;
+/* tile-calculator.css */
+.tile-calculator {
+  --red: #c0392b;
+  --red-light: #fdf2f1;
+  --red-mid: #e8a49e;
+  --green: #27ae60;
+  --green-light: #eaf7ef;
+  --gold: #b8860b;
+  --gold-light: #fdf9ed;
+  --text: #1a1a1a;
+  --text-muted: #888;
+  --text-hint: #bbb;
+  --border: #e8e4df;
+  --border-strong: #ccc8c2;
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --surface2: #f5f3f0;
+  --shadow: 0 2px 16px rgba(0,0,0,0.07);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.14);
+  --radius: 10px;
+  --radius-lg: 16px;
+  
+  margin-top: 20px;
+  font-family: 'DM Sans', sans-serif;
 }
 
-.tile-calculator__button{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-    width:100%;
-    padding:14px 18px;
-    border:1px solid #d9d9d9;
-    border-radius:999px;
-    background:#f5f7f7;
-    cursor:pointer;
+.tile-calculator * {
+  box-sizing: border-box;
 }
 
-.tile-calculator-modal{
-    position:fixed;
-    inset:0;
-    z-index:9999;
+.tile-calculator__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 18px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: var(--surface2);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--text);
+  transition: background 0.2s, border-color 0.2s;
 }
 
-.tile-calculator-overlay{
-    position:absolute;
-    inset:0;
-    background:rgba(0,0,0,.45);
+.tile-calculator__button:hover {
+  background: var(--surface);
+  border-color: var(--border-strong);
 }
 
-.tile-calculator-dialog{
-    position:absolute;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%);
-    width:min(650px,90vw);
-    background:#fff;
-    border-radius:20px;
-    padding:30px;
+.tile-calculator__icon svg {
+  display: block;
 }
 
-.tile-calculator-close{
-    position:absolute;
-    right:20px;
-    top:20px;
-    background:none;
-    border:none;
-    font-size:28px;
-    cursor:pointer;
+/* ── Card within Modal ── */
+.tile-calculator .card-section { padding: 1.75rem 2rem; border-bottom: 1px solid var(--border); }
+.tile-calculator .card-section:last-child { border-bottom: none; }
+.tile-calculator .section-title { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); font-weight: 500; margin-bottom: 1.1rem; }
+
+/* ── Stepper ── */
+.tile-calculator .stepper {
+  display: flex; align-items: center;
+  border: 1px solid var(--border-strong); border-radius: var(--radius);
+  overflow: hidden; height: 42px; background: var(--surface);
+  transition: border-color 0.15s;
+}
+.tile-calculator .stepper:focus-within { border-color: var(--red); }
+.tile-calculator .stepper input {
+  width: 90px; border: none; text-align: center;
+  font-size: 16px; font-weight: 500; font-family: 'DM Sans', sans-serif;
+  background: transparent; color: var(--text); outline: none;
+  -moz-appearance: textfield;
+}
+.tile-calculator .stepper input::-webkit-outer-spin-button,
+.tile-calculator .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.tile-calculator .stepper button {
+  width: 36px; height: 100%; border: none; background: var(--surface2);
+  color: var(--text); font-size: 20px; cursor: pointer; font-weight: 300;
+  flex-shrink: 0; transition: background 0.12s; line-height: 1; padding: 0;
+}
+.tile-calculator .stepper button:hover { background: var(--border); }
+.tile-calculator .stepper button:active { background: var(--border-strong); }
+
+.tile-calculator .loss-stepper { height: 32px; }
+.tile-calculator .loss-stepper button { width: 28px; font-size: 16px; }
+.tile-calculator .loss-stepper input { width: 48px; font-size: 14px; }
+
+.tile-calculator .unit-label { font-size: 14px; color: var(--text-muted); padding-bottom: 10px; font-weight: 300; }
+.tile-calculator .field { display: flex; flex-direction: column; gap: 5px; }
+.tile-calculator .field-label { font-size: 12px; color: var(--text-muted); font-weight: 500; letter-spacing: 0.04em; }
+.tile-calculator .input-row { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; }
+
+/* ── Loss row ── */
+.tile-calculator .loss-row { display: flex; align-items: center; gap: 8px; margin-top: 0.5rem; flex-wrap: wrap; }
+.tile-calculator .loss-row input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--red); cursor: pointer; flex-shrink: 0; margin: 0; }
+.tile-calculator .loss-row label { font-size: 13px; color: var(--text-muted); cursor: pointer; }
+.tile-calculator .unit-label-small { font-size: 13px; color: var(--text-muted); font-weight: 300; }
+
+/* ── Surface link ── */
+.tile-calculator .surface-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--red); cursor: pointer;
+  margin-top: 1rem; font-weight: 500;
+  border: 1px solid var(--red-mid);
+  background: var(--red-light);
+  border-radius: 20px; padding: 5px 14px;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.15s, border-color 0.15s;
+  text-decoration: none;
+}
+.tile-calculator .surface-link:hover { background: #fae4e2; border-color: var(--red); }
+
+/* ── Result ── */
+.tile-calculator .result-empty { padding: 2rem; text-align: center; color: var(--text-hint); font-size: 14px; font-weight: 300; }
+.tile-calculator .result-filled { display: none; }
+.tile-calculator .result-filled.visible { display: block; }
+
+.tile-calculator .result-header { padding: 1.5rem 2rem 0; display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 1.25rem; }
+.tile-calculator .result-header-title { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); font-weight: 500; }
+.tile-calculator .result-target { font-size: 13px; color: var(--text-muted); font-weight: 300; }
+
+.tile-calculator .breakdown { display: flex; padding: 0 2rem; gap: 0; margin-bottom: 1.5rem; }
+.tile-calculator .breakdown-unit {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  padding: 1.1rem 0.5rem; background: var(--surface2);
+  border: 1px solid var(--border); position: relative; transition: opacity 0.2s;
+}
+.tile-calculator .breakdown-unit:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+.tile-calculator .breakdown-unit:last-child { border-radius: 0 var(--radius) var(--radius) 0; border-left: none; }
+.tile-calculator .breakdown-unit:not(:first-child):not(:last-child) { border-left: none; }
+.tile-calculator .breakdown-unit.zero { opacity: 0.38; }
+.tile-calculator .breakdown-unit.highlight { background: var(--red-light); border-color: var(--red-mid); z-index: 1; }
+.tile-calculator .bu-qty { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 400; color: var(--text); line-height: 1; margin-bottom: 4px; }
+.tile-calculator .bu-name { font-size: 12px; font-weight: 500; color: var(--text); text-align: center; margin-bottom: 2px; }
+.tile-calculator .bu-sub { font-size: 11px; color: var(--text-hint); text-align: center; }
+.tile-calculator .bu-label { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--red); color: #fff; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 8px; border-radius: 20px; white-space: nowrap; font-weight: 500; }
+
+.tile-calculator .coverage-wrap { padding: 0 2rem 1.5rem; }
+.tile-calculator .coverage-bar { height: 10px; border-radius: 5px; background: var(--border); overflow: hidden; position: relative; margin-bottom: 6px; }
+.tile-calculator .cvg-needed { position: absolute; top: 0; left: 0; height: 100%; background: var(--red); border-radius: 5px 0 0 5px; transition: width 0.35s ease; }
+.tile-calculator .cvg-surplus { position: absolute; top: 0; height: 100%; background: var(--green); transition: left 0.35s ease, width 0.35s ease; }
+.tile-calculator .coverage-labels { display: flex; justify-content: space-between; font-size: 12px; }
+.tile-calculator .cvg-lbl-needed { color: var(--text-muted); }
+.tile-calculator .cvg-lbl-surplus { color: var(--green); font-weight: 500; }
+
+.tile-calculator .summary-row { padding: 1rem 2rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.tile-calculator .summary-tiles { font-size: 13px; color: var(--text-muted); font-weight: 300; }
+.tile-calculator .summary-tiles strong { color: var(--text); font-weight: 500; }
+.tile-calculator .summary-coverage { font-size: 13px; color: var(--text-muted); }
+.tile-calculator .summary-coverage strong { color: var(--text); font-weight: 500; }
+
+/* ── Spec card ── */
+.tile-calculator .spec-card-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); font-weight: 500; }
+.tile-calculator .spec-table { width: 100%; border-collapse: collapse; }
+.tile-calculator .spec-table td { padding: 10px 1.5rem; font-size: 13px; border-bottom: 1px solid var(--border); }
+.tile-calculator .spec-table tr:last-child td { border-bottom: none; }
+.tile-calculator .spec-table td:first-child { color: var(--text-muted); }
+.tile-calculator .spec-table td:last-child { text-align: right; font-weight: 500; }
+.tile-calculator .spec-table tr:hover td { background: var(--surface2); }
+
+/* ══════════════════════════════════
+   MODAL
+══════════════════════════════════ */
+.tile-calculator .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; padding: 1rem; backdrop-filter: blur(2px); }
+.tile-calculator .modal-overlay.open { display: flex; }
+.tile-calculator .modal { background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); width: 100%; max-width: 660px; max-height: 92vh; overflow-y: auto; animation: slideUp 0.2s ease; margin: auto; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+.tile-calculator .modal-header { padding: 1.5rem 1.75rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.tile-calculator .modal-header h2 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 400; margin: 0; color: var(--text); }
+.tile-calculator .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-muted); line-height: 1; padding: 2px; transition: color 0.12s; }
+.tile-calculator .modal-close:hover { color: var(--text); }
+.tile-calculator .modal-body { padding: 1.5rem 1.75rem; }
+.tile-calculator .modal-footer { padding: 1.25rem 1.75rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+
+.tile-calculator .btn { height: 42px; padding: 0 22px; border-radius: var(--radius); font-size: 14px; font-family: 'DM Sans', sans-serif; font-weight: 500; cursor: pointer; transition: background 0.12s; }
+.tile-calculator .btn-cancel { background: var(--surface); border: 1px solid var(--border-strong); color: var(--text-muted); }
+.tile-calculator .btn-cancel:hover { background: var(--surface2); }
+.tile-calculator .btn-confirm { background: var(--red); border: none; color: #fff; }
+.tile-calculator .btn-confirm:hover { background: #a93226; }
+
+/* ── How-to / dimension cards ── */
+.tile-calculator .how-to-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+.tile-calculator .how-to-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  user-select: none;
+}
+.tile-calculator .how-to-card:hover { border-color: var(--border-strong); }
+.tile-calculator .how-to-card.active-2d {
+  border-color: var(--border-strong);
+  background: var(--surface);
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+}
+.tile-calculator .how-to-card.active-3d {
+  border-color: var(--red-mid);
+  background: var(--red-light);
+  box-shadow: 0 1px 8px rgba(192,57,43,0.08);
+}
+.tile-calculator .how-to-icon {
+  width: 38px; height: 38px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.tile-calculator .how-to-icon.icon-2d { background: var(--surface); border: 1px solid var(--border); }
+.tile-calculator .how-to-icon.icon-3d { background: var(--red-light); border: 1px solid var(--red-mid); }
+.tile-calculator .how-to-card.active-2d .how-to-icon.icon-2d { background: var(--surface2); border-color: var(--border-strong); }
+.tile-calculator .how-to-card.active-3d .how-to-icon.icon-3d { background: #fff; }
+.tile-calculator .how-to-card-text { flex: 1; min-width: 0; }
+.tile-calculator .how-to-card-title { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 1px; letter-spacing: 0.02em; }
+.tile-calculator .how-to-card-desc { font-size: 11px; color: var(--text-muted); line-height: 1.4; font-weight: 300; }
+
+/* ── Shape grid ── */
+.tile-calculator .shape-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+.tile-calculator .shape-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 14px 8px 12px; border: 1px solid var(--border-strong);
+  border-radius: var(--radius); cursor: pointer; background: var(--surface);
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500;
+  color: var(--text-muted); transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.tile-calculator .shape-btn:hover { border-color: var(--red-mid); background: var(--red-light); color: var(--text); }
+.tile-calculator .shape-btn.active { border-color: var(--red); background: var(--red-light); color: var(--red); }
+.tile-calculator .shape-btn svg { display: block; }
+
+/* ── Section form ── */
+.tile-calculator .shape-form {
+  background: var(--surface2);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin-bottom: 10px;
+}
+.tile-calculator .shape-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.tile-calculator .shape-form-label { font-size: 12px; font-weight: 500; color: var(--text-muted); }
+.tile-calculator .shape-form-right { display: flex; align-items: center; gap: 6px; }
+.tile-calculator .shape-form-area { font-size: 12px; color: var(--gold); font-weight: 500; }
+.tile-calculator .shape-form-del {
+  background: none; border: none; color: var(--text-hint);
+  font-size: 18px; cursor: pointer; line-height: 1; padding: 0;
+  transition: color 0.12s;
+}
+.tile-calculator .shape-form-del:hover { color: var(--red); }
+
+.tile-calculator .shape-formula { font-size: 12px; color: var(--text-muted); font-style: italic; margin-bottom: 1rem; }
+.tile-calculator .shape-formula span { color: var(--gold); font-weight: 500; font-style: normal; }
+
+.tile-calculator .dim-row { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; }
+.tile-calculator .dim-field { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 90px; }
+.tile-calculator .dim-label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+.tile-calculator .dim-input-wrap { position: relative; display: flex; align-items: center; }
+.tile-calculator .dim-input {
+  width: 100%; height: 40px; border: 1px solid var(--border-strong);
+  border-radius: var(--radius); padding: 0 36px 0 12px;
+  font-size: 15px; font-family: 'DM Sans', sans-serif; font-weight: 500;
+  background: var(--surface); color: var(--text); outline: none;
+  text-align: right; transition: border-color 0.15s;
+  -moz-appearance: textfield; margin: 0;
+}
+.tile-calculator .dim-input::-webkit-outer-spin-button, .tile-calculator .dim-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.tile-calculator .dim-input:focus { border-color: var(--red); }
+.tile-calculator .dim-input::placeholder { color: var(--text-hint); font-weight: 300; }
+.tile-calculator .dim-unit { position: absolute; right: 10px; font-size: 12px; color: var(--text-hint); pointer-events: none; }
+
+/* ── 3D note ── */
+.tile-calculator .shape-3d-note {
+  font-size: 12px; color: var(--text-muted);
+  background: var(--gold-light); border: 1px solid #e0c96a;
+  border-radius: var(--radius); padding: 8px 12px;
+  margin-bottom: 1rem; display: none;
+}
+.tile-calculator .shape-3d-note.visible { display: block; }
+.tile-calculator .shape-3d-note strong { color: var(--gold); font-weight: 500; }
+
+/* ── Add section button ── */
+.tile-calculator .add-section-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--red); background: none;
+  border: 1px dashed var(--red-mid); border-radius: var(--radius);
+  padding: 8px 16px; cursor: pointer; width: 100%; justify-content: center;
+  margin-bottom: 1.25rem; font-family: 'DM Sans', sans-serif; font-weight: 500;
+  transition: background 0.12s;
+}
+.tile-calculator .add-section-btn:hover { background: var(--red-light); }
+
+/* ── Result bar in modal ── */
+.tile-calculator .modal-result-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.tile-calculator .modal-result-label { font-size: 13px; color: var(--text-muted); }
+.tile-calculator .modal-result-value { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 400; color: var(--text); }
+.tile-calculator .modal-result-formula { font-size: 11px; color: var(--text-hint); margin-top: 2px; }
+
+body.calculator-open {
+  overflow: hidden;
 }
 
-body.calculator-open{
-    overflow:hidden;
+@media (max-width: 500px) {
+  .tile-calculator .card-section { padding: 1.25rem; }
+  .tile-calculator .result-header, .tile-calculator .coverage-wrap, .tile-calculator .summary-row, .tile-calculator .breakdown { padding-left: 1.25rem; padding-right: 1.25rem; }
+  .tile-calculator .modal-body, .tile-calculator .modal-header, .tile-calculator .modal-footer { padding-left: 1.25rem; padding-right: 1.25rem; }
+  .tile-calculator .shape-grid { grid-template-columns: repeat(2, 1fr); }
+  .tile-calculator .how-to-grid { grid-template-columns: 1fr; }
+  .tile-calculator .bu-qty { font-size: 24px; }
 }

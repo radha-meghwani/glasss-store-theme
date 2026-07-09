@@ -1,55 +1,252 @@
-<div class="tile-calculator">
+{%- comment -%}
+  TILE CALCULATOR
+{%- endcomment -%}
 
-  <button
-    type="button"
-    class="tile-calculator__button"
-    data-open-calculator
-  >
+<div class="tile-calculator" id="TileCalculatorWrapper">
+
+  <!-- Shopify Product Data -->
+  <script type="application/json" id="TileCalculatorData">
+    {
+      "product": {
+        "id": {{ product.id | json }},
+        "title": {{ product.title | json }},
+        "variants": [
+          {%- for variant in product.variants -%}
+            {
+              "id": {{ variant.id | json }},
+              "title": {{ variant.title | json }},
+              "price": {{ variant.price | json }},
+              "available": {{ variant.available | json }}
+            }{%- unless forloop.last -%},{%- endunless -%}
+          {%- endfor -%}
+        ]
+      },
+      "selected_variant_id": {{ product.selected_or_first_available_variant.id | json }}
+    }
+  </script>
+
+  <!-- Button to open calculator -->
+  <button type="button" class="tile-calculator__button" id="OpenMainCalcBtn">
     <span class="tile-calculator__icon">
-      
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
     </span>
-
     Calculate your area
-
-    <span class="tile-calculator__arrow">
-      →
-    </span>
+    <span class="tile-calculator__arrow">→</span>
   </button>
 
-  <div class="tile-calculator-modal" hidden>
+  <!-- Main Calculator Modal -->
+  <div class="modal-overlay" id="MainCalcModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Oppervlakte Calculator</h2>
+        <button class="modal-close" id="CloseMainCalcBtn" type="button">×</button>
+      </div>
+      <div class="modal-body" style="padding: 0;">
+        <div class="card" style="box-shadow: none; border: none; border-radius: 0; max-width: 100%;">
+          
+          <div class="card-section">
+            <div class="section-title">Oppervlakte</div>
+            <div class="input-row">
+              <div class="field">
+                <div class="field-label">Oppervlakte (m²)</div>
+                <div class="stepper">
+                  <button id="BtnMinusArea" type="button">−</button>
+                  <input type="number" id="m2val" value="" min="0" step="0.01" placeholder="0.00">
+                  <button id="BtnPlusArea" type="button">+</button>
+                </div>
+              </div>
+              <div class="unit-label">m²</div>
+            </div>
 
-      <div class="tile-calculator-overlay"></div>
+            <div class="loss-row">
+              <input type="checkbox" id="loss-cb" checked>
+              <label for="loss-cb">Extra voor verlies en snijwerk:</label>
+              <div class="stepper loss-stepper" id="loss-stepper">
+                <button id="BtnMinusLoss" type="button">−</button>
+                <input type="number" id="loss-pct" value="10" min="0" max="50" step="5">
+                <button id="BtnPlusLoss" type="button">+</button>
+              </div>
+              <span class="unit-label-small">%</span>
+            </div>
 
-      <div
-        class="tile-calculator-dialog"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="tileCalculatorTitle"
-      >
+            <button class="surface-link" id="OpenShapeCalcBtn" type="button">
+              <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="13" height="13" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M4 1v13M8 1v13M1 4h13M1 8h13" stroke="currentColor" stroke-width="1"/></svg>
+              Vorm- en oppervlakteberekening (2D &amp; 3D)
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4.5 2.5L8 6l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
 
-          <button
-            class="tile-calculator-close"
-            data-close-calculator
-            type="button"
-          >
-              ×
-          </button>
+          <div>
+            <div class="result-empty" id="result-empty">
+              Vul hierboven een oppervlakte in of gebruik de vormberekening om uw project te meten.
+            </div>
+            <div class="result-filled" id="result-filled">
+              <div class="result-header">
+                <div class="result-header-title">Aanbevolen hoeveelheid</div>
+                <div class="result-target" id="result-target"></div>
+              </div>
+              <div class="breakdown" id="breakdown"></div>
+              <div class="coverage-wrap">
+                <div class="coverage-bar">
+                  <div class="cvg-needed" id="cvg-needed" style="width:0%"></div>
+                  <div class="cvg-surplus" id="cvg-surplus" style="left:0%;width:0%"></div>
+                </div>
+                <div class="coverage-labels">
+                  <span class="cvg-lbl-needed" id="cvg-lbl-needed"></span>
+                  <span class="cvg-lbl-surplus" id="cvg-lbl-surplus"></span>
+                </div>
+              </div>
+              <div class="summary-row">
+                <div class="summary-tiles" id="summary-tiles"></div>
+                <div class="summary-coverage" id="summary-coverage"></div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-          <h2 id="tileCalculatorTitle">
-              Artist Calculator
-          </h2>
+        <div class="spec-card" style="box-shadow: none; border-left: none; border-right: none; border-bottom: none; border-radius: 0; margin-top: 0; max-width: 100%;">
+          <div class="spec-card-header">Verpakkingsinfo</div>
+          <table class="spec-table" id="PackagingTable">
+            <!-- Populated via JS based on TILE_CONFIG -->
+          </table>
+          <div class="live-price-wrapper" style="padding: 1rem 1.5rem; background: var(--surface2); border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 13px; color: var(--text-muted);">Totaalprijs (geschat)</div>
+            <div id="LivePriceTotal" style="font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 500; color: var(--text);">€0,00</div>
+          </div>
+        </div>
 
-          <p>
-              Calculate your required quantity for each project – flat or three-dimensional.
-          </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-cancel" id="CancelMainCalcBtn" type="button">Annuleren</button>
+        <button class="btn btn-confirm" id="ApplyMainCalcBtn" type="button">Bevestigen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shape Calculator Modal -->
+  <div class="modal-overlay" id="ShapeModal">
+    <div class="modal">
+
+      <div class="modal-header">
+        <h2>Vorm- en oppervlakteberekening</h2>
+        <button class="modal-close" id="CloseShapeModalBtn" type="button">×</button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- 2D / 3D clickable cards (combined how-to + tab switcher) -->
+        <div class="how-to-grid">
+          <div class="how-to-card active-2d" id="card-2d">
+            <div class="how-to-icon icon-2d">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <rect x="3" y="5" width="14" height="10" rx="1.5" stroke="#888" stroke-width="1.3"/>
+                <path d="M3 11h14" stroke="#888" stroke-width="1" stroke-dasharray="2 2"/>
+                <path d="M10 5v10" stroke="#888" stroke-width="1" stroke-dasharray="2 2"/>
+              </svg>
+            </div>
+            <div class="how-to-card-text">
+              <div class="how-to-card-title">2D — Vlakke vormen</div>
+              <div class="how-to-card-desc">Rechthoek, cirkel, driehoek</div>
+            </div>
+          </div>
+          <div class="how-to-card" id="card-3d">
+            <div class="how-to-icon icon-3d">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <ellipse cx="10" cy="13" rx="6" ry="2.5" stroke="#c0392b" stroke-width="1.3"/>
+                <path d="M4 13V7.5c0-1.38 2.69-2.5 6-2.5s6 1.12 6 2.5V13" stroke="#c0392b" stroke-width="1.3"/>
+                <ellipse cx="10" cy="7.5" rx="6" ry="2.5" stroke="#c0392b" stroke-width="1.3" stroke-dasharray="2 2"/>
+              </svg>
+            </div>
+            <div class="how-to-card-text">
+              <div class="how-to-card-title">3D — Ruimtelijke vormen</div>
+              <div class="how-to-card-desc">Bol, cilinder, kegel</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="shape-3d-note" id="note-3d">
+          Bij 3D vormen berekenen we de <strong>volledige buitenoppervlakte</strong> — de totale te betegelen buitenkant.
+        </div>
+
+        <!-- ── 2D shapes ── -->
+        <div id="panel-2d">
+          <div class="shape-grid">
+            <button class="shape-btn active" data-shape="rect" type="button">
+              <svg width="40" height="30" viewBox="0 0 40 30"><rect x="2" y="4" width="36" height="22" rx="1" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
+              Rechthoek
+            </button>
+            <button class="shape-btn" data-shape="circle" type="button">
+              <svg width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
+              Cirkel
+            </button>
+            <button class="shape-btn" data-shape="triangle" type="button">
+              <svg width="40" height="34" viewBox="0 0 40 34"><polygon points="20,2 38,32 2,32" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/></svg>
+              Driehoek
+            </button>
+          </div>
+
+          <div id="sections-2d-wrap">
+            <div class="shape-formula" id="formula-2d-label"></div>
+            <div id="sections-2d-container"></div>
+            <button class="add-section-btn" id="add-2d-btn" type="button">+ Vlak toevoegen</button>
+          </div>
+        </div>
+
+        <!-- ── 3D shapes ── -->
+        <div id="panel-3d" style="display:none">
+          <div class="shape-grid">
+            <button class="shape-btn active" data-shape="sphere" type="button">
+              <svg width="38" height="38" viewBox="0 0 38 38">
+                <circle cx="19" cy="19" r="16" stroke="currentColor" stroke-width="1.8" fill="none"/>
+                <ellipse cx="19" cy="19" rx="16" ry="6" stroke="currentColor" stroke-width="1" fill="none" stroke-dasharray="3,2"/>
+              </svg>
+              Bol
+            </button>
+            <button class="shape-btn" data-shape="cylinder" type="button">
+              <svg width="36" height="40" viewBox="0 0 36 40">
+                <rect x="2" y="10" width="32" height="24" rx="0" stroke="currentColor" stroke-width="1.8" fill="none"/>
+                <ellipse cx="18" cy="10" rx="16" ry="5" stroke="currentColor" stroke-width="1.8" fill="none"/>
+                <ellipse cx="18" cy="34" rx="16" ry="5" stroke="currentColor" stroke-width="1" fill="none" stroke-dasharray="3,2"/>
+              </svg>
+              Cilinder
+            </button>
+            <button class="shape-btn" data-shape="cone" type="button">
+              <svg width="38" height="42" viewBox="0 0 38 42">
+                <line x1="19" y1="2" x2="2" y2="36" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <line x1="19" y1="2" x2="36" y2="36" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <ellipse cx="19" cy="36" rx="17" ry="5" stroke="currentColor" stroke-width="1.8" fill="none"/>
+              </svg>
+              Kegel
+            </button>
+          </div>
+
+          <div id="sections-3d-wrap">
+            <div class="shape-formula" id="formula-3d-label"></div>
+            <div id="sections-3d-container"></div>
+            <button class="add-section-btn" id="add-3d-btn" type="button">+ Vorm toevoegen</button>
+          </div>
+        </div>
+
+        <!-- Result bar -->
+        <div class="modal-result-bar">
+          <div>
+            <div class="modal-result-label">Totale oppervlakte</div>
+            <div class="modal-result-formula" id="shape-formula-out"></div>
+          </div>
+          <div class="modal-result-value" id="shape-result">0,00 m²</div>
+        </div>
 
       </div>
 
+      <div class="modal-footer">
+        <button class="btn btn-cancel" id="CancelShapeBtn" type="button">Annuleren</button>
+        <button class="btn btn-confirm" id="TakeQtyBtn" type="button">Overnemen</button>
+      </div>
+
+    </div>
   </div>
 
 </div>
 
-
 {{ 'tile-calculator.css' | asset_url | stylesheet_tag }}
-
 <script src="{{ 'tile-calculator.js' | asset_url }}" defer></script>
