@@ -51,17 +51,6 @@
         "padding-block-end": 20
       }
     },
-    "custom_section_iEF3d4": {
-      "type": "custom-section",
-      "name": "Complete the look",
-      "settings": {
-        "heading": "complete the look",
-        "main_product": [
-          "14k-rose-gold-cultured-pink-freshwater-pearl-ring",
-          "4-1-2-ctw-lab-grown-diamond-eternity-band-size-7"
-        ]
-      }
-    },
     "custom_faq_jRETRU": {
       "type": "custom-faq",
       "blocks": {
@@ -198,7 +187,6 @@
   },
   "order": [
     "main",
-    "custom_section_iEF3d4",
     "custom_faq_jRETRU",
     "custom_form_QVKqcH",
     "custom_pop_up_form_RJdfFR"
