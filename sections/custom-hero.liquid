@@ -1,0 +1,195 @@
+<div class="hero-section" id="heroSection">
+  <div class="hero-text">
+
+    {% for block in section.blocks %}
+      <div class="hero-slide {% if forloop.first %}active{% endif %}"
+           data-bg="{{ block.settings.hero_bg | image_url }}">
+        <h3>{{ block.settings.hero_heading }}</h3>
+        <p>{{ block.settings.hero_description }}</p>
+      </div>
+    {% endfor %}
+
+    {%- assign last_block = section.blocks | last -%}
+    <div class="last-slide" id="lastSlide">
+      <h3>{{ last_block.settings.last_heading }}</h3>
+      <p>{{ last_block.settings.last_description }}</p>
+    </div>
+
+  </div>
+
+  <!-- Right thumbnails -->
+  <div class="hero-thumbs">
+    {% for block in section.blocks %}
+      {% if block.settings.hero_thumb != blank %}
+        <img
+          src="{{ block.settings.hero_thumb | image_url }}"
+          class="{% if forloop.first %}active{% endif %}"
+          data-index="{{ forloop.index0 }}"
+          alt="thumb">
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+
+<style>
+.hero-section {
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 60px;
+  transition: background-image 0.6s ease;
+}
+
+.hero-text {
+    max-width: 500px;
+    margin: auto;
+    text-align: center;
+}
+
+.hero-text h3 {
+    font-size: 43px;
+    letter-spacing: 2px;
+    margin-bottom: 0px;
+}
+
+.hero-text p {
+    font-style: italic;
+    margin-top: 5px;
+    font-size: 23px;
+}
+
+.hero-slide {
+  display: none;
+  margin-bottom:50px;
+}
+
+.hero-slide.active {
+  display: block;
+}
+
+.hero-thumbs {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.hero-thumbs img {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.4;
+  border: 3px solid #fff;
+  transition: 0.3s;
+}
+
+.hero-thumbs img.active {
+  opacity: 1;
+  border-color: #ff5a5a;
+}
+
+.last-slide {
+  display: none;
+  margin-top: 30px;
+}
+
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const section = document.getElementById("heroSection");
+  const slides = section.querySelectorAll(".hero-slide");
+  const thumbs = section.querySelectorAll(".hero-thumbs img");
+  const lastSlide = document.getElementById("lastSlide");
+  const lastIndex = slides.length - 1;
+
+  if (!slides.length) return;
+
+  section.style.backgroundImage = `url(${slides[0].dataset.bg})`;
+
+  // initial state
+  lastSlide.style.display = "none";
+
+  thumbs.forEach((thumb, index) => {
+    thumb.addEventListener("click", function () {
+
+      slides.forEach(s => s.classList.remove("active"));
+      thumbs.forEach(t => t.classList.remove("active"));
+
+      slides[index].classList.add("active");
+      thumb.classList.add("active");
+
+      section.style.backgroundImage = `url(${slides[index].dataset.bg})`;
+
+      // 🔥 ONLY SHOW ON LAST SLIDE
+      if (index === lastIndex) {
+        lastSlide.style.display = "block";
+      } else {
+        lastSlide.style.display = "none";
+      }
+    });
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "Custom Hero Section",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "hero_block",
+      "name": "Hero Slide",
+      "settings": [
+        {
+          "type": "text",
+          "id": "hero_heading",
+          "label": "Hero Heading",
+          "default": "TOMATO SEASON"
+        },
+        {
+          "type": "text",
+          "id": "hero_description",
+          "label": "Hero Description",
+          "default": "nutritious delicious"
+        },
+        {
+          "type": "text",
+          "id": "last_heading",
+          "label": "last-heading"
+        },
+        {
+          "type": "text",
+          "id": "last_description",
+          "label":"last-description"
+        },
+        {
+          "type": "image_picker",
+          "id": "hero_bg",
+          "label": "Background Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "hero_thumb",
+          "label": "Right Thumbnail Image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Hero Section",
+      "category": "Custom",
+      "blocks": [
+        {
+          "type": "hero_block"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

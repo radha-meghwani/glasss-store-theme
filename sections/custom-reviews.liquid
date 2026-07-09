@@ -1,0 +1,251 @@
+<div class="reviews" 
+    style="
+    {% if section.settings.reviews_image != blank %}
+     background-image: url({{ section.settings.reviews_image | image_url: width: 2000 }})
+    {% endif %}
+    ">
+    
+    <div class="reviews-badges">
+    <h2>{{ section.settings.reviews_heading }}</h2>
+    <div class="reviews-content">
+        {% for block in section.blocks %}
+        <div class="reviews-blocks">
+            <div class="reviews-icon">
+                <div class="review-box">
+                     <i class="{{ block.settings.review_boxs }}"></i>
+                </div>
+            </div>
+
+            <div class="reviews-contents">
+                <h3>{{ block.settings.box_heading }}</h3>
+                <p>{{ block.settings.box_para }}</p>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+    </div>
+</div>
+
+<style>
+
+.reviews {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 80px 20px;
+}
+.reviews-badges {
+    max-width: 1200px;
+    margin: auto;
+    width: 100%;
+}
+.reviews-blocks {
+    display: flex;
+    gap: 10px;
+}
+.reviews-content {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 40px 30px;
+    margin-bottom: 0;
+}
+.reviews-badges h2{
+    text-align: center;
+    text-transform: capitalize;
+    font-size: 48px;
+    font-weight: 700;
+    color: #fff; 
+}
+.review-box {
+    height: 60px;
+    width: 60px;
+    background: #b9d1db;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1a1a1a;
+    font-size: 30px;
+    transition: all .3s ease;
+}
+.review-box:hover{
+background-color:#ebbaa9;
+}
+.reviews-contents h3{
+    font-size: 30px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: capitalize;
+    margin: 0px 0 10px;
+    transition: all .3s linear;
+    color:#fff;
+}
+.reviews-contents h3:hover{
+    color:#ebbaa9;
+}
+.reviews-contents p{
+    font-size: 15px;
+    line-height: 24px;
+    width: 186px;
+    height: 96px;
+    color:#fff;
+}
+
+@media (max-width: 1024px) {
+  .reviews-content {
+    display: flex !important;
+    overflow: hidden;
+  }
+
+  .reviews-content.swiper-initialized {
+    display: block !important;
+  }
+
+  .reviews-blocks {
+    flex-shrink: 0;
+  }
+
+  .swiper-pagination {
+    display: none !important;
+  }
+
+}
+</style>
+
+<script>
+let reviewsSwiper = null;
+
+function initReviewsSwiper() {
+  const reviews = document.querySelector('.reviews-content');
+  if (!reviews) return;
+
+  const isMobileOrTablet = window.innerWidth <= 1024;
+
+  /* =====================
+     INIT (MOBILE + TABLET)
+  ====================== */
+  if (isMobileOrTablet && !reviewsSwiper) {
+
+    reviews.classList.add('swiper');
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'swiper-wrapper';
+
+    const slides = Array.from(reviews.children);
+
+    slides.forEach(slide => {
+      slide.classList.add('swiper-slide');
+      wrapper.appendChild(slide);
+    });
+
+    reviews.innerHTML = '';
+    reviews.appendChild(wrapper);
+
+    const pagination = document.createElement('div');
+    pagination.className = 'swiper-pagination';
+    reviews.appendChild(pagination);
+
+    reviewsSwiper = new Swiper(reviews, {
+      slidesPerView: 1,
+      spaceBetween: 20,
+
+      grid: {
+        rows: 1,
+        fill: 'row'
+      },
+
+      pagination: {
+        el: pagination,
+        clickable: true
+      },
+
+      breakpoints: {
+        0: {
+          slidesPerView: 1,
+          grid: { rows: 1 }
+        },
+        640: {
+          slidesPerView: 1,
+          grid: { rows: 2 }   // TABLET: 2 stacked items
+        }
+      }
+    });
+  }
+
+  /* =====================
+     DESTROY (DESKTOP)
+  ====================== */
+  if (!isMobileOrTablet && reviewsSwiper) {
+    reviewsSwiper.destroy(true, true);
+    reviewsSwiper = null;
+
+    const wrapper = reviews.querySelector('.swiper-wrapper');
+    const slides = wrapper ? Array.from(wrapper.children) : [];
+
+    reviews.innerHTML = '';
+    slides.forEach(slide => {
+      slide.classList.remove('swiper-slide');
+      reviews.appendChild(slide);
+    });
+
+    reviews.classList.remove('swiper');
+  }
+}
+
+// Run on load + resize
+document.addEventListener('DOMContentLoaded', initReviewsSwiper);
+window.addEventListener('resize', initReviewsSwiper);
+</script>
+
+
+{% schema %}
+{
+    "name": "custom-reviews",
+    "settings": [
+        {
+            "type": "image_picker",
+            "id": "reviews_image",
+            "label": "reviews_image"
+        },
+        {
+            "type": "text",
+            "id": "reviews_heading",
+            "label": "reviews_heading",
+            "default":"feel the difference.."
+        }
+    ],
+    "blocks":[
+        {
+            "type":"reviews-block",
+            "name":"reviews-block",
+            "settings":[
+                {
+                    "type":"text",
+                    "id":"review_boxs",
+                    "label": "review_boxs",
+                    "default": "fa-solid fa-leaf",
+                    "info": "Example: fa-solid fa-heart"
+                },
+                {
+                    "type": "text",
+                    "id": "box_heading",
+                    "label": "box_heading",
+                    "default":"Box-heading"
+                },
+                {
+                    "type": "text",
+                    "id": "box_para",
+                    "label": "box_para",
+                    "default":"Box_para"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "custom-reviews",
+            "category":"custom"
+        }
+    ]
+}
+{% endschema %}

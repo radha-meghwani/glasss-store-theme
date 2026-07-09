@@ -1,0 +1,53 @@
+.tile-calculator{
+    margin-top:20px;
+}
+
+.tile-calculator__button{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    width:100%;
+    padding:14px 18px;
+    border:1px solid #d9d9d9;
+    border-radius:999px;
+    background:#f5f7f7;
+    cursor:pointer;
+}
+
+.tile-calculator-modal{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+}
+
+.tile-calculator-overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.45);
+}
+
+.tile-calculator-dialog{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    width:min(650px,90vw);
+    background:#fff;
+    border-radius:20px;
+    padding:30px;
+}
+
+.tile-calculator-close{
+    position:absolute;
+    right:20px;
+    top:20px;
+    background:none;
+    border:none;
+    font-size:28px;
+    cursor:pointer;
+}
+
+body.calculator-open{
+    overflow:hidden;
+}

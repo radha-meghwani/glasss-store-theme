@@ -1,0 +1,55 @@
+<div class="tile-calculator">
+
+  <button
+    type="button"
+    class="tile-calculator__button"
+    data-open-calculator
+  >
+    <span class="tile-calculator__icon">
+      
+    </span>
+
+    Calculate your area
+
+    <span class="tile-calculator__arrow">
+      →
+    </span>
+  </button>
+
+  <div class="tile-calculator-modal" hidden>
+
+      <div class="tile-calculator-overlay"></div>
+
+      <div
+        class="tile-calculator-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="tileCalculatorTitle"
+      >
+
+          <button
+            class="tile-calculator-close"
+            data-close-calculator
+            type="button"
+          >
+              ×
+          </button>
+
+          <h2 id="tileCalculatorTitle">
+              Artist Calculator
+          </h2>
+
+          <p>
+              Calculate your required quantity for each project – flat or three-dimensional.
+          </p>
+
+      </div>
+
+  </div>
+
+</div>
+
+
+{{ 'tile-calculator.css' | asset_url | stylesheet_tag }}
+
+<script src="{{ 'tile-calculator.js' | asset_url }}" defer></script>

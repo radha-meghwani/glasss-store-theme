@@ -1,0 +1,260 @@
+<div class="custom-testimonials">
+    <div class="testimonials-section">
+        <h4>{{ section.settings.testimonials_heading }}</h4>
+        <h6>{{ section.settings.testimonials_subheading }}</h6>
+
+ <div class="testimonials-block swiper">
+    <div class="swiper-wrapper">
+        {% for block in section.blocks %}
+        <div class="swiper-slide">
+            <div class="customer-reviews">
+                <p>{{ block.settings.customer_para }}</p>
+                <p class="customer_stars">{{ block.settings.customer_stars }}</p>
+            </div>
+
+            <div class="users-info">
+                <div class="user">
+                    {% if block.settings.customer_image != blank %}
+                        <img class="customer_image"
+                             src="{{ block.settings.customer_image | img_url:'master' }}"
+                             alt="customer-image">
+                    {% endif %}
+                </div>
+                <h6>{{ block.settings.user_name }}
+                    <span> - {{ block.settings.user_proff }}</span>
+                </h6>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    <div class="swiper-pagination"></div>
+</div>
+
+    </div>
+</div>
+
+<style>
+.custom-testimonials{
+    background-color:#b9d1db80;
+}
+.testimonials-section{
+    max-width:1200px;
+    margin:auto;
+}
+.user img {
+    height: 83px;
+    width: 83px;
+    border-radius: 50%;
+}
+.testimonials-section h4{
+    text-align: center;
+    font-size: 28px;
+    margin: 0 0 10px;
+    font-weight: 700;
+}
+.testimonials-section h6{
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    color: #1a1a1abf;
+    margin: 15px 0px 60px 0px;
+}
+.users-info {
+    display: flex;
+    gap: 15px;
+}
+.customer-reviews p{
+    font-size: 16px;
+    line-height: 24px;
+    color: #1a1a1a;
+    margin: 0;
+}
+p.customer_stars{
+    font-size: 23px;
+    color: #1a1a1a;
+    padding: 10px 0px 5px 0px;
+}
+.users-info h6 {
+    text-align: left;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 40px;
+}
+.users-info span{
+    color: #1a1a1a;
+    font-weight: 500;
+    line-height: 24px;
+    font-size: 16px;
+    margin: 0;
+    padding: 0 0 0 2px;
+}
+.testimonials-section {
+    max-width: 1200px;
+    margin: auto;
+    padding: 92px 0px 92px 0px;
+}
+/* Swiper Fix */
+.testimonials-block {
+    overflow: hidden;
+    padding: 0px 37px 0px 37px;
+}
+
+.swiper-slide {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* Pagination dots */
+.swiper-pagination {
+    margin-top: 35px;
+    position: relative;
+}
+
+.swiper-pagination-bullet{
+    height:15px;
+    width:15px;
+}
+
+.swiper-pagination-bullet {
+    background: #1a1a1a;
+    opacity: .5;
+}
+
+.swiper-pagination-bullet-active {
+    background: #ebbaa9;
+    opacity:1;
+}
+
+@media (max-width:1025px){
+.swiper-pagination {
+  display: block !important;
+}
+}
+
+@media (max-width:769px){
+.users-info {
+    justify-content: center;
+}
+.customer-reviews p{
+    text-align: center;
+}
+.testimonials-section h6 {
+    margin: 15px 0px 37px 0px;
+}
+.users-info h6 {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    margin: 5px 0px 0px 0px;
+}
+.swiper-pagination {
+    margin-top: 80px;
+}
+.testimonials-section {
+    padding: 92px 0px 65px 0px;
+}
+}
+
+@media (max-width:480px){
+.users-info {
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    align-items: center;
+}
+.testimonials-section {
+    padding: 92px 0px 35px 0px;
+}
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    new Swiper(".custom-testimonials .swiper", {
+        slidesPerView: 2,
+        spaceBetween: 40,
+        pagination: {
+            el: ".custom-testimonials .swiper-pagination",
+            clickable: true
+        },
+        breakpoints: {
+            0: {
+                slidesPerView: 1
+            },
+            768: {
+                slidesPerView: 1
+            },
+            1024: {
+                slidesPerView: 2
+            }
+        }
+    });
+});
+</script>
+
+{% schema %}
+{
+    "name": "custom-testimonials",
+    "settings": [
+        {
+            "type": "text",
+            "id": "testimonials_heading",
+            "label": "Testimonials-heading",
+            "default":"Testimonials"
+        },
+        {
+            "type": "text",
+            "id": "testimonials_subheading",
+            "label": "Testimonials-subheading",
+            "default":"Thus Spoke our Customers"
+        }
+    ],
+    "blocks": [
+        {
+            "type":"testimonials_block",
+            "name":"testimonials_block",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "customer_para",
+                    "label": "customer-reviews"
+                },
+                {
+                    "type": "text",
+                    "id": "customer_stars",
+                    "label":"customer-reviews"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "customer_image",
+                    "label": "customer-image"
+                },
+                {
+                    "type": "text",
+                    "id": "user_name",
+                    "label": "user-name"
+                },
+                {
+                    "type": "text",
+                    "id": "user_proff",
+                    "label": "user-proff"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+           "name": "custom-testimonials",
+           "category": "custom",
+           "blocks": [
+                {
+                    "type": "testimonials_block"
+                }
+           ]
+        }
+    ]
+}
+{% endschema %}

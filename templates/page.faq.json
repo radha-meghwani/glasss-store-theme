@@ -1,0 +1,206 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "blocks": {
+        "heading": {
+          "type": "text",
+          "name": "Title",
+          "settings": {
+            "text": "<h1>{{ closest.page.title }}</h1>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "center",
+            "type_preset": "h2",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "heading"
+      ],
+      "disabled": true,
+      "settings": {
+        "content_direction": "column",
+        "gap": 32,
+        "color_scheme": "scheme-5",
+        "padding-block-start": 60,
+        "padding-block-end": 20
+      }
+    },
+    "custom_section_iEF3d4": {
+      "type": "custom-section",
+      "name": "Complete the look",
+      "settings": {
+        "heading": "complete the look",
+        "main_product": [
+          "14k-rose-gold-cultured-pink-freshwater-pearl-ring",
+          "4-1-2-ctw-lab-grown-diamond-eternity-band-size-7"
+        ]
+      }
+    },
+    "custom_faq_jRETRU": {
+      "type": "custom-faq",
+      "blocks": {
+        "accordion_block_p4aiT6": {
+          "type": "accordion_block",
+          "settings": {
+            "accordion_header": "How will my order be delivered to me?",
+            "accordion_content": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui official.</p>"
+          }
+        },
+        "accordion_block_jxbJ7n": {
+          "type": "accordion_block",
+          "settings": {
+            "accordion_header": "What do I need to know?",
+            "accordion_content": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui official.</p>"
+          }
+        },
+        "accordion_block_MhL6TN": {
+          "type": "accordion_block",
+          "settings": {
+            "accordion_header": "How do I check the status of my order?",
+            "accordion_content": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui official.</p>"
+          }
+        },
+        "accordion_block_87VbqB": {
+          "type": "accordion_block",
+          "settings": {
+            "accordion_header": "What are the shipping charges?",
+            "accordion_content": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui official.</p>"
+          }
+        },
+        "accordion_block_AyEb6c": {
+          "type": "accordion_block",
+          "settings": {
+            "accordion_header": "Can I cancel my order?",
+            "accordion_content": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui official.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "accordion_block_p4aiT6",
+        "accordion_block_jxbJ7n",
+        "accordion_block_MhL6TN",
+        "accordion_block_87VbqB",
+        "accordion_block_AyEb6c"
+      ],
+      "name": "custom-FAQ",
+      "settings": {
+        "faq_heading": "Frequently Asked",
+        "faq_subheading": "General queries for your Basic knowledge"
+      }
+    },
+    "custom_form_QVKqcH": {
+      "type": "custom-form",
+      "blocks": {
+        "forms_inline_4i7NkE": {
+          "type": "shopify://apps/forms/blocks/inline/8744a304-fcb1-4347-b211-bb6b4759a76a",
+          "settings": {
+            "form_id": "988801",
+            "text_color": "#202020",
+            "button_background_color": "#202020",
+            "button_label_color": "#ffffff",
+            "links_color": "#1878b9",
+            "errors_color": "#e02229",
+            "text_alignment": "center",
+            "form_alignment": "center",
+            "padding_top": 0,
+            "padding_bottom": 24,
+            "padding_right": 0,
+            "padding_left": 0
+          }
+        }
+      },
+      "block_order": [
+        "forms_inline_4i7NkE"
+      ],
+      "disabled": true,
+      "name": "Insurance Checkup",
+      "settings": {
+        "heading": "Hoe sta jij ervoor?",
+        "description": "",
+        "form_heading": "Plan een telefonische check-up",
+        "first_name_placeholder": "Voornaam",
+        "last_name_placeholder": "Achternaam",
+        "phone_placeholder": "Telefoonnummer",
+        "email_placeholder": "E-mailadres",
+        "date_placeholder": "Kies datum",
+        "time_placeholder": "Kies tijdstip",
+        "button_text": "Direct aanvragen",
+        "button_color": "#7ed957",
+        "privacy_text": "",
+        "success_title": "Aanvraag ontvangen!",
+        "success_message": "Bedankt voor het aanvragen van de check-up. Je ontvangt een bevestiging op het opgegeven e-mailadres.",
+        "weekend_message": "Weekenden niet beschikbaar — kies een weekdag (ma–vr)"
+      }
+    },
+    "custom_pop_up_form_RJdfFR": {
+      "type": "custom-pop-up-form",
+      "blocks": {
+        "forms_inline_kwabWn": {
+          "type": "shopify://apps/forms/blocks/inline/8744a304-fcb1-4347-b211-bb6b4759a76a",
+          "settings": {
+            "form_id": "1060057",
+            "text_color": "#202020",
+            "button_background_color": "#202020",
+            "button_label_color": "#ffffff",
+            "links_color": "#1878b9",
+            "errors_color": "#e02229",
+            "text_alignment": "center",
+            "form_alignment": "center",
+            "padding_top": 0,
+            "padding_bottom": 24,
+            "padding_right": 0,
+            "padding_left": 0
+          }
+        }
+      },
+      "block_order": [
+        "forms_inline_kwabWn"
+      ],
+      "name": "pop up form",
+      "settings": {
+        "form_bg_img": "shopify://shop_images/d745240c-5995-4ebf-a749-609e76667732.jpg",
+        "form_img": "shopify://shop_images/254b8de8-56fb-4f9b-89ea-cf70f7fa34d6.jpg",
+        "form_title": "Semi annual sale",
+        "form_heading": "GET $100 OFFYOUR FIRST ORDER Sign up for our latest drops & offers.",
+        "form_content": "<p><br/>By submitting this form and signing up for texts, you consent to receive marketing text messages (e.g. promos, cart reminders) from Renaissance FMI Inc.<br/> at the number provided, including messages sent by autodialer. Consent is not a condition of purchase. Msg & data rates may apply.<br/>Msg frequency varies. Unsubscribe at any time by replying STOP or clicking the unsubscribe link (where available).<a href=\"https://www.withclarity.com/pages/privacy-policy\" target=\"_blank\">Privacy Policy</a>&<a href=\"https://www.withclarity.com/pages/terms-conditions\" target=\"_blank\">Terms</a>.</p>",
+        "enable_popup": true,
+        "display_type": "popup",
+        "popup_delay": 3,
+        "show_once": true
+      }
+    }
+  },
+  "order": [
+    "main",
+    "custom_section_iEF3d4",
+    "custom_faq_jRETRU",
+    "custom_form_QVKqcH",
+    "custom_pop_up_form_RJdfFR"
+  ]
+}

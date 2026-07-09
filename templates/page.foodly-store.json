@@ -1,0 +1,274 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "content_direction": "column",
+        "gap": 32,
+        "color_scheme": "",
+        "padding-block-start": 40,
+        "padding-block-end": 80
+      }
+    },
+    "custom_hero_4fdJhw": {
+      "type": "custom-hero",
+      "blocks": {
+        "hero_block_VGztyV": {
+          "type": "hero_block",
+          "settings": {
+            "hero_heading": "TOMATO SEASON",
+            "hero_description": "nutritious  delicious",
+            "last_heading": "",
+            "last_description": "",
+            "hero_bg": "shopify://shop_images/img_homepage_slide_1_2000x_da3c6fbe-b699-4022-a38c-e831ee7fb273.webp",
+            "hero_thumb": "shopify://shop_images/img_thumb_homepage_slide_1_150x_9908d90f-ea83-45a3-849b-2289be0794b5.avif"
+          }
+        },
+        "hero_block_RztkXK": {
+          "type": "hero_block",
+          "settings": {
+            "hero_heading": "PAELLA OR PASTA?",
+            "hero_description": "you’ll need this sweet pepper for both",
+            "last_heading": "",
+            "last_description": "",
+            "hero_bg": "shopify://shop_images/img_homepage_slide_2_2000x_4215b1c8-f383-4694-a058-8c05c6d2bf10.webp",
+            "hero_thumb": "shopify://shop_images/img_thumb_homepage_slide_2_150x_518481df-f419-4354-8d9c-adf2ecb84250.jpg"
+          }
+        },
+        "hero_block_Yk47ft": {
+          "type": "hero_block",
+          "settings": {
+            "hero_heading": "",
+            "hero_description": "",
+            "last_heading": "APPLE PIE?",
+            "last_description": "YES, PLEASE!Mmmmm...",
+            "hero_bg": "shopify://shop_images/img_homepage_slide_3_2000x_88b1736c-cb0e-464f-b93a-a528e29e151a.webp",
+            "hero_thumb": "shopify://shop_images/img_thumb_homepage_slide_3_150x_e73da45f-7c61-4a93-97ed-95d9a2b61665.avif"
+          }
+        }
+      },
+      "block_order": [
+        "hero_block_VGztyV",
+        "hero_block_RztkXK",
+        "hero_block_Yk47ft"
+      ],
+      "name": "custom-hero-section",
+      "settings": {}
+    },
+    "custom_slider_6a6dBf": {
+      "type": "custom-slider",
+      "blocks": {
+        "product_block_NBnQRe": {
+          "type": "product_block",
+          "settings": {
+            "product_heading": "Basil",
+            "product_subheading": "Harvest 2015 | In stock | Bunch",
+            "product_image": "shopify://shop_images/Basil_grande_25104548-3d51-4308-b886-265f29693500.webp"
+          }
+        },
+        "product_block_mnxXzU": {
+          "type": "product_block",
+          "settings": {
+            "product_heading": "Brandywine Tomatoes",
+            "product_subheading": "Harvest 2015 | In stock | Kg",
+            "product_image": "shopify://shop_images/Brandywine-tomatoes-front_grande_5453429a-7f4f-44b3-9d77-7ca14b172fed.webp"
+          }
+        },
+        "product_block_nTNxrF": {
+          "type": "product_block",
+          "settings": {
+            "product_heading": "Campari Tomatoes",
+            "product_subheading": "Harvest 2015 | In stock | Kg",
+            "product_image": "shopify://shop_images/img_homepage_slide_1_2000x_1bb7538e-3872-42f0-b969-e83b4f84f57e.webp"
+          }
+        },
+        "product_block_AVPprc": {
+          "type": "product_block",
+          "settings": {
+            "product_heading": "Capia Pepper",
+            "product_subheading": "Harvest 2015 | In stock | Kg",
+            "product_image": "shopify://shop_images/Capia-Pepper-above_grande_c056c1cf-d7d7-4018-83f6-8a4eae12f813.webp"
+          }
+        },
+        "product_block_qCNGYC": {
+          "type": "product_block",
+          "settings": {
+            "product_heading": "Cherry Tomatoes",
+            "product_subheading": "Harvest 2015 | In stock | Kg",
+            "product_image": "shopify://shop_images/Cherry-tomatoes-above_grande_1b7b4388-3e9c-4605-b56a-872da44dd4e7.webp"
+          }
+        },
+        "product_block_raaKpw": {
+          "type": "product_block",
+          "settings": {
+            "product_heading": "Cherry Tomatoes 2016",
+            "product_subheading": "Harvest 2015 | In stock | Kg",
+            "product_image": "shopify://shop_images/cherry-tomatoes_grande_6af078d3-b487-4ff8-a5a8-4c2ace93a42f.webp"
+          }
+        },
+        "product_block_K8iUYU": {
+          "type": "product_block",
+          "settings": {
+            "product_heading": "Cucumber",
+            "product_subheading": "Harvest 2015 | In stock | Kg",
+            "product_image": "shopify://shop_images/cucumber_grande_2165fe5e-6d52-461a-a6db-4626e74f7cc3.webp"
+          }
+        },
+        "product_block_3HLHyK": {
+          "type": "product_block",
+          "settings": {
+            "product_heading": "Damson Plums",
+            "product_subheading": "Harvest 2015 | In stock | Kg",
+            "product_image": "shopify://shop_images/Damson_grande_1eeccb35-791e-41b2-a564-9fee0d958bd6.webp"
+          }
+        },
+        "product_block_w7tJPg": {
+          "type": "product_block",
+          "settings": {
+            "product_heading": "Empire Apples",
+            "product_subheading": "Harvest 2015 | In stock | Kg",
+            "product_image": "shopify://shop_images/Empire-Apple_grande_012add03-d5df-4267-82d0-6a0860d5fd57.webp"
+          }
+        },
+        "product_block_BKF8JJ": {
+          "type": "product_block",
+          "settings": {
+            "product_heading": "Fuji Apples",
+            "product_subheading": "Harvest 2015 | In stock | Kg",
+            "product_image": "shopify://shop_images/Fuji-single_grande_ef8df469-e7e4-4e18-8338-13793f78fa75.webp"
+          }
+        },
+        "product_block_hJXVKV": {
+          "type": "product_block",
+          "settings": {
+            "product_heading": "Gala Apples",
+            "product_subheading": "Harvest 2015 | In stock | Kg",
+            "product_image": "shopify://shop_images/img_homepage_slide_3_2000x_88b1736c-cb0e-464f-b93a-a528e29e151a.webp"
+          }
+        },
+        "product_block_9qL6ez": {
+          "type": "product_block",
+          "settings": {
+            "product_heading": "Golden Delicious Apples",
+            "product_subheading": "Harvest 2015 | In stock | Kg",
+            "product_image": "shopify://shop_images/Golden-Delicious-Apples_grande_ec829fff-6535-40d9-b982-c8b438762565.webp"
+          }
+        },
+        "product_block_JMktWi": {
+          "type": "product_block",
+          "settings": {
+            "product_heading": "Green Beans",
+            "product_subheading": "Harvest 2015 | In stock | Kg",
+            "product_image": "shopify://shop_images/green-beans_grande_7bbe1bb0-b71f-4066-a610-0baa234d6d79.webp"
+          }
+        },
+        "product_block_Lbq8WX": {
+          "type": "product_block",
+          "settings": {
+            "product_heading": "Leek",
+            "product_subheading": "Harvest 2015 | In stock | Kg",
+            "product_image": "shopify://shop_images/leek_grande_4c89a79b-189d-42bc-9119-d375ab363fd1.webp"
+          }
+        },
+        "product_block_q3eaeY": {
+          "type": "product_block",
+          "settings": {
+            "product_heading": "Maynard Plums",
+            "product_subheading": "Harvest 2015 | In stock | Kg",
+            "product_image": "shopify://shop_images/Maynard-Plum-Front_grande_cfd21e35-e243-435d-852f-8927e978baea.webp"
+          }
+        },
+        "product_block_46JA3F": {
+          "type": "product_block",
+          "settings": {
+            "product_heading": "Red Bell Pepper",
+            "product_subheading": "Harvest 2015 | In stock | Kg",
+            "product_image": "shopify://shop_images/Red-Bell-Pepper_grande_2039cf98-f17a-4c44-b186-66543b6e5666.webp"
+          }
+        },
+        "product_block_jEg36f": {
+          "type": "product_block",
+          "settings": {
+            "product_heading": "Stanley Plums",
+            "product_subheading": "Harvest 2015 | In stock | Kg",
+            "product_image": "shopify://shop_images/Stanley-Plums-Above_grande_463d1cec-9f9c-410c-bd10-54c09cef965c.webp"
+          }
+        },
+        "product_block_e8zhE7": {
+          "type": "product_block",
+          "settings": {
+            "product_heading": "Strawberries",
+            "product_subheading": "Harvest 2015 | In stock | Kg",
+            "product_image": "shopify://shop_images/strawberries_grande_b01c0c87-9e75-4278-975b-fb8ef6b017de.webp"
+          }
+        },
+        "product_block_Nrwn6G": {
+          "type": "product_block",
+          "settings": {
+            "product_heading": "Thompson Seedless Grapes",
+            "product_subheading": "Harvest 2015 | In stock | Kg",
+            "product_image": "shopify://shop_images/Thompson-Seedless-Grape_grande_75c0a5ee-90ad-48ca-8514-61f53d3e4b5b.webp"
+          }
+        },
+        "product_block_dNhjjP": {
+          "type": "product_block",
+          "settings": {
+            "product_heading": "Vit-plate",
+            "product_subheading": "Harvest 2015 | In stock | Kg",
+            "product_image": "shopify://shop_images/plums_wideangle_grande_grande_364d5c4c-a38a-4d16-baa0-9680bf451cd6.webp"
+          }
+        }
+      },
+      "block_order": [
+        "product_block_NBnQRe",
+        "product_block_mnxXzU",
+        "product_block_nTNxrF",
+        "product_block_AVPprc",
+        "product_block_qCNGYC",
+        "product_block_raaKpw",
+        "product_block_K8iUYU",
+        "product_block_3HLHyK",
+        "product_block_w7tJPg",
+        "product_block_BKF8JJ",
+        "product_block_hJXVKV",
+        "product_block_9qL6ez",
+        "product_block_JMktWi",
+        "product_block_Lbq8WX",
+        "product_block_q3eaeY",
+        "product_block_46JA3F",
+        "product_block_jEg36f",
+        "product_block_e8zhE7",
+        "product_block_Nrwn6G",
+        "product_block_dNhjjP"
+      ],
+      "name": "custom-slider",
+      "settings": {
+        "slide1_image": "shopify://shop_images/img_homepage_special_1_1500x_14194bbc-cd4d-45a5-86ec-87218927dc3b.webp",
+        "slide2_image": "shopify://shop_images/img_homepage_special_2_1500x_2c4b0ab0-c9a5-448a-85fe-646c37776f86.webp",
+        "overlay_heading1": "START YOUR DAY",
+        "overlay_subheading1": "with vit-plate",
+        "overlay_heading2": "C-OVERLOAD",
+        "overlay_subheading2": "",
+        "badge1": "special pack",
+        "desc1": "Healthy deal",
+        "badge2": "20% discount",
+        "desc2": "September deal"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "custom_hero_4fdJhw",
+    "custom_slider_6a6dBf"
+  ]
+}

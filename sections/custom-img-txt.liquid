@@ -1,0 +1,124 @@
+<div class="img-txt">
+    <div class="custom-containerr">
+
+        <div class="content-container">
+            <h2>{{ section.settings.content_heading }}</h2>
+            <h4>{{ section.settings.content_subheading }}</h4>
+            <p>{{ section.settings.content_para }}</p>
+        </div>
+
+        <div class="content_image">
+            {% if section.settings.content_image != blank %}
+                <img class="content-image" src="{{ section.settings.content_image | img_url:'master' }}" alt="content_image" loading="lazy">
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+
+.img-txt {
+    background: #B9D1DB;
+}
+
+.custom-containerr {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 15px;
+}
+
+.content-container {
+    width: 50%;
+    margin-top: 100px;
+}
+
+.content_image {
+    width: 50%;
+    padding: 55px;
+}
+    
+.content_image img {
+    height: 100%;
+    width: 100%;
+}
+
+.content-container h2 {
+    font-size: 60px;
+    text-transform: capitalize;
+    font-weight: 900;
+   margin: 0px 0px 13px;
+}
+
+.content-container h4 {
+    font-size: 20px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin: 0px 0px 20px;
+}
+
+@media (max-width:480px){
+
+.custom-containerr {
+    flex-direction: column-reverse;
+}
+
+.content_image {
+    width: 100%;
+    padding: 35px;
+}
+
+.content-container {
+    width: 100%;
+    margin-top: -40px;
+    padding: 50px;
+}
+
+.content-container h2 {
+    font-size: 48px;
+    margin: -10px 0px 13px;
+}
+
+.content-container h4 {
+    font-size: 18px;
+    margin: 0px;
+}
+
+}
+
+</style>
+
+{% schema %}
+{
+    "name": "custom-img-with-txt",
+    "settings": [
+        {
+            "type":"text",
+            "id":"content_heading",
+            "label":"content-heading"
+        },
+        {
+            "type": "text",
+            "id": "content_subheading",
+            "label": "content-subheading"
+        },
+        {
+            "type": "textarea",
+            "id": "content_para",
+            "label": "content-para"
+        },
+        {
+            "type": "image_picker",
+            "id": "content_image",
+            "label": "content-image"
+        }
+    ],
+    "presets": [
+        {
+            "name": "custom-img-with-txt",
+            "category": "custom"
+        }
+    ]
+}
+{% endschema %}

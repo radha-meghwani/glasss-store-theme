@@ -1,0 +1,511 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "blocks": {
+        "heading": {
+          "type": "text",
+          "name": "Title",
+          "settings": {
+            "text": "<h1>{{ closest.page.title }}</h1>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "center",
+            "type_preset": "h2",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "page-content": {
+          "type": "page-content",
+          "settings": {},
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "heading",
+        "page-content"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "gap": 32,
+        "color_scheme": "scheme-5",
+        "padding-block-start": 60,
+        "padding-block-end": 20
+      }
+    },
+    "section_RxUWfi": {
+      "type": "section",
+      "blocks": {
+        "spacer_km3bJd": {
+          "type": "spacer",
+          "name": "t:names.spacer",
+          "settings": {
+            "size": "percent",
+            "percent_size": 10,
+            "pixel_size": 120,
+            "custom_mobile_size": false,
+            "size_mobile": "percent",
+            "percent_size_mobile": 100,
+            "pixel_size_mobile": 120
+          },
+          "blocks": {}
+        },
+        "group_9U9CYa": {
+          "type": "group",
+          "name": "t:names.group",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "custom",
+            "custom_width": 40,
+            "width_mobile": "custom",
+            "custom_width_mobile": 100,
+            "height": "custom",
+            "custom_height": 100,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 100,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "text_xrqcAV": {
+              "type": "text",
+              "name": "t:names.heading",
+              "settings": {
+                "text": "<h4><strong>The Handcrafted Soap</strong></h4>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "text_ti87aa": {
+              "type": "text",
+              "name": "t:names.text",
+              "settings": {
+                "text": "<p>Quisque volutpat mattis eros. Nullam malesuada erat ut ki diaml ka dhuddu pochu turpis. Suspendisse urna nibh, viverra non, semper suscipit, posuere a, pede. Donec nec justo eget felis facilisis fermentum. Morbi in sem quis dui placerat ornare. Pellentesque odio nisi, euismod in, pharetra a, ultricies in, diam. Sed arcu. Cras consequate. Etiam pretium varius quam in aliquam. Curabitur malesuada elit sed enim placerat, vitae interdum erat cursus. Morbi laoreet sapien id scelerisque dapibus. Aliquam erat volutpat. Nunc pulvinar tempus dui in tristique. Aliquam sem fringilla ut morbi tincidunt. Risus nec feugiat in fermentum posuere urna nec tincidunt. Urna et pharetra pharetra massa massa ultricies mi quis. Sapien pellentesque habitant morbi tristique senectus. Nam aliquam sem et tortor consequat.</p>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "text_zwhD8d": {
+              "type": "text",
+              "name": "t:names.text",
+              "settings": {
+                "text": "<p>Nullam malesuada erat ut ki diaml ka dhuddu pochu turpis. Suspendisse urna nibh, viverra non, semper suscipit, posuere a, pede. Donec nec justo eget felis facilisis fermentum. Morbi in sem quis dui placerat ornare. Tortor dignissim convallis aenean et tortor. Ac tincidunt vitae semper quis lectus nulla at volutpat diam.</p>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "text_xrqcAV",
+            "text_ti87aa",
+            "text_zwhD8d"
+          ]
+        },
+        "group_XUp4km": {
+          "type": "group",
+          "name": "t:names.group",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "image_MGrVWW": {
+              "type": "image",
+              "name": "t:names.image",
+              "settings": {
+                "image": "shopify://shop_images/abou-10.webp",
+                "link": "",
+                "image_ratio": "square",
+                "width": "custom",
+                "custom_width": 70,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "image_MGrVWW"
+          ]
+        }
+      },
+      "block_order": [
+        "spacer_km3bJd",
+        "group_9U9CYa",
+        "group_XUp4km"
+      ],
+      "name": "t:names.custom_section",
+      "settings": {
+        "content_direction": "row",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "center",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 20,
+        "color_scheme": "",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 80,
+        "padding-block-end": 80
+      }
+    },
+    "custom_reviews_hWQcRm": {
+      "type": "custom-reviews",
+      "blocks": {
+        "reviews_block_tQiwJm": {
+          "type": "reviews-block",
+          "settings": {
+            "review_boxs": "fa-brands fa-pagelines",
+            "box_heading": "Go Organic",
+            "box_para": "Aliquam sit amet cursus mauris. Sed vitae mattis ipsum."
+          }
+        },
+        "reviews_block_x7gmmH": {
+          "type": "reviews-block",
+          "settings": {
+            "review_boxs": "fa-solid fa-droplet",
+            "box_heading": "Soft Skin Feel",
+            "box_para": "Ged vestibulum nulla elementum auctor tincidunt. Aliquam sit amet"
+          }
+        },
+        "reviews_block_G3FQd9": {
+          "type": "reviews-block",
+          "settings": {
+            "review_boxs": "fa-solid fa-heart",
+            "box_heading": "Love your Skin",
+            "box_para": "Vestibulum enim nulla, sollicitudin ac hendrerit nec, tempor quis nisl."
+          }
+        },
+        "reviews_block_J3RiMf": {
+          "type": "reviews-block",
+          "settings": {
+            "review_boxs": "fa-solid fa-user",
+            "box_heading": "PH Balanced",
+            "box_para": "Elementum auctor tincidunt. Sed vestibulum nulla  Aliquam sit amet"
+          }
+        },
+        "reviews_block_MBJrQN": {
+          "type": "reviews-block",
+          "settings": {
+            "review_boxs": "fa-brands fa-empire",
+            "box_heading": "Freshness Explored",
+            "box_para": "Sollicitudin ac hendrerit nec, tempor quis nisl. Sed vestibulum"
+          }
+        },
+        "reviews_block_RPkBpP": {
+          "type": "reviews-block",
+          "settings": {
+            "review_boxs": "fa-solid fa-wand-magic-sparkles",
+            "box_heading": "Best Fragrance",
+            "box_para": "Sed vestibulum nulla elementum auctor tincidunt. Aliquam sit amet"
+          }
+        }
+      },
+      "block_order": [
+        "reviews_block_tQiwJm",
+        "reviews_block_x7gmmH",
+        "reviews_block_G3FQd9",
+        "reviews_block_J3RiMf",
+        "reviews_block_MBJrQN",
+        "reviews_block_RPkBpP"
+      ],
+      "name": "custom-reviews",
+      "settings": {
+        "reviews_image": "shopify://shop_images/abou-par.webp",
+        "reviews_heading": "feel the difference.."
+      }
+    },
+    "custom_image_w_text_JwAjqb": {
+      "type": "custom-image-w-text",
+      "name": "custom-image-w-text",
+      "settings": {
+        "content_heading": "A natural soap for your natural beauty",
+        "content_para": "Sed vestibulum nulla elementum auctor tincidunt. Aliquam sit amet cursus mauris. Sed vitae mattis ipsum. Vestibulum enim nulla, sollicitudin ac hendrerit nec, tempor quis nisl",
+        "custom-image": "shopify://shop_images/abo-2.webp",
+        "content_heading2": "A legacy of cleanliness and hygiene",
+        "content_para2": "Aliquam sit amet cursus mauris. Sed vitae mattis ipsum. Vestibulum enim nulla, sollicitudin ac hendrerit nec, tempor quis nisl. Sed vestibulum nulla elementum auctor tincidunt.",
+        "custom-image2": "shopify://shop_images/abo-3.webp"
+      }
+    },
+    "custom_testimonials_NCJxJ6": {
+      "type": "custom-testimonials",
+      "blocks": {
+        "testimonials_block_kRYng3": {
+          "type": "testimonials_block",
+          "settings": {
+            "customer_para": "Girem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type.",
+            "customer_stars": "★★★★★",
+            "customer_image": "shopify://shop_images/abo-8.webp",
+            "user_name": "Laurie Shaw",
+            "user_proff": "Beautician"
+          }
+        },
+        "testimonials_block_hGABHi": {
+          "type": "testimonials_block",
+          "settings": {
+            "customer_para": "Simply dummy lorem Ipsum is  text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type.",
+            "customer_stars": "★★★☆☆",
+            "customer_image": "shopify://shop_images/abo-9.webp",
+            "user_name": "Soniya Gillesbe",
+            "user_proff": "Therapist"
+          }
+        },
+        "testimonials_block_x4ePEU": {
+          "type": "testimonials_block",
+          "settings": {
+            "customer_para": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type.",
+            "customer_stars": "★★★☆☆",
+            "customer_image": "shopify://shop_images/abo-8.webp",
+            "user_name": "Laurie Shaw",
+            "user_proff": "Beautician"
+          }
+        },
+        "testimonials_block_jrEia7": {
+          "type": "testimonials_block",
+          "settings": {
+            "customer_para": "Girem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type.",
+            "customer_stars": "★★★★☆",
+            "customer_image": "shopify://shop_images/abo-11.webp",
+            "user_name": "Melvin Powell",
+            "user_proff": "Skin care Specialist"
+          }
+        }
+      },
+      "block_order": [
+        "testimonials_block_kRYng3",
+        "testimonials_block_hGABHi",
+        "testimonials_block_x4ePEU",
+        "testimonials_block_jrEia7"
+      ],
+      "name": "custom-testimonials",
+      "settings": {
+        "testimonials_heading": "Testimonials",
+        "testimonials_subheading": "Thus Spoke our Customers"
+      }
+    },
+    "custom_team_cDJnFQ": {
+      "type": "custom-team",
+      "blocks": {
+        "team_block_yWx6iW": {
+          "type": "team-block",
+          "settings": {
+            "members_img": "shopify://shop_images/team-4.webp",
+            "member_name": "fredan casey",
+            "member_proff": "CEO",
+            "twitter_icon": "fa-brands fa-twitter",
+            "fb_icon": "fa-brands fa-square-facebook",
+            "printrest_icon": "fa-brands fa-pinterest",
+            "insta_icon": "fa-brands fa-instagram"
+          }
+        },
+        "team_block_Fr6GUn": {
+          "type": "team-block",
+          "settings": {
+            "members_img": "shopify://shop_images/team-1.webp",
+            "member_name": "jaffi dixon",
+            "member_proff": "production manager",
+            "twitter_icon": "fa-brands fa-twitter",
+            "fb_icon": "fa-brands fa-square-facebook",
+            "printrest_icon": "fa-brands fa-pinterest",
+            "insta_icon": "fa-brands fa-instagram"
+          }
+        },
+        "team_block_X7mHXV": {
+          "type": "team-block",
+          "settings": {
+            "members_img": "shopify://shop_images/team-3.webp",
+            "member_name": "sam richards",
+            "member_proff": "quality analyst",
+            "twitter_icon": "fa-brands fa-twitter",
+            "fb_icon": "fa-brands fa-square-facebook",
+            "printrest_icon": "fa-brands fa-pinterest",
+            "insta_icon": "fa-brands fa-instagram"
+          }
+        },
+        "team_block_xLFCY7": {
+          "type": "team-block",
+          "settings": {
+            "members_img": "shopify://shop_images/team-2.webp",
+            "member_name": "olivia bowers",
+            "member_proff": "sales executive",
+            "twitter_icon": "fa-brands fa-twitter",
+            "fb_icon": "fa-brands fa-square-facebook",
+            "printrest_icon": "fa-brands fa-pinterest",
+            "insta_icon": "fa-brands fa-instagram"
+          }
+        }
+      },
+      "block_order": [
+        "team_block_yWx6iW",
+        "team_block_Fr6GUn",
+        "team_block_X7mHXV",
+        "team_block_xLFCY7"
+      ],
+      "name": "custom-team",
+      "settings": {
+        "team_heading": "Our team",
+        "team_subheading": "The people worked hard through"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "section_RxUWfi",
+    "custom_reviews_hWQcRm",
+    "custom_image_w_text_JwAjqb",
+    "custom_testimonials_NCJxJ6",
+    "custom_team_cDJnFQ"
+  ]
+}

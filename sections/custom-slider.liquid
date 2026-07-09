@@ -1,0 +1,558 @@
+<div class="custom-slider">
+  <div class="slider">
+
+    <!-- LEFT SLIDE -->
+    <div class="slide slide1"
+      {% if section.settings.slide1_image != blank %}
+        style="background-image:url({{ section.settings.slide1_image | image_url }})"
+      {% endif %}
+    >
+      <div class="text-overlay">
+        <h3>{{ section.settings.overlay_heading1 }}</h3>
+        <h4>{{ section.settings.overlay_subheading1 }}</h4>
+      </div>
+
+      <div class="offer">
+        <span class="offer-badge1">
+            <strong>
+            {{ section.settings.badge1 }}
+            </strong>
+        </span>
+        <span class="description1">{{ section.settings.desc1 }}</span>
+    </div>
+
+    </div>
+
+    <!-- RIGHT SLIDE -->
+    <div class="slide slide2"
+      {% if section.settings.slide2_image != blank %}
+        style="background-image:url({{ section.settings.slide2_image | image_url }})"
+      {% endif %}
+    >
+      <div class="text-overlay">
+        <h3>{{ section.settings.overlay_heading2 }}</h3>
+        <h4>{{ section.settings.overlay_subheading2 }}</h4>
+      </div>
+
+      <div class="offer2">
+        <span class="offer-badge2">
+            <strong>
+            {{ section.settings.badge2 }}
+            </strong>
+        </span>
+        <span class="description2">{{ section.settings.desc2 }}</span>
+    </div>
+
+    </div>
+
+  </div>
+
+  <!-- PRODUCT SLIDER WITH SWIPER -->
+  <div class="swiper product-slider">
+    <div class="swiper-wrapper">
+      {% for block in section.blocks %}
+        <div class="swiper-slide product-item">
+          
+          {% if block.settings.product_image != blank %}
+            <div class="product-image">
+              <img
+                src="{{ block.settings.product_image | image_url }}"
+                alt="{{ block.settings.product_heading }}"
+                loading="lazy"
+              >
+            </div>
+          {% endif %}
+
+          <div class="product-text">
+            <h2>{{ block.settings.product_heading }}</h2>
+            <h3>{{ block.settings.product_subheading }}</h3>
+          </div>
+
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Navigation buttons -->
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+
+    <!-- Pagination -->
+    <div class="swiper-pagination"></div>
+  </div>
+
+</div>
+
+<style>
+.custom-slider {
+  padding: 30px 0;
+  padding-top: 5px;
+}
+
+.slider {
+  display: flex;
+  width: 100%;
+  margin-bottom: 0px !important;
+  gap:5px;
+}
+
+.swiper{
+    margin-top: 0px !important;
+}
+
+.slide {
+  width: 50%;
+  height: 450px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.slide1:hover{
+ background-color:#F2D5D9;
+ cursor:pointer;
+}
+
+.slide2:hover{
+ background-color:#F2D5D9;
+ cursor:pointer;
+}
+
+.slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color:rgb(255, 173, 173);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.slide:hover::after {
+  opacity: 0.5;
+}
+
+.text-overlay {
+  position: relative;
+  z-index: 2;
+}
+
+.slide1 { background-color: #F2D5D9; }
+.slide2 { background-color: #F3F3F3; }
+
+.text-overlay {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #000;
+}
+
+.text-overlay h3 {
+    font-size: 40px;
+    margin-bottom: 0px;
+    letter-spacing: 2px;
+}
+
+.text-overlay h4 {
+    font-size: 25px;
+    font-style: italic;
+    margin-top: 10px;
+    font-weight: 700;
+}
+
+span.offer-badge1 {
+    background-color: #f3b562;
+    color: #5c4b51;
+    height: 120px;
+    width: 120px;
+    display: block;
+    border-radius: 50%;
+    bottom: 25px;
+    position: relative;
+}
+
+.offer {
+    max-width: 594px;
+    top: 55%;
+    position: relative;
+    padding: 0px;
+    display: flex;
+    justify-content: space-between;
+    left: 15%;
+}
+
+.offer2 {
+    max-width: 340px;
+    top: 50%;
+    position: relative;
+    padding: 0px;
+    display: flex;
+    justify-content: space-between;
+    left: 20%;
+}
+
+.offer-badge1 strong {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 21px;
+    text-align: center;
+    margin-top: 40px;
+    line-height: 17px;
+}
+
+.description1::after{
+    background-color:#f3b562;
+    height:3px;
+    content:"";
+    display:block;
+    width: 437px;
+}
+
+.description2::after{
+    background-color:#8cbeb2;
+    height:3px;
+    content:"";
+    display:block;
+    width: 152px;
+}
+
+span.offer-badge2 {
+    background: #8cbeb2;
+    color: #fff;
+    height: 120px;
+    width: 120px;
+    border-radius: 50%;
+    position:relative;
+    bottom: 25px;
+    left: 70px;
+}
+
+.offer-badge2 strong {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 21px;
+    text-align: center;
+    margin-top: 40px;
+    line-height: 17px;
+}
+
+span.description1 {
+    color: #5c4b51;
+    font-weight: 600;
+    font-size: 20px;
+    text-align: end;
+}
+
+span.description2 {
+    color: #fff;
+    font-weight: 600;
+    font-size: 20px;
+    text-align: end;
+}
+
+/* PRODUCT SLIDER STYLES */
+.product-slider {
+  width: 100%;
+  padding-top: 40px;
+  position: relative;
+}
+
+.swiper-wrapper {
+  display: flex;
+}
+
+.product-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+}
+
+.product-image {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 250px;
+}
+
+.product-image:hover{
+    cursor:pointer;
+}
+
+.product-image img {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+}
+
+.product-image img:hover{
+    background-color:#F2D5D9;
+}
+
+.product-text h2 {
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 0px;
+}
+
+.product-text h3 {
+    font-size: 20px;
+    color: #adaaaa;
+    margin-top: 0px;
+}
+
+/* Swiper Navigation Buttons */
+.swiper-button-prev,
+.swiper-button-next {
+  color: #333!important;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  color: #f06060!important;
+}
+
+.swiper-button-prev::after,
+.swiper-button-next::after {
+  font-size: 20px;
+}
+
+/* Swiper Pagination */
+.swiper-pagination-bullet {
+  background: #ddd;
+  opacity: 1;
+  display:none!important;
+}
+
+.swiper-pagination-bullet-active {
+  background: #333;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .slider {
+    flex-direction: column;
+  }
+
+  .slide {
+    width: 100%;
+    height: 300px;
+  }
+
+  .swiper-button-prev,
+  .swiper-button-next {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+@media (max-width: 480px){
+.offer {
+    max-width: 540px;
+    top: 50%;
+    position: relative;
+    padding: 8px 20px 0px 23px;
+    display: flex;
+    justify-content: space-between;
+    left: 0%;
+}
+.offer2 {
+    max-width: 540px;
+    top: 50%;
+    position: relative;
+    padding: 0px 134px 0px 45px;
+    display: flex;
+    justify-content: space-between;
+    left: 0%;
+}
+.hero-thumbs img {
+    {% comment %} width: 75px;
+    height: 59px; {% endcomment %}
+}
+.hero-thumbs {
+    display: flex;
+    flex-direction: row;
+    gap: 18px;
+    position: relative;
+    left: -140px;
+    top: 257px;
+}
+
+
+.description1::after {
+    background-color: #f3b562;
+    height: 3px;
+    content: "";
+    display: block;
+    width: 285px;
+}
+
+span.offer-badge1 {
+    height: 90px;
+    width: 90px;
+}
+
+.offer-badge1 strong {
+    font-size: 16px;
+    margin-top: 28px;
+}
+
+span.offer-badge2 {
+    height: 73px;
+    width: 73px;
+    bottom: 25px;
+}
+
+.offer-badge2 strong {
+    font-size: 13px;
+    margin-top: 18px;
+}
+
+.description2::after {
+    width: 100px;
+}
+
+span.description2 {
+    color: #fff;
+    font-weight: 600;
+    font-size: 13px;
+    text-align: end;
+}
+
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const swiper = new Swiper('.product-slider', {
+    slidesPerView: 1,
+    spaceBetween: 20,
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    breakpoints: {
+      640: {
+        slidesPerView: 2,
+        spaceBetween: 20,
+      },
+      1024: {
+        slidesPerView: 4,
+        spaceBetween: 20,
+      },
+    },
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "Custom Slider",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "slide1_image",
+      "label": "Left Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide2_image",
+      "label": "Right Image"
+    },
+    {
+      "type": "text",
+      "id": "overlay_heading1",
+      "label": "Left Heading",
+      "default": "START YOUR DAY"
+    },
+    {
+      "type": "text",
+      "id": "overlay_subheading1",
+      "label": "Left Subheading",
+      "default": "with vit-plate"
+    },
+    {
+      "type": "text",
+      "id": "overlay_heading2",
+      "label": "Right Heading",
+      "default": "C-OVERLOAD"
+    },
+    {
+      "type": "text",
+      "id": "overlay_subheading2",
+      "label": "Right Subheading",
+      "default": "September deal"
+    },
+    {
+        "type": "text",
+        "id": "badge1",
+        "label": "badge1"
+    },
+    {
+        "type": "text",
+        "id": "desc1",
+        "label": "desc1"
+    },
+    {
+        "type": "text",
+        "id": "badge2",
+        "label": "badge2"
+    },
+    {
+        "type": "text",
+        "id": "desc2",
+        "label": "desc2"
+    }
+  ],
+  "blocks": [
+    {
+        "type":"product_block",
+        "name":"product_block",
+        "settings": [
+            {
+                "type": "text",
+                "id": "product_heading",
+                "label": "Product Heading"
+            },
+            {
+                "type": "text",
+                "id": "product_subheading",
+                "label":"Product Subheading"
+            },
+            {
+                "type": "image_picker",
+                "id": "product_image",
+                "label": "Product Image"
+            }
+        ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Slider",
+      "category": "Custom",
+      "blocks": [
+        {
+            "type": "product_block"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

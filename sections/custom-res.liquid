@@ -1,0 +1,276 @@
+{% comment %}
+  Home Preview Image Section
+  - Desktop & Tablet: Static layout (Content LEFT, Image RIGHT)
+  - Mobile: Swiper (Image slide + Content slide)
+{% endcomment %}
+
+<section class="va-section">
+  <div class="va-wrapper">
+
+    <!-- =====================
+         DESKTOP / TABLET
+         ===================== -->
+    <div class="va-desktop">
+      <div class="va-content">
+        <p class="va-eyebrow">{{ section.settings.eyebrow }}</p>
+        <h2 class="va-heading">{{ section.settings.heading }}</h2>
+        <p class="va-text">{{ section.settings.text }}</p>
+
+        {% if section.settings.list != blank %}
+          <div class="va-list">
+            {{ section.settings.list }}
+          </div>
+        {% endif %}
+
+        {% if section.settings.button_label != blank %}
+          <a href="{{ section.settings.button_link }}" class="va-button">
+            {{ section.settings.button_label }}
+          </a>
+        {% endif %}
+      </div>
+
+      <div class="va-media">
+        {% if section.settings.image != blank %}
+          <img
+            src="{{ section.settings.image | image_url: width: 1400 }}"
+            alt="{{ section.settings.image.alt | escape }}"
+            loading="lazy">
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- =====================
+         MOBILE (SWIPER)
+         ===================== -->
+    <div class="va-mobile swiper">
+      <div class="swiper-wrapper">
+
+        <!-- Slide 1 : Image -->
+        <div class="swiper-slide">
+          <div class="va-media">
+            {% if section.settings.image != blank %}
+              <img
+                src="{{ section.settings.image | image_url: width: 1000 }}"
+                alt="{{ section.settings.image.alt | escape }}"
+                loading="lazy">
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Slide 2 : Content -->
+        <div class="swiper-slide">
+          <div class="va-content">
+            <p class="va-eyebrow">{{ section.settings.eyebrow }}</p>
+            <h2 class="va-heading">{{ section.settings.heading }}</h2>
+            <p class="va-text">{{ section.settings.text }}</p>
+
+            {% if section.settings.list != blank %}
+              <div class="va-list">
+                {{ section.settings.list }}
+              </div>
+            {% endif %}
+
+            {% if section.settings.button_label != blank %}
+              <a href="{{ section.settings.button_link }}" class="va-button">
+                {{ section.settings.button_label }}
+              </a>
+            {% endif %}
+          </div>
+        </div>
+
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+/* =========================
+   BASE
+   ========================= */
+.va-section {
+  padding: 60px 0;
+}
+
+.va-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.va-media {
+  overflow: hidden;
+  width: 115%;
+}
+
+.va-media img {
+  width: 115%;
+  max-width: none;
+  display: block;
+}
+
+/* =========================
+   DESKTOP + TABLET
+   ========================= */
+.va-desktop {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 120px;
+  align-items: center;
+}
+
+.va-content {
+  max-width: 360px;
+}
+
+.va-eyebrow {
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 1.8px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.va-heading {
+  font-size: 44px;
+  line-height: 52px;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
+.va-text {
+  font-size: 18px;
+  line-height: 26px;
+}
+
+.va-list {
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 22px;
+  text-transform: uppercase;
+}
+
+.va-button {
+  display: inline-block;
+  margin-top: 32px;
+  padding: 12px 30px;
+  border: 2px solid #000;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #000;
+  text-align: center;
+}
+
+.va-button:hover {
+  background: #000;
+  color: #fff;
+}
+
+.va-mobile {
+  display: none;
+}
+
+/* =========================
+   MOBILE ONLY
+   ========================= */
+@media (max-width: 767px) {
+
+  .va-desktop {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .va-media {
+    overflow: hidden;
+    width: 100%;
+    order: -1;
+}
+
+  .va-content {
+    max-width: 100%;
+  }
+
+  .va-heading {
+    font-size: 30px;
+    line-height: 36px;
+  }
+
+  .va-text {
+    font-size: 16px;
+    line-height: 22px;
+  }
+
+  .va-button {
+    margin-top: 24px;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (window.innerWidth < 768 && typeof Swiper !== 'undefined') {
+    new Swiper('.va-mobile', {
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true
+      }
+    });
+  }
+});
+</script>
+
+{% schema %}
+{
+  "name": "Home Preview Image",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Section image"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "Try before you buy"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Home Preview"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Description",
+      "default": "Seeking love at first sight? Try two rings at home & find the right one for you."
+    },
+    {
+      "type": "richtext",
+      "id": "list",
+      "label": "Bullet text",
+      "default": "<p>3D Printed<br>Finely Crafted<br>Custom Replica<br>Complimentary Consultation</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Learn more"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Home Preview Image Section"
+    }
+  ]
+}
+{% endschema %}

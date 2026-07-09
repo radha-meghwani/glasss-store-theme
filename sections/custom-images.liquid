@@ -1,0 +1,385 @@
+<div class="custom-images">
+
+  <div class="main-cont swiper-wrapper">
+    <div class="swiper-track">
+
+      {% for block in section.blocks %}
+        <div class="container swiper-slide">
+
+          <div class="contain first-content">
+            <h1>{{ block.settings.main_heading }}</h1>
+            <p>{{ block.settings.sub_heading }}</p>
+
+            {% if block.settings.btn_label != blank %}
+              <a
+                href="{{ block.settings.btn_link }}"
+                class="cta-btn"
+                {% if block.settings.btn_target == 'blank' %}target="_blank"{% endif %}
+              >
+                {{ block.settings.btn_label }}
+              </a>
+            {% endif %}
+          </div>
+
+          {% if block.settings.block-image != blank %}
+            <div class="block-image">
+              <img
+                class="block-image"
+                src="{{ block.settings.block-image | img_url: 'master' }}"
+                alt="block-image"
+                loading="lazy"
+              >
+            </div>
+          {% endif %}
+
+          <div class="contain second-content">
+            <h1>{{ block.settings.main_headng }}</h1>
+            <p>{{ block.settings.sub_headng }}</p>
+
+            {% if block.settings.btnn_label != blank %}
+              <a
+                href="{{ block.settings.btnn_link }}"
+                class="cta-btn"
+                {% if block.settings.btnn_target == 'blank' %}target="_blank"{% endif %}
+              >
+                {{ block.settings.btnn_label }}
+              </a>
+            {% endif %}
+          </div>
+
+        </div>
+      {% endfor %}
+
+    </div>
+
+    <!-- pagination dots -->
+    {% comment %} <div class="swiper-dots"></div> {% endcomment %}
+
+  </div>
+
+   <!-- pagination dots -->
+    <div class="swiper-dots"></div>
+</div>
+
+<style>
+.custom-images {
+  max-width: 1200px;
+  margin: auto;
+}
+
+.main-cont {
+  display: flex;
+  width: 100%;
+  gap: 35px;
+  padding: 45px;
+}
+
+.swiper-track {
+  display: flex;
+  width: 100%;
+}
+
+.container {
+  width: 50%;
+}
+
+.contain h1 {
+  font-size: 43px;
+  font-weight: 600;
+  margin-bottom: 13px;
+  line-height: 36px;
+}
+
+.contain p {
+  font-size: 18px;
+  line-height: 20px;
+  font-weight: 300;
+  margin: 10px 0px;
+}
+
+/* Button */
+.cta-btn {
+  display: inline-block;
+  background: #000;
+  color: #fff;
+  padding: 10px 22px;
+  font-size: 12px;
+  font-weight:bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+  margin-top: 10px;
+  border:2px solid #000;
+}
+
+.cta-btn:hover{
+    background-color:#fff;
+    color:#000;
+    cursor:pointer;
+}
+
+/* ---------------- MOBILE SWIPER ---------------- */
+@media (max-width: 747px) {
+
+  .main-cont {
+    overflow: hidden;
+    padding: 7px;
+    gap:0px;
+    margin-top: 30px;
+  }
+
+  .swiper-track {
+    gap: 0;
+    transition: transform 0.6s ease;
+  }
+
+  .container {
+    width: 100%;
+    min-width: 100%;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .block-image img {
+    width: 100%;
+  }
+
+  .swiper-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 30px;
+  }
+
+  .swiper-dots span {
+    width: 8px;
+    height: 8px;
+    background: #cfcfcf;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .swiper-dots span.active {
+    background: #000;
+  }
+}
+
+/* desktop hide dots */
+@media (min-width: 748px) {
+  .swiper-dots {
+    display: none;
+  }
+  
+   .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .contain {
+    display: block;
+  }
+
+  /* hide both by default */
+  .first-content,
+  .second-content {
+    display: none;
+  }
+
+  /* odd slides → first content */
+  .swiper-slide:nth-child(odd) .first-content {
+    display: block;
+  }
+
+  /* even slides → second content */
+  .swiper-slide:nth-child(even) .second-content {
+    display: block;
+  }
+}
+
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const track = document.querySelector('.swiper-track');
+  const slides = document.querySelectorAll('.swiper-slide');
+  const dotsWrap = document.querySelector('.swiper-dots');
+
+  let index = 0;
+  let startX = 0;
+  let endX = 0;
+  let interval = null;
+  let autoSlide = {{ section.settings.auto_slide | json }};
+
+  function isMobile() {
+    return window.innerWidth < 747;
+  }
+
+  function update() {
+    if (!isMobile()) return;
+    track.style.transform = `translateX(-${index * 100}%)`;
+    const dots = dotsWrap.querySelectorAll('span');
+    dots.forEach(d => d.classList.remove('active'));
+    if (dots[index]) dots[index].classList.add('active');
+  }
+
+  function initDots() {
+    dotsWrap.innerHTML = '';
+    slides.forEach((_, i) => {
+      const dot = document.createElement('span');
+      if (i === 0) dot.classList.add('active');
+      dotsWrap.appendChild(dot);
+
+      dot.addEventListener('click', () => {
+        if (!isMobile()) return;
+        index = i;
+        update();
+      });
+    });
+  }
+
+  function startAutoSlide() {
+    if (!autoSlide || !isMobile()) return;
+    interval = setInterval(() => {
+      index = (index + 1) % slides.length;
+      update();
+    }, 3500);
+  }
+
+  function stopAutoSlide() {
+    if (interval) {
+      clearInterval(interval);
+      interval = null;
+    }
+  }
+
+  /* TOUCH EVENTS (guarded) */
+  track.addEventListener('touchstart', e => {
+    if (!isMobile()) return;
+    startX = e.touches[0].clientX;
+  });
+
+  track.addEventListener('touchmove', e => {
+    if (!isMobile()) return;
+    endX = e.touches[0].clientX;
+  });
+
+  track.addEventListener('touchend', () => {
+    if (!isMobile()) return;
+
+    const diff = startX - endX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0 && index < slides.length - 1) index++;
+      else if (diff < 0 && index > 0) index--;
+      update();
+    }
+  });
+
+  /* INIT */
+  function init() {
+    stopAutoSlide();
+
+    if (isMobile()) {
+      index = 0;
+      initDots();
+      update();
+      startAutoSlide();
+    } else {
+      // Desktop reset
+      track.style.transform = 'none';
+      dotsWrap.innerHTML = '';
+    }
+  }
+
+  init();
+  window.addEventListener('resize', init);
+});
+</script>
+
+
+{% schema %}
+{
+  "name": "custom-images",
+  "settings": [
+    {
+    "type": "checkbox",
+    "id": "auto_slide",
+    "label": "Enable auto slide (mobile)",
+    "default": true
+    }
+
+  ],
+  "blocks": [
+    {
+      "type": "image_block",
+      "name": "image_block",
+      "settings": [
+        {
+          "type": "text",
+          "id": "main_heading",
+          "label": "main-heading"
+        },
+        {
+          "type": "text",
+          "id": "sub_heading",
+          "label": "sub-heading"
+        },
+        {
+          "type": "text",
+          "id": "main_headng",
+          "label": "main-headng"
+        },
+        {
+          "type": "text",
+          "id": "sub_headng",
+          "label": "sub-headng"
+        },
+        {
+          "type": "text",
+          "id": "btn_label",
+          "label": "Button label",
+        },
+         {
+          "type": "url",
+          "id": "btn_link",
+          "label": "Button link"
+        },
+        {
+          "type": "text",
+          "id": "btnn_label",
+          "label": "Button label",
+        },
+        {
+          "type": "url",
+          "id": "btnn_link",
+          "label": "Button link"
+        },
+        {
+          "type": "select",
+          "id": "btn_target",
+          "label": "Open link in",
+          "options": [
+            { "value": "self", "label": "Current window" },
+            { "value": "blank", "label": "New window" }
+          ],
+          "default": "self"
+        },
+        {
+          "type": "image_picker",
+          "id": "block-image",
+          "label": "block-image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "custom-images",
+      "category": "custom",
+      "blocks": [
+        { "type": "image_block" }
+      ]
+    }
+  ]
+}
+{% endschema %}

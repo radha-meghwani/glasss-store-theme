@@ -1,0 +1,156 @@
+<div class="review-section">
+  <div class="reviews">
+    <h2>{{ section.settings.review_heading }}</h2>
+    <p>{{ section.settings.review_description }}</p>
+
+    <div class="review-images">
+      {% for block in section.blocks %}
+        {% if block.settings.review_image != blank %}
+          <div class="review-image-wrap">
+            <img
+              class="review-image default"
+              src="{{ block.settings.review_image | img_url: 'master' }}"
+              alt="review image"
+            >
+
+            {% if block.settings.review_image_hover != blank %}
+              <img
+                class="review-image hover"
+                src="{{ block.settings.review_image_hover | img_url: 'master' }}"
+                alt="review image hover"
+              >
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+
+<style>
+.review-section{
+  background-color:#fcf7f1;
+}
+
+.reviews{
+  max-width: 50%;
+  margin: auto;
+  text-align: center;
+  padding: 50px;
+}
+
+.reviews h2 {
+  text-transform: uppercase;
+  font-size: 25px;
+  margin: 0 0 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.reviews p{
+  font-size: 29px;
+  font-weight: 900;
+  color: #6a6a6a;
+  margin:0 0 40px;
+}
+
+/* IMAGE ROW */
+.review-images{
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+}
+
+/* IMAGE HOVER EFFECT */
+.review-image-wrap{
+  position: relative;
+  width: 120px;
+  height: 60px;
+  overflow: hidden;
+}
+
+.review-image{
+  position: absolute;
+  left: 0;
+  width: 100%;
+  transition: transform 0.4s ease;
+}
+
+.review-image:hover{
+    cursor:pointer;
+}
+
+.review-image.default{
+  top: 0;
+  transform: translateY(0);
+}
+
+.review-image.hover{
+  top: 100%;
+}
+
+.review-image-wrap:hover .review-image.default{
+  transform: translateY(-100%);
+}
+
+.review-image-wrap:hover .review-image.hover{
+  transform: translateY(-100%);
+}
+
+@media(max-width:427px){
+ .reviews {
+    max-width: 90%;
+    margin: auto;
+    text-align: center;
+    padding: 25px;
+}
+}
+</style>
+
+{% schema %}
+{
+  "name": "custom-review",
+  "settings": [
+    {
+      "type": "text",
+      "id": "review_heading",
+      "label": "review heading"
+    },
+    {
+      "type": "text",
+      "id": "review_description",
+      "label": "review description"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review_block",
+      "name":"review_block",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "review_image",
+          "label": "Default image"
+        },
+        {
+          "type": "image_picker",
+          "id": "review_image_hover",
+          "label": "Hover image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "custom-review",
+      "category": "custom",
+      "blocks": [
+        { "type":"review_block" },
+        { "type":"review_block" },
+        { "type":"review_block" }
+      ]
+    }
+  ]
+}
+{% endschema %}

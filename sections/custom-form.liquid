@@ -1,0 +1,709 @@
+{% comment %}
+  ============================================================
+  Section: Insurance Checkup
+  File:    sections/hero-form.liquid
+  ============================================================
+  Customer data storage (visible in Shopify Admin):
+    • Name / Email / Phone  → Customers → [record] → Overview
+    • Tags                  → Customers → [record] → Tags chip
+    • Note                  → Customers → [record] → Notes panel
+                              Contains appointment date + time
+  ============================================================
+  Success detection strategy (dual-layer):
+    1. sessionStorage flag — set on submit, read on next page load.
+       Shopify redirects to the clean return_to URL on success and
+       back to the page with #ic-form-- hash on error. The hash
+       presence tells us which case it is.
+    2. form.posted_successfully? inline <script> — fires if Shopify's
+       Liquid flash happens to be set (backup, not always reliable).
+  ============================================================
+{% endcomment %}
+
+{% schema %}
+{
+  "name": "Insurance Checkup",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Afbeeldingen"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Achtergrond (desktop)"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image_mb",
+      "label": "Achtergrond (mobiel)"
+    },
+    {
+      "type": "header",
+      "content": "Linker kolom"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Koptekst",
+      "default": "Hoe sta jij ervoor?"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Beschrijving"
+    },
+    {
+      "type": "header",
+      "content": "Formulier"
+    },
+    {
+      "type": "text",
+      "id": "form_heading",
+      "label": "Formulier koptekst",
+      "default": "Plan een telefonische check-up"
+    },
+    {
+      "type": "text",
+      "id": "first_name_placeholder",
+      "label": "Voornaam",
+      "default": "Voornaam"
+    },
+    {
+      "type": "text",
+      "id": "last_name_placeholder",
+      "label": "Achternaam",
+      "default": "Achternaam"
+    },
+    {
+      "type": "text",
+      "id": "phone_placeholder",
+      "label": "Telefoonnummer",
+      "default": "Telefoonnummer"
+    },
+    {
+      "type": "text",
+      "id": "email_placeholder",
+      "label": "E-mailadres",
+      "default": "E-mailadres"
+    },
+    {
+      "type": "text",
+      "id": "date_placeholder",
+      "label": "Afspraakdatum",
+      "default": "Kies datum"
+    },
+    {
+      "type": "text",
+      "id": "time_placeholder",
+      "label": "Afspraaктijdstip",
+      "default": "Kies tijdstip"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Knoptekst",
+      "default": "Direct aanvragen"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Knopkleur",
+      "default": "#7ED957"
+    },
+    {
+      "type": "richtext",
+      "id": "privacy_text",
+      "label": "Privacytekst"
+    },
+    {
+      "type": "header",
+      "content": "Bevestigingsbericht"
+    },
+    {
+      "type": "text",
+      "id": "success_title",
+      "label": "Bevestigingstitel",
+      "default": "Aanvraag ontvangen!"
+    },
+    {
+      "type": "textarea",
+      "id": "success_message",
+      "label": "Bevestigingstekst",
+      "default": "Bedankt voor het aanvragen van de check-up. Je ontvangt een bevestiging op het opgegeven e-mailadres."
+    },
+    {
+      "type": "header",
+      "content": "Validatiemeldingen"
+    },
+    {
+      "type": "text",
+      "id": "weekend_message",
+      "label": "Weekend-waarschuwing",
+      "default": "Weekenden niet beschikbaar — kies een weekdag (ma–vr)"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Insurance Checkup"
+    }
+  ]
+}
+{% endschema %}
+
+{% assign _ic_form_id = 'ic-form--' | append: section.id %}
+
+<section
+  class="ic-section"
+  id="ic-{{ section.id }}"
+  style="--ic-btn: {{ section.settings.button_color }}; background-image: url({{ section.settings.bg_image | image_url: width: 2000 }});"
+>
+  <div class="ic-wrap">
+
+    <!-- Left column -->
+    <div class="ic-left">
+      <h1 class="ic-h1">{{ section.settings.heading }}</h1>
+      <div class="ic-desc">{{ section.settings.description }}</div>
+    </div>
+
+    <!-- Form card -->
+    <div class="ic-card">
+      {% comment %} <h2 class="ic-h2">{{ section.settings.form_heading }}</h2> {% endcomment %}
+
+      {% comment %} {% form 'create_customer', id: _ic_form_id %}
+
+        {% comment %} <input type="hidden" name="contact[tags]" value="Insurance Lead,Checkup Request"> {% endcomment %}
+        <input type="hidden" name="customer[tags]" value="Insurance Lead,Checkup Request">
+
+        <input type="hidden" name="return_to"         value="{{ request.path }}">
+        <input type="hidden" id="ic-tags--{{ section.id }}" value="Insurance Lead, Checkup Request">
+        <input type="hidden" id="ic-note--{{ section.id }}" name="customer[note]" value="">
+        {% comment %} <input type="hidden" id="ic-password--{{ section.id }}" name="customer[password]" value="">
+        <input type="hidden" id="ic-password-confirm--{{ section.id }}" name="customer[password_confirmation]" value=""> {% endcomment %}
+
+        <!--
+          SUCCESS PANEL — always in the DOM, hidden by default.
+          Shown by JS (sessionStorage detection) or by the Liquid
+          inline script below when form.posted_successfully? is true.
+        -->
+        <div
+          id="ic-success--{{ section.id }}"
+          class="ic-success"
+          style="display:none"
+          role="alert"
+          aria-live="polite"
+        >
+          {% if section.settings.success_title != blank %}
+            <p class="ic-success__title">{{ section.settings.success_title }}</p>
+          {% endif %}
+          <p class="ic-success__body">{{ section.settings.success_message }}</p>
+        </div>
+
+        {% if form.posted_successfully? %}
+          <script>
+            sessionStorage.setItem('ic_success_{{ section.id }}', '1');
+          </script>
+        {% endif %}
+
+        <!-- FORM FIELDS CONTAINER — JS hides this on success -->
+        <div id="ic-fields--{{ section.id }}">
+
+          {% if form.errors %}
+            <div class="ic-errors" role="alert" aria-live="assertive">
+              {{ form.errors | default_errors }}
+            </div>
+          {% endif %}
+
+          <div class="ic-grid">
+
+            <input
+              class="ic-in"
+              type="text"
+              name="customer[first_name]"
+              placeholder="{{ section.settings.first_name_placeholder }}"
+              autocomplete="given-name"
+            >
+
+            <input
+              class="ic-in"
+              type="text"
+              name="customer[last_name]"
+              placeholder="{{ section.settings.last_name_placeholder }}"
+              autocomplete="family-name"
+            >
+
+            <input
+              class="ic-in"
+              type="tel"
+              name="customer[phone]"
+              placeholder="{{ section.settings.phone_placeholder }}"
+              autocomplete="tel"
+            >
+
+            <input
+              class="ic-in"
+              type="email"
+              name="customer[email]"
+              placeholder="{{ section.settings.email_placeholder }}"
+              autocomplete="email"
+              required
+            >
+
+            <input
+              class="ic-in"
+              type="text"
+              id="ic-date--{{ section.id }}"
+              placeholder="{{ section.settings.date_placeholder }}"
+              onfocus="if(this.value===''){this.type='date'}"
+              onblur="if(this.value===''){this.type='text'}"
+              required
+            >
+
+            <select
+              class="ic-in"
+              id="ic-time--{{ section.id }}"
+              required
+            >
+              <option value="">{{ section.settings.time_placeholder }}</option>
+            </select>
+
+          </div>
+
+          <div id="ic-wknd--{{ section.id }}" class="ic-wknd" style="display:none">
+            <p>&#9888;&#65039; {{ section.settings.weekend_message }}</p>
+          </div>
+
+          <button
+            class="ic-btn"
+            type="submit"
+            style="background: var(--ic-btn);"
+          >
+            {{ section.settings.button_text }}
+          </button>
+
+          {% if section.settings.privacy_text != blank %}
+            <div class="ic-priv">{{ section.settings.privacy_text }}</div>
+          {% endif %}
+
+        </div><!-- /ic-fields -->
+
+      {% endform %}  {% endcomment %}
+
+      <div class="ic-form-app">
+        {% for block in section.blocks %}
+          {% render block %}
+        {% endfor %}
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<style>
+  /* ── Section shell ── */
+  #ic-{{ section.id }}.ic-section {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    padding: 40px 20px;
+  }
+  #ic-{{ section.id }}.ic-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgb(220 220 220 / 15%);
+    z-index: 1;
+  }
+
+  /* ── Two-column layout ── */
+  #ic-{{ section.id }} .ic-wrap {
+    position: relative;
+    z-index: 2;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    min-height: 680px;
+  }
+  #ic-{{ section.id }} .ic-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-self:end;
+  }
+  #ic-{{ section.id }} .ic-h1 { font-size: 42px; margin: 0; }
+  #ic-{{ section.id }} .ic-desc { font-size: 14px; }
+
+  /* ── Form card ── */
+  #ic-{{ section.id }} .ic-card {
+    flex: 1;
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    height: fit-content;
+    margin: auto;
+  }
+  #ic-{{ section.id }} .ic-h2 { margin: 0 0 20px; }
+
+  /* ── Field grid ── */
+  #ic-{{ section.id }} .ic-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  #ic-{{ section.id }} .ic-in {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+  #ic-{{ section.id }} .ic-in--full { grid-column: 1 / -1; }
+  #ic-{{ section.id }} .ic-in:focus {
+    outline: 2px solid var(--ic-btn, #7ED957);
+    border-color: transparent;
+  }
+  #ic-{{ section.id }} .ic-in--err { border-color: #c0392b !important; }
+
+  /* ── Submit button ── */
+  #ic-{{ section.id }} .ic-btn {
+    display: block;
+    width: 100%;
+    padding: 12px 28px;
+    margin-top: 15px;
+    color: #fff;
+    border: none;
+    border-radius: 99px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    transition: opacity 0.2s;
+  }
+  #ic-{{ section.id }} .ic-btn:hover { opacity: 0.85; }
+
+  /* ── Success panel ── */
+  #ic-{{ section.id }} .ic-success {
+    text-align: center;
+    padding: 20px 10px;
+  }
+  #ic-{{ section.id }} .ic-success__title {
+    margin: 0 0 10px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #000;
+  }
+  #ic-{{ section.id }} .ic-success__body {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #000;
+  }
+
+  /* ── Error panel ── */
+  #ic-{{ section.id }} .ic-errors {
+    background: #fdf0ef;
+    border: 1px solid #c0392b;
+    border-radius: 5px;
+    padding: 12px 16px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #c0392b;
+  }
+  #ic-{{ section.id }} .ic-errors ul { margin: 0; padding-left: 18px; }
+
+  /* ── Weekend warning ── */
+  #ic-{{ section.id }} .ic-wknd {
+    display: flex;
+    justify-content: center;
+    padding-top: 12px;
+  }
+  #ic-{{ section.id }} .ic-wknd p {
+    margin: 0;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #000;
+  }
+
+  /* ── Privacy text ── */
+  #ic-{{ section.id }} .ic-priv {
+    font-size: 12px;
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  button._formSubmitButton_cit2d_96{
+    border-radius:99px!important;
+  }
+
+  /* ── Mobile ── */
+  @media (max-width: 768px) {
+    #ic-{{ section.id }}.ic-section {
+      background-image: url({{ section.settings.bg_image_mb | image_url }}) !important;
+      background-size: contain;
+      background-position: top;
+      padding: 0;
+    }
+    #ic-{{ section.id }}.ic-section::before {
+      background: rgb(0 0 0 / 47%);
+    }
+    #ic-{{ section.id }} .ic-wrap {
+      flex-direction: column;
+      min-height: auto;
+      padding: 40px 20px;
+      gap: 45px;
+    }
+    #ic-{{ section.id }} .ic-h1,
+    #ic-{{ section.id }} .ic-desc { color: #fff; }
+    #ic-{{ section.id }} .ic-grid { grid-template-columns: 1fr; }
+    #ic-{{ section.id }} .ic-in--full { grid-column: 1; }
+  }
+
+  @media (max-width: 480px) {
+    #ic-{{ section.id }} .ic-wknd p { font-size: 13px; }
+  }
+</style>
+
+<script>
+(function () {
+  var sid        = '{{ section.id }}';
+  var PENDING    = 'ic_sub_' + sid;
+
+  var root       = document.getElementById('ic-'        + sid);
+  if (!root) return;
+
+  var form       = document.getElementById('ic-form--'    + sid);
+  var dateInput  = document.getElementById('ic-date--'    + sid);
+  var timeSelect = document.getElementById('ic-time--'    + sid);
+  var noteField  = document.getElementById('ic-note--'    + sid);
+  var wkndMsg    = document.getElementById('ic-wknd--'    + sid);
+  var successEl  = document.getElementById('ic-success--' + sid);
+  var fieldsEl   = document.getElementById('ic-fields--'  + sid);
+
+  if (!form) return;
+
+  // ── Show success: reveal panel, hide form fields ──────────
+  function showSuccess() {
+    if (successEl) {
+      successEl.style.display = 'block';
+      // Update success message with appointment details
+      var successBody = successEl.querySelector('.ic-success__body');
+      if (successBody) {
+        var date = sessionStorage.getItem('ic_date_' + sid);
+        var time = sessionStorage.getItem('ic_time_' + sid);
+        var message = '{{ section.settings.success_message | escape }}';
+        if (date && time) {
+          message += ' Je afspraak is gepland voor ' + date + ' om ' + time + '.';
+        } else if (date) {
+          message += ' Je afspraak is gepland voor ' + date + '.';
+        }
+        successBody.textContent = message;
+        // Clear stored details
+        sessionStorage.removeItem('ic_date_' + sid);
+        sessionStorage.removeItem('ic_time_' + sid);
+      }
+    }
+    if (fieldsEl) fieldsEl.style.display = 'none';
+  }
+
+  // ── sessionStorage-based success detection ────────────────
+  // On submit we store a pending flag. On the next page load:
+  //   • Clean URL (no #ic-form-- hash) = Shopify success redirect → show success
+  //   • URL with #ic-form-- hash       = Shopify error redirect   → show errors
+  if (sessionStorage.getItem('ic_success_' + sid) === '1') {
+    sessionStorage.removeItem('ic_success_' + sid);
+    showSuccess();
+  } else if (sessionStorage.getItem(PENDING) === '1') {
+    sessionStorage.removeItem(PENDING);
+    var hash = window.location.hash || '';
+    if (!hash.includes('ic-form--')) {
+      showSuccess();
+    }
+  }
+
+  // ── Min selectable date = today ───────────────────────────
+  if (dateInput) {
+    var now = new Date();
+    dateInput.min = now.getFullYear()
+      + '-' + String(now.getMonth() + 1).padStart(2, '0')
+      + '-' + String(now.getDate()).padStart(2, '0');
+  }
+
+  // ── Populate time slots on date change ───────────────────
+  if (dateInput && timeSelect) {
+    dateInput.addEventListener('change', function () {
+      var d   = new Date(this.value + 'T00:00:00');
+      var day = d.getDay();
+
+      timeSelect.innerHTML = '<option value="">{{ section.settings.time_placeholder | escape }}</option>';
+      wkndMsg.style.display = 'none';
+
+      if (day === 0 || day === 6) {
+        this.value = '';
+        this.type  = 'text';
+        wkndMsg.style.display = 'flex';
+        return;
+      }
+
+      // Mon–Thu: 17:00–20:00  |  Fri: 09:00–20:00
+      var startHour = (day === 5) ? 9 : 17;
+      for (var h = startHour; h < 20; h++) {
+        ['00', '30'].forEach(function (m) {
+          var val = String(h).padStart(2, '0') + ':' + m;
+          var opt = document.createElement('option');
+          opt.value = opt.textContent = val;
+          timeSelect.appendChild(opt);
+        });
+      }
+    });
+  }
+
+  // ── Form submit: build note, validate, set pending flag ──
+  form.addEventListener('submit', function (e) {
+    var lines = [];
+    if (dateInput  && dateInput.value)  lines.push('Afspraak datum: '    + dateInput.value);
+    if (timeSelect && timeSelect.value) lines.push('Afspraak tijdstip: ' + timeSelect.value);
+    if (noteField) noteField.value = lines.join('\n');
+
+    if (timeSelect && !timeSelect.value) {
+      e.preventDefault();
+      timeSelect.classList.add('ic-in--err');
+      timeSelect.focus();
+      return;
+    }
+
+    var tagsInput = document.getElementById('ic-tags--' + sid);
+    if (tagsInput) {
+      var tags = ['Insurance Lead', 'Checkup Request'];
+      if (dateInput && dateInput.value) {
+        tags.push('Datum: ' + dateInput.value);
+      }
+      if (timeSelect && timeSelect.value) {
+        tags.push('Tijd: ' + timeSelect.value);
+      }
+      tagsInput.value = tags.join(', ');
+    }
+
+    {% comment %} var passwordField = document.getElementById('ic-password--' + sid);
+    var passwordConfirm = document.getElementById('ic-password-confirm--' + sid);
+    if (passwordField && passwordConfirm) {
+      var randomPassword = 'Ic' + Math.random().toString(36).slice(2) + '!' ;
+      passwordField.value = randomPassword;
+      passwordConfirm.value = randomPassword;
+    } {% endcomment %}
+
+    // Store appointment details for success message
+    if (dateInput && dateInput.value) {
+      sessionStorage.setItem('ic_date_' + sid, dateInput.value);
+    }
+    if (timeSelect && timeSelect.value) {
+      sessionStorage.setItem('ic_time_' + sid, timeSelect.value);
+    }
+
+    // Flag must be set BEFORE the page navigates away
+    sessionStorage.setItem(PENDING, '1');
+  });
+
+}());
+</script>
+
+{% comment %} form app css {% endcomment %}
+
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+
+setTimeout(()=>{
+
+const formEmbed=
+document.querySelector(
+'shopify-forms-embed'
+);
+
+if(
+!formEmbed ||
+!formEmbed.shadowRoot
+)return;
+
+const style=
+document.createElement(
+'style'
+);
+
+style.textContent=`
+
+[class*="_formDisclaimer"] p{
+   margin:0!important;
+   font-size:12px!important;
+   color: #000000bf;
+}
+
+button._formSubmitButton_cit2d_96{
+  border-radius:99px!important;
+}
+
+button[class*="_formSubmitButton"]{
+   border-radius:99px!important;
+}
+section[class*="_grid"]{
+   max-width:100% !important;
+}
+section[class*="_formHeader"]{
+   margin:5px auto 5px !important;
+}
+
+form[class*="_formFieldset"]{
+    display:flex !important;
+    gap:12px !important;
+    flex-direction: row !important;
+    padding:0 2px !important;
+    flex-wrap:wrap !important;
+}
+
+/* First Name + Surname */
+form[class*="_formFieldset"] > div:nth-child(2),
+form[class*="_formFieldset"] > div:nth-child(4),
+form[class*="_formFieldset"] > div:nth-child(5),
+form[class*="_formFieldset"] > div:nth-child(3){
+  width:calc(50% - 6px) !important;
+}
+
+/* Full width fields */
+form[class*="_formFieldset"] > div:nth-child(1),
+form[class*="_formFieldset"] > div:nth-child(6),
+form[class*="_formFieldset"] > div:nth-child(7),
+form[class*="_formFieldset"] > button{
+    width:100% !important;
+}
+
+@media(max-width:480px){
+form[class*="_formFieldset"] > div{
+    width:100% !important;
+}
+
+form[class*="_formFieldset"]{
+   gap:10px !important;
+}
+}
+
+`;
+
+formEmbed
+.shadowRoot
+.appendChild(style);
+
+},1500);
+
+});
+</script>

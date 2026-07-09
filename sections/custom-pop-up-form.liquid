@@ -1,0 +1,443 @@
+<div id="popup-overlay-{{ section.id }}" class="popup-overlay">
+  <section
+    id="popup-{{ section.id }}"
+    class="pop-up-form {% if section.settings.display_type == 'popup' %}popup-mode{% else %}inline-mode{% endif %}"
+  >
+    <div
+      class="pop-up-form-main"
+      style="background-image: url({{ section.settings.form_bg_img | img_url: 'masater' }});"
+    >
+      <div class="left-img-block">
+        {% if section.settings.form_img != blank %}
+          <img class="pop-up-img" src="{{ section.settings.form_img | img_url: 'master' }}" alt="image" loading="lazy">
+        {% endif %}
+      </div> 
+      <div class="right-content-block">
+
+        {% if section.settings.display_type == 'popup' %}
+          <button
+            id="popup-close-{{ section.id }}"
+            class="popup-close"
+            type="button"
+            aria-label="Close"
+          >
+            &times;
+          </button>
+        {% endif %}
+
+        <div class="form-title">
+          <h6>{{ section.settings.form_title }}</h6>
+        </div>
+
+        <div class="form-heading">
+          <h5>{{ section.settings.form_heading }}</h5>
+        </div>
+
+        <div class="ic-form-app">
+          {% for block in section.blocks %}
+            {% render block %}
+          {% endfor %}
+        </div>
+
+        <div class="form-content">
+          <p>{{ section.settings.form_content }}</p>
+        </div>
+
+        {% comment %} <div class="ic-form-app">
+          {% for block in section.blocks %}
+            {% render block %}
+          {% endfor %}
+        </div> {% endcomment %}
+      </div>
+    </div>
+  </section>
+</div>
+
+<style>
+  .pop-up-form{
+    padding: 10px 0px 50px 0px;
+  }
+
+  .pop-up-img{
+    height:100%;
+    width:100%;
+  }
+
+  .pop-up-form-main{
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    max-width: 830px;
+    margin: auto;
+    background-repeat: no-repeat;
+    height: 100%;
+    width: 100%;
+    background-size: contain;
+    background-position: right center;
+  }
+
+  .left-img-block{
+    width:51%;
+  }
+
+  .right-content-block{
+    width:50%;
+    padding: 40px 30px;
+  }
+
+  .form-heading h5{
+    font-size:26px;
+    font-family:serif;
+    color:#fff;
+  }
+
+  .form-title h6{
+    font-size: 20px;
+    color: #fff;
+    font-family: serif;
+    text-align: center;
+    margin-bottom: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .form-content p{
+    font-size: 17px;
+    color: #fff;
+    font-family: sans-serif;
+  }
+
+  .form-content p a{
+    color:#fff;
+  }
+
+  form[class*="_formFieldset"]{
+      margin-top:20px!important;
+  }
+
+  section[class*="_formHeader"]{
+      display:none!important;
+  }
+
+  section[class*="_grid"]{
+      max-width:100%!important;
+      padding:0!important;
+  }
+
+  .popup-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.65);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:99999;
+}
+
+.popup-mode{
+    display:none;
+}
+
+.inline-mode{
+    display:block;
+}
+
+.popup-close {
+    position: absolute;
+    top: 20px;
+    right: 17px;
+    width: 35px;
+    height: 35px;
+    border: none;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 30px;
+    line-height: 34px;
+    padding: 0;
+    z-index: 2;
+    font-weight: 500;
+}
+
+.right-content-block{
+    position:relative;
+}
+
+@media (max-width:480px){
+.pop-up-form-main{
+  flex-direction: column;
+  background-position: center;
+}
+    .left-img-block {
+      width: 100%;
+      display: none;
+  }
+  .right-content-block {
+    padding: 30px 35px;
+    max-width: 450px;
+    width: 100%;
+  }
+    .form-title h6{
+      font-size:15px;
+  }
+    .popup-close {
+    top: 13px;
+    right: 40px;
+    width: 25px;
+    height: 25px;
+    font-size: 25px;
+    line-height: 25px;
+  }
+   .form-heading h5{
+    font-size:18px!important;
+  }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "pop up form",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "form_bg_img",
+      "label": "Background Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "form_img",
+      "label": "Select Image"
+    },
+    {
+      "type": "text",
+      "id": "form_title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "form_heading",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "form_content",
+      "label": "Content"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_popup",
+      "label": "Enable Popup",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "display_type",
+      "label": "Display Type",
+      "default": "popup",
+      "options": [
+        {
+          "value": "popup",
+          "label": "Popup"
+        },
+        {
+          "value": "inline",
+          "label": "Inline"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "popup_delay",
+      "label": "Popup Delay (Seconds)",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "checkbox",
+      "id": "show_once",
+      "label": "Show Popup Once",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ],
+  "presets": [
+    {
+      "name": "pop up form",
+      "category": "custom"
+    }
+  ]
+}
+{% endschema %}
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+
+  const section = document.getElementById("popup-{{ section.id }}");
+  const overlay = document.getElementById("popup-overlay-{{ section.id }}");
+  const closeBtn = document.getElementById("popup-close-{{ section.id }}");
+
+  if (!section) return;
+
+  const popupEnabled = {{ section.settings.enable_popup | json }};
+  const displayType = {{ section.settings.display_type | json }};
+  const delay = {{ section.settings.popup_delay | json }};
+  const showOnce = {{ section.settings.show_once | json }};
+
+  const storageKey = "popup_{{ section.id }}";
+
+  // INLINE
+  if (displayType === "inline") {
+
+      section.style.display = "block";
+
+      if (overlay) {
+          overlay.style.display = "block";
+          overlay.style.background = "transparent";
+          overlay.style.position = "static";
+      }
+
+      return;
+  }
+
+  // Popup disabled
+  if (!popupEnabled) {
+
+      if (overlay) overlay.style.display = "none";
+
+      return;
+  }
+
+  // Show once
+  if (showOnce && localStorage.getItem(storageKey)) {
+
+      return;
+
+  }
+
+  // Hide initially
+
+  if (overlay) overlay.style.display = "none";
+
+  section.style.display = "none";
+
+  // Open popup
+
+  setTimeout(function(){
+
+      if (overlay)
+          overlay.style.display = "flex";
+
+      section.style.display = "block";
+
+  }, delay * 1000);
+
+  function closePopup(){
+
+      if (overlay)
+          overlay.style.display = "none";
+
+      section.style.display = "none";
+
+      if(showOnce){
+
+          localStorage.setItem(storageKey,"true");
+
+      }
+
+  }
+
+  if(closeBtn){
+
+      closeBtn.addEventListener("click", closePopup);
+
+  }
+
+  if(overlay){
+
+      overlay.addEventListener("click", function(e){
+
+          if(e.target===overlay){
+
+              closePopup();
+
+          }
+
+      });
+
+  }
+
+});
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const section = document.getElementById('popup-{{ section.id }}');
+    if (!section) return;
+
+    function applyStyles() {
+      const formEmbed = section.querySelector('shopify-forms-embed');
+
+      if (!formEmbed || !formEmbed.shadowRoot) {
+        setTimeout(applyStyles, 300);
+        return;
+      }
+
+      if (formEmbed.shadowRoot.querySelector('#popup-fix')) return;
+
+      const style = document.createElement('style');
+      style.id = 'popup-fix';
+
+      style.textContent = `
+      section[class*="_grid"]{
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 30px 0px 0px 0px !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+        min-height: 20px !important;
+        height: 100% !important;
+      }
+
+      form[class*="_formFieldset"]{
+        width:100% !important;
+        margin:0 !important;
+        padding:0 !important;
+        box-sizing:border-box !important;
+      }
+
+      form[class*="_formFieldset"] > *{
+        width:100% !important;
+        max-width:100% !important;
+        box-sizing:border-box !important;
+      }
+
+      section._formHeader_cit2d_24{
+        margin: 25px 0px 10px 0px!important;
+      }
+
+      h2._textHeading_2aowh_35{
+        color:#ffffff!important;
+      }
+
+    ._textBody_2aowh_10, span._textBody_2aowh_10, p._textBody_2aowh_10 {
+      color: #ffffff!important;
+      }
+
+    ._formBannerContainer_z5ku3_1 ._formBannerHeading_z5ku3_9 {
+        color:#ffffff!important
+    }
+
+    `;
+
+      formEmbed.shadowRoot.appendChild(style);
+    }
+
+    applyStyles();
+  });
+</script>

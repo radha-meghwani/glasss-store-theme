@@ -1,0 +1,167 @@
+<div class="custom-faq">
+  <div class="faq-section">
+    <h2 class="faq-heading">{{ section.settings.faq_heading }}</h2>
+    <p class="faq-subheading">{{ section.settings.faq_subheading }}</p>
+
+    <div class="faq-accordion">
+      {% for block in section.blocks %}
+        <div class="accordion-item" {{ block.shopify_attributes }}>
+          <button class="accordion-header">
+            <span class="accordion-title">
+              + {{ block.settings.accordion_header }}
+            </span>
+            <span class="accordion-arrow">⌄</span>
+          </button>
+
+          <div class="accordion-content">
+            {{ block.settings.accordion_content }}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<style>
+.custom-faq {
+  max-width: 1200px;
+  margin: auto;
+  padding: 50px 20px;
+}
+
+.faq-heading {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.faq-subheading {
+  text-align: center;
+  font-size: 16px;
+  margin-bottom: 35px;
+  color: #555;
+}
+
+.accordion-item {
+  margin-bottom: 14px;
+}
+
+.accordion-header {
+  width: 100%;
+  background: #c7dde5;
+  border: none;
+  padding: 22px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.accordion-header:hover{
+background-color:#efc1ad;
+color:#fff;
+cursor:pointer;
+text-decoration:none;
+}
+
+{% comment %} .accordion-item.active .accordion-header {
+  background: #efc1ad;
+  color: #000;
+} {% endcomment %}
+
+.accordion-content {
+  display: none;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #eee;
+}
+
+.accordion-arrow {
+  font-size: 18px;
+  transition: transform 0.3s ease;
+}
+
+.accordion-item.active .accordion-arrow {
+  transform: rotate(180deg);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const headers = document.querySelectorAll('.accordion-header');
+
+  headers.forEach(header => {
+    header.addEventListener('click', () => {
+      const item = header.parentElement;
+
+      document.querySelectorAll('.accordion-item').forEach(i => {
+        if (i !== item) i.classList.remove('active');
+      });
+
+      item.classList.toggle('active');
+
+      document.querySelectorAll('.accordion-content').forEach(content => {
+        content.style.display = 'none';
+      });
+
+      const content = item.querySelector('.accordion-content');
+      if (item.classList.contains('active')) {
+        content.style.display = 'block';
+      }
+    });
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "Custom FAQ",
+  "settings": [
+    {
+      "type": "text",
+      "id": "faq_heading",
+      "label": "FAQ Heading",
+      "default": "Frequently Asked"
+    },
+    {
+      "type": "text",
+      "id": "faq_subheading",
+      "label": "FAQ Subheading",
+      "default": "General Queries For Your Basic Knowledge"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "accordion_block",
+      "name": "Accordion row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "accordion_header",
+          "label": "Question"
+        },
+        {
+          "type": "richtext",
+          "id": "accordion_content",
+          "label": "Answer"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom FAQ",
+      "category": "Custom",
+      "blocks": [
+        {
+          "type": "accordion_block"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

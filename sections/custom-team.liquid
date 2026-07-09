@@ -1,0 +1,401 @@
+<div class="custom-team">
+
+    <div class="team-section">
+
+        <h4>{{ section.settings.team_heading }}</h4>
+        <h6>{{ section.settings.team_subheading }}</h6>
+
+        <div class="team-slider-wrapper">
+  
+  <button class="team-arrow team-prev">❮</button>
+
+        <div class="team-block">
+            {% for block in section.blocks %}
+                <div class="team-member">
+                    <div class="member-img">
+                        {% if block.settings.members_img != blank %}
+                        <img class="members-img" src="{{ block.settings.members_img | img_url: 'master' }}" alt="team-member-img">
+                        {% endif %}
+
+                        <div class="social-icons">
+                            <ul class="team-social">
+
+                            <li class="team-icons">
+                                <div class="icons-box">
+                                <i class="{{ block.settings.twitter_icon }}"></i>
+                                </div>
+                            </li>
+
+                             <li class="team-icons">
+                                <div class="icons-box">
+                                <i class="{{ block.settings.fb_icon }}"></i>
+                                </div>
+                            </li>
+
+                             <li class="team-icons">
+                                <div class="icons-box">
+                                <i class="{{ block.settings.printrest_icon }}"></i>
+                                </div>
+                            </li>
+
+                             <li class="team-icons">
+                                <div class="icons-box">
+                                <i class="{{ block.settings.insta_icon }}"></i>
+                                </div>
+                            </li>
+    
+                            </ul>
+                        </div>
+
+                    </div>
+                    <div class="member-info">
+                        <h4>{{ block.settings.member_name }}</h4>
+                        <h5>{{ block.settings.member_proff }}</h5>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+          <button class="team-arrow team-next">❯</button>
+
+</div>
+
+    </div>
+
+</div>
+
+<style>
+
+.team-section{
+    max-width: 1200px;
+    margin: auto;
+    margin-top: 80px;
+    margin-bottom: 80px;
+}
+.member-img img{
+    height:auto;
+    width:300px;
+}
+.team-section h4,h6{
+    text-align:center;
+}
+.team-section h4{
+    font-size: 28px;
+    font-weight: 700;
+    text-transform: capitalize;
+    margin: 0px 0 10px;
+}
+.team-section h6{
+    font-size: 16px;
+    font-weight: 500;
+    margin: 5px 0 0 0;
+}
+.team-member{
+    display: flex;
+    flex-direction: column;
+    padding: 17px;
+}
+.team-block{
+    display: flex;
+    flex-direction: row;
+    margin: 35px 0px 0px 0px;
+}
+.member-info h4{
+    font-size: 20px;
+    font-weight: 700;
+    text-transform: capitalize;
+    margin: 30px 0 13px 0;
+}
+.member-info h5{
+    color: #6a6a6a;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: capitalize;
+    text-align:center;
+    margin:0px;
+}
+.team-social li{
+    list-style:none;
+}
+.team-icons{
+    background-color: #b9d1db;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    font-size: 17px;
+}
+.team-icons:hover{
+    background-color:#ebbaa9;
+    cursor:pointer;
+}
+.team-social {
+    display: flex;
+    gap: 7px;
+    margin: 0px;
+    padding: 0;
+    justify-content: center;
+    position: relative;
+    bottom: 67px;
+    opacity:0;
+    transition: .3s linear all;
+    overflow: hidden;
+    z-index:2;
+    transform: translatey(20px); 
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.team-member:hover .team-social{
+    opacity:1;
+    transform: translateY(0);
+}
+
+{% comment %} swiper {% endcomment %}
+
+.team-section {
+  max-width: 1200px;
+  margin: 80px auto;
+  padding: 0 15px;
+  overflow: hidden;
+}
+
+/* wrapper */
+.team-slider-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+/* slider track */
+.team-block {
+  display: flex;
+  transition: transform 0.4s ease;
+  will-change: transform;
+}
+
+/* slide */
+.team-member {
+  flex: 0 0 25%;
+  padding: 17px;
+  box-sizing: border-box;
+}
+
+/* image */
+.member-img img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* arrows */
+.team-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 37px;
+  height: 37px;
+  border: none;
+  background: #ebbaa9;
+  color: #000;
+  font-size: 18px;
+  cursor: pointer;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.team-prev { left: 3px; }
+.team-next { right: 3px; }
+
+/* hide arrows desktop */
+@media (min-width: 991px) {
+  .team-arrow {
+    display: none;
+  }
+}
+
+@media (max-width: 990px) {
+  .team-member {
+    flex: 0 0 33.333%;
+  }
+
+  .team-arrow {
+    display: flex;
+  }
+}
+
+@media (max-width: 560px) {
+  .team-member {
+    flex: 0 0 100%;
+  }
+
+  .team-arrow {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+.team-social {
+  display: flex;
+  gap: 7px;
+  justify-content: center;
+  position: relative;
+  bottom: 65px;
+  opacity: 0;
+  transform: translateY(15px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 2;
+}
+
+.team-member:hover .team-social {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width:480px){
+.team-arrow {
+    width: 33px;
+    height: 33px;
+}
+.team-next {
+    right: 30px;
+}
+.team-prev { 
+    left: 30px; 
+}
+.member-info h4 {
+    margin: -7px 0 13px 0;
+}
+}
+
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const slider = document.querySelector(".team-block");
+  const slides = document.querySelectorAll(".team-member");
+  const prevBtn = document.querySelector(".team-prev");
+  const nextBtn = document.querySelector(".team-next");
+
+  let index = 0;
+  let startX = 0;
+  let currentTranslate = 0;
+
+  function slidesPerView() {
+    if (window.innerWidth <= 560) return 1;
+    if (window.innerWidth <= 990) return 3;
+    return slides.length;
+  }
+
+  function updateSlider() {
+    const slideWidth = slider.offsetWidth / slidesPerView();
+    currentTranslate = index * slideWidth;
+    slider.style.transform = `translateX(-${currentTranslate}px)`;
+  }
+
+  nextBtn.addEventListener("click", () => {
+    if (index < slides.length - slidesPerView()) {
+      index++;
+      updateSlider();
+    }
+  });
+
+  prevBtn.addEventListener("click", () => {
+    if (index > 0) {
+      index--;
+      updateSlider();
+    }
+  });
+
+  /* touch swipe */
+  slider.addEventListener("touchstart", e => {
+    startX = e.touches[0].clientX;
+  });
+
+  slider.addEventListener("touchend", e => {
+    const endX = e.changedTouches[0].clientX;
+    const diff = startX - endX;
+
+    if (diff > 50) nextBtn.click();
+    if (diff < -50) prevBtn.click();
+  });
+
+  window.addEventListener("resize", () => {
+    index = 0;
+    updateSlider();
+  });
+});
+</script>
+
+{% schema %}
+{
+    "name": "custom-team",
+    "settings": [
+        {
+            "type": "text",
+            "id": "team_heading",
+            "label": "team-heading"
+        },
+        {
+            "type": "text",
+            "id": "team_subheading",
+            "label": "team-subheading"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "team-block",
+            "name": "team-block",
+            "settings": [
+                {
+                    "type": "image_picker",
+                    "id": "members_img",
+                    "label": "members-img"
+                },
+                {
+                    "type": "text",
+                    "id": "member_name",
+                    "label": "member-name"
+                },
+                {
+                    "type": "text",
+                    "id": "member_proff",
+                    "label": "member-proff"
+                },
+                {
+                    "type": "text",
+                    "id": "twitter_icon",
+                    "label": "twitter-icon"
+                },
+                {
+                    "type": "text",
+                    "id": "fb_icon",
+                    "label": "fb-icon"
+                },
+                {
+                    "type": "text",
+                    "id": "printrest_icon",
+                    "label": "printrest-icon"
+                },
+                {
+                    "type": "text",
+                    "id": "insta_icon",
+                    "label": "insta-icon"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "custom-team",
+            "category": "custom",
+            "blocks": [
+                {
+                    "type": "team-block"
+                }
+            ]
+        }
+    ]
+}
+{% endschema %}

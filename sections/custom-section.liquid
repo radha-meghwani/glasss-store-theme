@@ -1,0 +1,136 @@
+<section class="complete-the-look">
+
+  <div class="page-width">
+
+    <div class="ctl-heading">
+      <h2>{{ section.settings.heading }}</h2>
+    </div>
+
+    {% assign current_product = product %}
+
+    {% if current_product == blank %}
+      {% assign current_product = section.settings.main_product %}
+    {% endif %}
+
+    <div class="ctl-current-product-card">
+        <a href="{{ current_product.url }}">
+            {% if current_product.featured_image %}
+                <img 
+                    src="{{ current_product.featured_image | img_url: width: 500 }}"
+                    alt="{{ current_product.title }}"
+                    class="stl-current-img"
+                    width="300"
+                    height="300"
+                    loading="lazy"
+                >
+            {% endif %}
+
+            <h4>{{ current_product.title }}</h4>
+
+        </a>
+
+        <p>{{ current_product.price | money }}</p>
+
+    </div>
+
+
+    {% if current_product %}
+
+      {% assign complete_the_look = current_product.metafields.custom.complete_the_look.value %}
+
+      {% if complete_the_look != blank %}
+
+        <div class="ctl-products">
+
+          {% for look_product in complete_the_look %}
+
+            <div class="ctl-product-card">
+
+              <a href="{{ look_product.url }}">
+
+                {% if look_product.featured_image %}
+                  <img
+                    src="{{ look_product.featured_image | image_url: width: 500 }}"
+                    alt="{{ look_product.title }}"
+                    class="stl-img"
+                    width="300"
+                    height="300"
+                    loading="lazy"
+                  >
+                {% endif %}
+
+                <h4>{{ look_product.title }}</h4>
+
+              </a>
+
+              <p>{{ look_product.price | money }}</p>
+
+            </div>
+
+          {% endfor %}
+
+        </div>
+
+      {% else %}
+
+        <p>No Complete the Look products assigned.</p>
+
+      {% endif %}
+
+    {% else %}
+
+      <p>Please select a Main Product from the Theme Editor.</p>
+
+    {% endif %}
+
+  </div>
+
+</section>
+
+<style>
+.stl-img{
+    height: 100px;
+    width: 100px;
+}
+.stl-current-img{
+    height: 100px;
+    width: 100px;
+}
+.ctl-current-product-card{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.ctl-current-product-card a{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+</style>
+
+{% schema %}
+{
+  "name": "Complete the look",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Complete the Look"
+    },
+    {
+      "type": "product",
+      "id": "main_product",
+      "label": "Main Product",
+      "info": "Used when the section is not on a product page."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Complete the look"
+    }
+  ]
+}
+{% endschema %}
