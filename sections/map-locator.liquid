@@ -359,21 +359,36 @@ New globe
       {%- endfor -%}
     ].filter(l => l.lat !== 0 || l.lng !== 0);
 
+    // Safe fallbacks in case Theme Editor hasn't saved the new settings yet
+    const waterColor = '{{ section.settings.water_color }}' || '#e0f2fe';
+    const landColor = '{{ section.settings.land_color }}' || '#ffffff';
+    const borderColor = '{{ section.settings.map_border_color }}' || '#bae6fd';
+    const atmosColor = '{{ section.settings.atmosphere_color }}' || '#bae6fd';
+
     // Initialize Globe
     const globe = Globe()(container)
       .backgroundColor('rgba(0,0,0,0)')
       .showGlobe(true)
       .showAtmosphere(true)
-      .atmosphereColor('{{ section.settings.atmosphere_color }}')
+      .globeColor(waterColor)
+      .atmosphereColor(atmosColor)
       .atmosphereAltitude(0.15)
       .width(container.clientWidth)
       .height(container.clientHeight);
 
-    // Apply bright shading to the globe to prevent it from turning black
+    // Apply bright shading to the globe to prevent any black shadows
     const material = globe.globeMaterial();
-    material.color = new THREE.Color('{{ section.settings.water_color }}'); 
-    material.emissive = new THREE.Color('{{ section.settings.water_color }}'); 
-    material.emissiveIntensity = 0.5; // Keeps it bright but retains some 3D spherical shading
+    material.color = new THREE.Color(waterColor); 
+    material.emissive = new THREE.Color(waterColor); 
+    material.emissiveIntensity = 0.5;
+
+    // Ensure scene is brightly lit unconditionally
+    setTimeout(() => {
+      if (globe.scene) {
+        const scene = globe.scene();
+        scene.add(new THREE.AmbientLight(0xffffff, 2.0)); // Strong white ambient light
+      }
+    }, 100);
 
     // Fetch GeoJSON and render proper map polygons (no longer dotted)
     fetch('https://unpkg.com/world-atlas/countries-110m.json')
@@ -382,9 +397,9 @@ New globe
         const countries = topojson.feature(world, world.objects.countries).features;
         
         globe.polygonsData(countries)
-          .polygonCapColor(() => '{{ section.settings.land_color }}') // Solid land color
+          .polygonCapColor(() => landColor)
           .polygonSideColor(() => 'rgba(255, 255, 255, 0.4)')
-          .polygonStrokeColor(() => '{{ section.settings.map_border_color }}')
+          .polygonStrokeColor(() => borderColor)
           .polygonAltitude(0.01);
       });
 
