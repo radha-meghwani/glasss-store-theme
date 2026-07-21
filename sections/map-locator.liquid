@@ -1,0 +1,934 @@
+{% comment %}
+  Map Locator Section
+  A premium reusable world map locator section using Leaflet.js
+{% endcomment %}
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+
+<style>
+  .map-locator-section-{{ section.id }} {
+    padding: {{ section.settings.padding_top }}px 20px {{ section.settings.padding_bottom }}px;
+    background-color: {{ section.settings.background_color }};
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .map-locator-header {
+    text-align: center;
+    margin-bottom: 40px;
+    width: 100%;
+    max-width: 800px;
+  }
+
+  .map-locator-title {
+    margin: 0 0 15px;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #111;
+    line-height: 1.2;
+  }
+
+  .map-locator-subtitle {
+    margin: 0 0 20px;
+    font-size: 1.2rem;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
+  }
+  
+  .map-locator-description {
+    color: #666;
+    line-height: 1.6;
+    font-size: 1.1rem;
+  }
+
+  /* Globe Container */
+  .map-globe-container-{{ section.id }} {
+    position: relative;
+    width: {{ section.settings.globe_size_desktop }}px;
+    height: {{ section.settings.globe_size_desktop }}px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto;
+    border: {{ section.settings.border_width }}px solid {{ section.settings.border_color }};
+    {% if section.settings.shadow_toggle %}
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15), inset 0 0 40px rgba(0,0,0,0.1);
+    {% endif %}
+    transition: width 0.3s ease, height 0.3s ease, border-radius 0.3s ease;
+    transform: translateZ(0); /* Hardware acceleration */
+    -webkit-mask-image: -webkit-radial-gradient(white, black); /* fix Safari overflow bug */
+    isolation: isolate; /* Create new stacking context */
+  }
+
+  /* Fullscreen override */
+  .map-globe-container-{{ section.id }}.is-fullscreen {
+    width: 100vw !important;
+    height: 100vh !important;
+    border-radius: 0 !important;
+    border-width: 0 !important;
+  }
+
+  .map-globe-{{ section.id }} {
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+    background-color: #aadaff; /* water color */
+    z-index: 1;
+  }
+  
+  .map-globe-{{ section.id }}:active {
+    cursor: grabbing;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 989px) {
+    .map-globe-container-{{ section.id }}:not(.is-fullscreen) {
+      width: {{ section.settings.globe_size_tablet }}px;
+      height: {{ section.settings.globe_size_tablet }}px;
+    }
+  }
+
+  @media (max-width: 749px) {
+    .map-globe-container-{{ section.id }}:not(.is-fullscreen) {
+      width: {{ section.settings.globe_size_mobile }}px;
+      height: {{ section.settings.globe_size_mobile }}px;
+    }
+    .map-locator-title {
+      font-size: 2rem;
+    }
+  }
+
+  /* Leaflet custom overrides */
+  .leaflet-container {
+    background: transparent; /* inherit from container */
+    font-family: inherit;
+  }
+  
+  /* Popup Styling */
+  .leaflet-popup-content-wrapper {
+    border-radius: 12px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  }
+  
+  .leaflet-popup-content {
+    margin: 0;
+    width: 280px !important;
+  }
+  
+  .map-popup-image {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-bottom: 1px solid #eee;
+    display: block;
+  }
+  
+  .map-popup-body {
+    padding: 20px;
+  }
+  
+  .map-popup-title {
+    margin: 0 0 8px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #111;
+  }
+  
+  .map-popup-location {
+    font-size: 0.85rem;
+    color: #777;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .map-popup-address {
+    font-size: 0.95rem;
+    color: #444;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  
+  .map-popup-contact {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 15px;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 12px;
+  }
+  
+  .map-popup-contact div {
+    margin-bottom: 6px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .map-popup-contact strong {
+    color: #111;
+  }
+  
+  .map-popup-desc {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 15px;
+    line-height: 1.5;
+  }
+  
+  .map-popup-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 15px;
+  }
+  
+  .map-popup-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: #111;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background 0.3s ease;
+    box-sizing: border-box;
+  }
+  
+  .map-popup-btn:hover {
+    background: #333;
+    color: #fff;
+  }
+
+  .map-popup-btn-outline {
+    background: #fff;
+    color: #111;
+    border: 1px solid #111;
+  }
+
+  .map-popup-btn-outline:hover {
+    background: #f5f5f5;
+    color: #111;
+  }
+  
+  .leaflet-popup-close-button {
+    color: #333 !important;
+    background: rgba(255,255,255,0.9) !important;
+    border-radius: 50%;
+    width: 28px !important;
+    height: 28px !important;
+    top: 12px !important;
+    right: 12px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px !important;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  
+  .leaflet-popup-close-button:hover {
+    background: #fff !important;
+    transform: scale(1.05);
+  }
+
+  /* Marker animation */
+  .custom-map-marker {
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .custom-map-marker svg {
+    animation: markerDrop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    transform-origin: bottom center;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+    transition: transform 0.2s ease, filter 0.2s ease;
+  }
+
+  .custom-map-marker:hover svg {
+    transform: scale(1.15) translateY(-5px);
+    filter: drop-shadow(0 8px 12px rgba(0,0,0,0.4));
+  }
+
+  .custom-map-marker.leaflet-interactive {
+    z-index: 1000 !important; /* Ensure hovered marker is on top */
+  }
+
+  @keyframes markerDrop {
+    0% { transform: translateY(-50px) scale(0); opacity: 0; }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+  }
+</style>
+
+<div class="map-locator-section-{{ section.id }}">
+  <div class="map-locator-header">
+    {%- if section.settings.title != blank -%}
+      <h2 class="map-locator-title">{{ section.settings.title }}</h2>
+    {%- endif -%}
+    {%- if section.settings.subtitle != blank -%}
+      <h3 class="map-locator-subtitle">{{ section.settings.subtitle }}</h3>
+    {%- endif -%}
+    {%- if section.settings.description != blank -%}
+      <div class="map-locator-description">{{ section.settings.description }}</div>
+    {%- endif -%}
+  </div>
+
+  <div id="globe-container-{{ section.id }}" class="map-globe-container-{{ section.id }}">
+    <div id="map-{{ section.id }}" class="map-globe-{{ section.id }}"></div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    initMapLocator_{{ section.id | replace: '-', '_' }}();
+  });
+
+  // Handle Shopify Theme Editor events cleanly
+  document.addEventListener('shopify:section:load', function(event) {
+    if (event.detail.sectionId === '{{ section.id }}') {
+      initMapLocator_{{ section.id | replace: '-', '_' }}();
+    }
+  });
+
+  document.addEventListener('shopify:section:unload', function(event) {
+    if (event.detail.sectionId === '{{ section.id }}') {
+      let mapKey = 'leafletMap_' + '{{ section.id | replace: "-", "_" }}';
+      if (window[mapKey]) {
+        window[mapKey].remove();
+        delete window[mapKey];
+      }
+    }
+  });
+
+  function initMapLocator_{{ section.id | replace: '-', '_' }}() {
+    const mapElementId = 'map-{{ section.id }}';
+    const mapElement = document.getElementById(mapElementId);
+    
+    if (!mapElement) return;
+
+    const mapKey = 'leafletMap_' + '{{ section.id | replace: "-", "_" }}';
+
+    // Cleanup existing map if re-initializing (e.g., Theme Editor)
+    if (window[mapKey]) {
+      window[mapKey].remove();
+    }
+
+    const defaultZoom = {{ section.settings.default_zoom }};
+    const minZoom = {{ section.settings.min_zoom }};
+    const maxZoom = {{ section.settings.max_zoom }};
+    const scrollWheelZoom = {{ section.settings.scroll_wheel_zoom }};
+    const dragging = {{ section.settings.dragging }};
+    const zoomControl = {{ section.settings.zoom_controls }};
+
+    // Initialize map
+    const map = L.map(mapElementId, {
+      center: [20, 0], // Fallback center
+      zoom: defaultZoom,
+      minZoom: minZoom,
+      maxZoom: maxZoom,
+      scrollWheelZoom: scrollWheelZoom,
+      dragging: dragging,
+      tap: dragging,
+      zoomControl: zoomControl,
+      attributionControl: false, // Clean look
+      worldCopyJump: true // Seamless panning
+    });
+    
+    window[mapKey] = map;
+
+    // Determine Map Style based on Tile Provider
+    let tileUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'; // Light default
+    {% if section.settings.map_style == 'dark' %}
+      tileUrl = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+    {% elsif section.settings.map_style == 'satellite' %}
+      tileUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+    {% elsif section.settings.map_style == 'osm' %}
+      tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    {% endif %}
+
+    L.tileLayer(tileUrl, {
+      maxZoom: maxZoom,
+      subdomains: 'abcd'
+    }).addTo(map);
+
+    // Parse Marker Data from Shopify Blocks
+    const locations = [
+      {%- for block in section.blocks -%}
+        {
+          id: "{{ block.id }}",
+          lat: parseFloat("{{ block.settings.latitude | default: '0' }}") || 0,
+          lng: parseFloat("{{ block.settings.longitude | default: '0' }}") || 0,
+          storeName: {{ block.settings.store_name | json }},
+          country: {{ block.settings.country | json }},
+          city: {{ block.settings.city | json }},
+          address: {{ block.settings.address | json }},
+          phone: {{ block.settings.phone | json }},
+          email: {{ block.settings.email | json }},
+          website: {{ block.settings.website | json }},
+          description: {{ block.settings.description | json }},
+          image: {% if block.settings.image %}{{ block.settings.image | image_url: width: 600 | json }}{% else %}null{% endif %},
+          btnLabel: {{ block.settings.button_label | json }},
+          btnUrl: {{ block.settings.button_url | json }},
+          color: "{{ block.settings.marker_color | default: '#000000' }}",
+          size: {{ block.settings.marker_size | default: 34 }}
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ];
+
+    const markers = [];
+    const bounds = L.latLngBounds();
+    let validMarkersCount = 0;
+
+    locations.forEach((loc, index) => {
+      // Skip if coordinates are invalid or zero
+      if (loc.lat === 0 && loc.lng === 0) return; 
+
+      validMarkersCount++;
+
+      // Create Custom SVG Marker Icon
+      const svgIcon = L.divIcon({
+        className: 'custom-map-marker',
+        html: `<svg width="${loc.size}" height="${loc.size * 1.3}" viewBox="0 0 24 34" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 0C5.373 0 0 5.373 0 12c0 7.857 11.233 21.285 11.583 21.71a.5.5 0 00.834 0C12.767 33.285 24 19.857 24 12c0-6.627-5.373-12-12-12zm0 17.5a5.5 5.5 0 110-11 5.5 5.5 0 010 11z" fill="${loc.color}"/>
+               </svg>`,
+        iconSize: [loc.size, loc.size * 1.3],
+        iconAnchor: [loc.size / 2, loc.size * 1.3],
+        popupAnchor: [0, -(loc.size * 1.3) + 5]
+      });
+
+      const marker = L.marker([loc.lat, loc.lng], { icon: svgIcon }).addTo(map);
+      
+      // Apply staggered animation delay to SVG via DOM mutation
+      setTimeout(() => {
+        if(marker._icon) {
+          const svgEl = marker._icon.querySelector('svg');
+          if (svgEl) {
+            svgEl.style.animationDelay = `${(index % 10) * 100}ms`;
+          }
+        }
+      }, 50);
+
+      // Construct Popup HTML
+      let popupHtml = '<div class="map-popup-container">';
+      
+      if (loc.image) {
+        popupHtml += `<img src="${loc.image}" alt="${loc.storeName || 'Store'}" class="map-popup-image" loading="lazy">`;
+      }
+      
+      popupHtml += '<div class="map-popup-body">';
+      
+      if (loc.storeName) {
+        popupHtml += `<h4 class="map-popup-title">${loc.storeName}</h4>`;
+      }
+      
+      if (loc.city || loc.country) {
+        popupHtml += `<div class="map-popup-location">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          ${[loc.city, loc.country].filter(Boolean).join(', ')}
+        </div>`;
+      }
+      
+      if (loc.address) {
+        popupHtml += `<div class="map-popup-address">${loc.address.replace(/\n/g, '<br>')}</div>`;
+      }
+      
+      if (loc.phone || loc.email) {
+        popupHtml += `<div class="map-popup-contact">`;
+        if (loc.phone) popupHtml += `<div><strong>P:</strong> <a href="tel:${loc.phone}" style="color:inherit;text-decoration:none;">${loc.phone}</a></div>`;
+        if (loc.email) popupHtml += `<div><strong>E:</strong> <a href="mailto:${loc.email}" style="color:inherit;text-decoration:none;">${loc.email}</a></div>`;
+        popupHtml += `</div>`;
+      }
+      
+      if (loc.description) {
+        popupHtml += `<div class="map-popup-desc">${loc.description}</div>`;
+      }
+      
+      if ((loc.btnLabel && loc.btnUrl) || loc.website) {
+        popupHtml += `<div class="map-popup-buttons">`;
+        if (loc.btnLabel && loc.btnUrl) popupHtml += `<a href="${loc.btnUrl}" class="map-popup-btn">${loc.btnLabel}</a>`;
+        if (loc.website) popupHtml += `<a href="${loc.website}" target="_blank" class="map-popup-btn map-popup-btn-outline">Visit Website</a>`;
+        popupHtml += `</div>`;
+      }
+      
+      popupHtml += '</div></div>';
+
+      marker.bindPopup(popupHtml);
+
+      // Hover effects
+      marker.on('mouseover', function(e) {
+        this._icon.style.zIndex = 1000;
+      });
+      marker.on('mouseout', function(e) {
+        this._icon.style.zIndex = 0;
+      });
+
+      // Center map on marker click smoothly
+      marker.on('click', function(e) {
+        const currentZoom = map.getZoom();
+        const targetZoom = Math.max(currentZoom, 12);
+        map.flyTo(e.target.getLatLng(), targetZoom, {
+          animate: true,
+          duration: 0.8
+        });
+      });
+
+      markers.push(marker);
+      bounds.extend([loc.lat, loc.lng]);
+    });
+
+    // Auto fit bounds logic
+    if (validMarkersCount > 0) {
+      {% if section.settings.auto_fit %}
+        // Fit all markers nicely inside the globe view
+        map.fitBounds(bounds, { padding: [80, 80], maxZoom: defaultZoom });
+      {% else %}
+        // Just center on the first marker but respect default zoom
+        map.setView([locations[0].lat, locations[0].lng], defaultZoom);
+      {% endif %}
+    }
+
+    // Optional Fullscreen Control
+    {% if section.settings.fullscreen %}
+      const FullscreenControl = L.Control.extend({
+        options: { position: 'topright' },
+        onAdd: function() {
+          const btn = L.DomUtil.create('a', 'leaflet-bar leaflet-control leaflet-control-custom');
+          btn.href = "#";
+          btn.title = "Toggle Fullscreen";
+          btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>';
+          btn.style.width = '32px';
+          btn.style.height = '32px';
+          btn.style.backgroundColor = 'white';
+          btn.style.cursor = 'pointer';
+          btn.style.display = 'flex';
+          btn.style.alignItems = 'center';
+          btn.style.justifyContent = 'center';
+          btn.style.boxShadow = '0 1px 5px rgba(0,0,0,0.4)';
+          btn.style.borderRadius = '4px';
+          
+          btn.onclick = function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            const container = document.getElementById('globe-container-{{ section.id }}');
+            
+            if (!document.fullscreenElement) {
+              if (container.requestFullscreen) {
+                container.requestFullscreen().catch(err => {
+                  console.warn(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+              } else if (container.webkitRequestFullscreen) { /* Safari */
+                container.webkitRequestFullscreen();
+              } else if (container.msRequestFullscreen) { /* IE11 */
+                container.msRequestFullscreen();
+              }
+              container.classList.add('is-fullscreen');
+            } else {
+              if (document.exitFullscreen) {
+                document.exitFullscreen();
+              } else if (document.webkitExitFullscreen) { /* Safari */
+                document.webkitExitFullscreen();
+              } else if (document.msExitFullscreen) { /* IE11 */
+                document.msExitFullscreen();
+              }
+            }
+          }
+          return btn;
+        }
+      });
+      map.addControl(new FullscreenControl());
+      
+      // Listen for fullscreen changes to toggle classes and fix map size
+      const fullscreenEvents = ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'];
+      fullscreenEvents.forEach(event => {
+        document.addEventListener(event, () => {
+          const container = document.getElementById('globe-container-{{ section.id }}');
+          if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+            container.classList.remove('is-fullscreen');
+          }
+          setTimeout(() => { map.invalidateSize(); }, 300);
+        });
+      });
+    {% endif %}
+
+    // Ensure map renders correctly immediately (helps with hidden overflow clipping bugs)
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 200);
+    
+    // Invalidate size on window resize for responsiveness
+    window.addEventListener('resize', () => {
+       map.invalidateSize();
+    });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Map Locator Globe",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content Settings"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Find a Store Near You"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subheading",
+      "default": "Global Locations"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Discover our global network of stores and partners.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Globe Aesthetics"
+    },
+    {
+      "type": "range",
+      "id": "globe_size_desktop",
+      "min": 400,
+      "max": 1200,
+      "step": 20,
+      "unit": "px",
+      "label": "Globe Size (Desktop)",
+      "default": 760
+    },
+    {
+      "type": "range",
+      "id": "globe_size_tablet",
+      "min": 300,
+      "max": 800,
+      "step": 10,
+      "unit": "px",
+      "label": "Globe Size (Tablet)",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "globe_size_mobile",
+      "min": 250,
+      "max": 500,
+      "step": 10,
+      "unit": "px",
+      "label": "Globe Size (Mobile)",
+      "default": 350
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color",
+      "default": "#f0f0f0"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Border Width",
+      "default": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "shadow_toggle",
+      "label": "Enable Soft Shadow",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Map Configuration"
+    },
+    {
+      "type": "select",
+      "id": "map_style",
+      "label": "Map Style",
+      "options": [
+        {
+          "value": "light",
+          "label": "Light / Voyager (Default)"
+        },
+        {
+          "value": "dark",
+          "label": "Dark Matter"
+        },
+        {
+          "value": "osm",
+          "label": "OpenStreetMap"
+        },
+        {
+          "value": "satellite",
+          "label": "Satellite"
+        }
+      ],
+      "default": "light"
+    },
+    {
+      "type": "range",
+      "id": "default_zoom",
+      "min": 1,
+      "max": 18,
+      "step": 1,
+      "label": "Default Zoom Level",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "min_zoom",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "label": "Minimum Zoom",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "max_zoom",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "label": "Maximum Zoom",
+      "default": 18
+    },
+    {
+      "type": "checkbox",
+      "id": "scroll_wheel_zoom",
+      "label": "Enable Mouse Wheel Zoom",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "dragging",
+      "label": "Enable Map Dragging",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "zoom_controls",
+      "label": "Show Zoom Controls",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "fullscreen",
+      "label": "Enable Fullscreen Button",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_fit",
+      "label": "Auto Fit Markers on Load",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Section Padding"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 80
+    }
+  ],
+  "blocks": [
+    {
+      "type": "location",
+      "name": "Location Marker",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Coordinates"
+        },
+        {
+          "type": "text",
+          "id": "latitude",
+          "label": "Latitude",
+          "info": "e.g., 40.7128. Tip: Right-click on Google Maps to copy coordinates."
+        },
+        {
+          "type": "text",
+          "id": "longitude",
+          "label": "Longitude",
+          "info": "e.g., -74.0060"
+        },
+        {
+          "type": "header",
+          "content": "Store Details"
+        },
+        {
+          "type": "text",
+          "id": "store_name",
+          "label": "Store Name",
+          "default": "Flagship Store"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Store Image (Popup)"
+        },
+        {
+          "type": "text",
+          "id": "country",
+          "label": "Country",
+          "default": "United States"
+        },
+        {
+          "type": "text",
+          "id": "city",
+          "label": "City",
+          "default": "New York"
+        },
+        {
+          "type": "textarea",
+          "id": "address",
+          "label": "Street Address",
+          "default": "123 Commerce St\nNew York, NY 10001"
+        },
+        {
+          "type": "text",
+          "id": "phone",
+          "label": "Phone Number"
+        },
+        {
+          "type": "text",
+          "id": "email",
+          "label": "Email Address"
+        },
+        {
+          "type": "url",
+          "id": "website",
+          "label": "Website URL"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Short Description"
+        },
+        {
+          "type": "header",
+          "content": "Action Button"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Custom Button Label",
+          "default": "Get Directions"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "Custom Button URL"
+        },
+        {
+          "type": "header",
+          "content": "Marker Aesthetics"
+        },
+        {
+          "type": "color",
+          "id": "marker_color",
+          "label": "Marker Color",
+          "default": "#111111"
+        },
+        {
+          "type": "range",
+          "id": "marker_size",
+          "min": 15,
+          "max": 80,
+          "step": 1,
+          "unit": "px",
+          "label": "Marker Size",
+          "default": 34
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Map Locator Globe",
+      "blocks": [
+        {
+          "type": "location",
+          "settings": {
+            "store_name": "New York Flagship",
+            "country": "United States",
+            "city": "New York",
+            "latitude": "40.7128",
+            "longitude": "-74.0060",
+            "marker_color": "#ff3366"
+          }
+        },
+        {
+          "type": "location",
+          "settings": {
+            "store_name": "London Store",
+            "country": "United Kingdom",
+            "city": "London",
+            "latitude": "51.5074",
+            "longitude": "-0.1278",
+            "marker_color": "#3366ff"
+          }
+        },
+        {
+          "type": "location",
+          "settings": {
+            "store_name": "Tokyo Branch",
+            "country": "Japan",
+            "city": "Tokyo",
+            "latitude": "35.6762",
+            "longitude": "139.6503",
+            "marker_color": "#33ff66"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
