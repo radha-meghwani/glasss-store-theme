@@ -18,72 +18,129 @@
     padding: {{ section.settings.padding_top }}px 20px {{ section.settings.padding_bottom }}px;
     background-color: {{ section.settings.background_color }};
     display: flex;
-    flex-direction: column;
     align-items: center;
+    justify-content: center;
     overflow: hidden;
+    position: relative;
+    {% if section.settings.full_screen_section %}
+    min-height: 100vh;
+    {% endif %}
   }
 
-  .map-locator-header {
-    text-align: center;
-    margin-bottom: 40px;
+  .map-locator-inner-{{ section.id }} {
+    display: flex;
     width: 100%;
-    max-width: 800px;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: center;
+    gap: 40px;
+    {% if section.settings.layout == 'center' %}
+    flex-direction: column;
+    text-align: center;
+    {% else %}
+    flex-direction: row;
+    text-align: left;
+    justify-content: space-between;
+    {% endif %}
+    position: relative;
+    z-index: 2;
+  }
+
+  .map-locator-header-{{ section.id }} {
+    flex: 1;
+    max-width: {% if section.settings.layout == 'center' %}800px{% else %}500px{% endif %};
   }
 
   .map-locator-title {
     margin: 0 0 15px;
-    font-size: 2.5rem;
-    font-weight: 600;
-    color: #111;
+    font-size: 3rem;
+    font-weight: 700;
+    color: {{ section.settings.text_color }};
     line-height: 1.2;
   }
 
   .map-locator-subtitle {
     margin: 0 0 20px;
     font-size: 1.2rem;
-    color: #555;
+    color: {{ section.settings.text_color }};
+    opacity: 0.8;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 500;
+    letter-spacing: 1.5px;
+    font-weight: 600;
   }
   
   .map-locator-description {
-    color: #666;
-    line-height: 1.6;
-    font-size: 1.1rem;
+    color: {{ section.settings.text_color }};
+    opacity: 0.9;
+    line-height: 1.7;
+    font-size: 1.15rem;
+  }
+
+  .map-locator-stats {
+    display: flex;
+    gap: 30px;
+    margin-top: 40px;
+    {% if section.settings.layout == 'center' %}
+    justify-content: center;
+    {% endif %}
+  }
+
+  .map-locator-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .map-locator-stat-label {
+    font-size: 0.9rem;
+    color: {{ section.settings.text_color }};
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .map-locator-stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: {{ section.settings.text_color }};
   }
 
   /* Globe Container */
+  .map-globe-wrapper-{{ section.id }} {
+    flex: 1;
+    display: flex;
+    justify-content: {% if section.settings.layout == 'split' %}flex-end{% else %}center{% endif %};
+    align-items: center;
+    position: relative;
+    width: 100%;
+    /* Create a responsive square aspect ratio container */
+    max-width: {{ section.settings.globe_size_desktop }}px;
+  }
+
   .map-globe-container-{{ section.id }} {
     position: relative;
-    width: {{ section.settings.globe_size_desktop }}px;
-    height: {{ section.settings.globe_size_desktop }}px;
+    width: 100%;
+    padding-bottom: 100%; /* Perfect circle trick */
     border-radius: 50%;
     overflow: hidden;
-    margin: 0 auto;
     border: {{ section.settings.border_width }}px solid {{ section.settings.border_color }};
     {% if section.settings.shadow_toggle %}
-    box-shadow: 0 20px 50px rgba(0,0,0,0.15), inset 0 0 40px rgba(0,0,0,0.1);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.1), inset 0 0 40px rgba(0,0,0,0.05);
     {% endif %}
-    transition: width 0.3s ease, height 0.3s ease, border-radius 0.3s ease;
     transform: translateZ(0); /* Hardware acceleration */
     -webkit-mask-image: -webkit-radial-gradient(white, black); /* fix Safari overflow bug */
-    isolation: isolate; /* Create new stacking context */
+    isolation: isolate;
   }
 
-  /* Fullscreen override */
-  .map-globe-container-{{ section.id }}.is-fullscreen {
-    width: 100vw !important;
-    height: 100vh !important;
-    border-radius: 0 !important;
-    border-width: 0 !important;
-  }
-
+  /* Ensure map fills the circle */
   .map-globe-{{ section.id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     cursor: grab;
-    background-color: #aadaff; /* water color */
+    background-color: transparent;
     z-index: 1;
   }
   
@@ -91,27 +148,75 @@
     cursor: grabbing;
   }
 
+  /* Fullscreen API override - keep it round! */
+  .map-globe-wrapper-{{ section.id }}.is-fullscreen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: {{ section.settings.background_color }};
+  }
+
+  .map-globe-wrapper-{{ section.id }}.is-fullscreen .map-globe-container-{{ section.id }} {
+    width: 90vmin !important;
+    padding-bottom: 90vmin !important;
+    max-width: none !important;
+    border-radius: 50% !important;
+    margin: 0 auto;
+  }
+
+  /* Split layout specific styling to make it bleed off screen like Shopify Admin */
+  {% if section.settings.layout == 'split' %}
+  @media (min-width: 990px) {
+    .map-globe-wrapper-{{ section.id }} {
+      max-width: none;
+      width: 55%;
+      margin-right: -10%; /* Bleed off the right edge */
+    }
+    
+    .map-globe-container-{{ section.id }} {
+      width: 100%;
+      padding-bottom: 100%;
+      transform: scale(1.1); /* Make it extra large */
+    }
+  }
+  {% endif %}
+
   /* Responsive adjustments */
   @media (max-width: 989px) {
-    .map-globe-container-{{ section.id }}:not(.is-fullscreen) {
-      width: {{ section.settings.globe_size_tablet }}px;
-      height: {{ section.settings.globe_size_tablet }}px;
+    .map-locator-inner-{{ section.id }} {
+      flex-direction: column;
+      text-align: center;
+      gap: 30px;
+    }
+    .map-locator-header-{{ section.id }} {
+      max-width: 100%;
+    }
+    .map-locator-stats {
+      justify-content: center;
+    }
+    .map-globe-wrapper-{{ section.id }} {
+      justify-content: center;
+      margin-right: 0;
+      width: 100%;
+      max-width: {{ section.settings.globe_size_tablet }}px;
+    }
+    .map-globe-container-{{ section.id }} {
+      transform: none;
     }
   }
 
   @media (max-width: 749px) {
-    .map-globe-container-{{ section.id }}:not(.is-fullscreen) {
-      width: {{ section.settings.globe_size_mobile }}px;
-      height: {{ section.settings.globe_size_mobile }}px;
-    }
     .map-locator-title {
-      font-size: 2rem;
+      font-size: 2.2rem;
+    }
+    .map-globe-wrapper-{{ section.id }} {
+      max-width: {{ section.settings.globe_size_mobile }}px;
     }
   }
 
   /* Leaflet custom overrides */
   .leaflet-container {
-    background: transparent; /* inherit from container */
+    background: transparent !important;
     font-family: inherit;
   }
   
@@ -269,7 +374,7 @@
   }
 
   .custom-map-marker.leaflet-interactive {
-    z-index: 1000 !important; /* Ensure hovered marker is on top */
+    z-index: 1000 !important;
   }
 
   @keyframes markerDrop {
@@ -279,20 +384,39 @@
 </style>
 
 <div class="map-locator-section-{{ section.id }}">
-  <div class="map-locator-header">
-    {%- if section.settings.title != blank -%}
-      <h2 class="map-locator-title">{{ section.settings.title }}</h2>
-    {%- endif -%}
-    {%- if section.settings.subtitle != blank -%}
-      <h3 class="map-locator-subtitle">{{ section.settings.subtitle }}</h3>
-    {%- endif -%}
-    {%- if section.settings.description != blank -%}
-      <div class="map-locator-description">{{ section.settings.description }}</div>
-    {%- endif -%}
-  </div>
+  <div class="map-locator-inner-{{ section.id }}">
+    
+    <div class="map-locator-header-{{ section.id }}">
+      {%- if section.settings.subtitle != blank -%}
+        <h3 class="map-locator-subtitle">{{ section.settings.subtitle }}</h3>
+      {%- endif -%}
+      {%- if section.settings.title != blank -%}
+        <h2 class="map-locator-title">{{ section.settings.title }}</h2>
+      {%- endif -%}
+      {%- if section.settings.description != blank -%}
+        <div class="map-locator-description">{{ section.settings.description }}</div>
+      {%- endif -%}
 
-  <div id="globe-container-{{ section.id }}" class="map-globe-container-{{ section.id }}">
-    <div id="map-{{ section.id }}" class="map-globe-{{ section.id }}"></div>
+      {%- if section.settings.show_stats -%}
+      <div class="map-locator-stats">
+        <div class="map-locator-stat">
+          <span class="map-locator-stat-label">Total Locations</span>
+          <span class="map-locator-stat-value">{{ section.blocks.size }}</span>
+        </div>
+        <div class="map-locator-stat">
+          <span class="map-locator-stat-label">Global Presence</span>
+          <span class="map-locator-stat-value">Worldwide</span>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+
+    <div id="globe-wrapper-{{ section.id }}" class="map-globe-wrapper-{{ section.id }}">
+      <div class="map-globe-container-{{ section.id }}">
+        <div id="map-{{ section.id }}" class="map-globe-{{ section.id }}"></div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -326,7 +450,7 @@
 
     const mapKey = 'leafletMap_' + '{{ section.id | replace: "-", "_" }}';
 
-    // Cleanup existing map if re-initializing (e.g., Theme Editor)
+    // Cleanup existing map if re-initializing
     if (window[mapKey]) {
       window[mapKey].remove();
     }
@@ -340,7 +464,7 @@
 
     // Initialize map
     const map = L.map(mapElementId, {
-      center: [20, 0], // Fallback center
+      center: [20, 0],
       zoom: defaultZoom,
       minZoom: minZoom,
       maxZoom: maxZoom,
@@ -348,25 +472,29 @@
       dragging: dragging,
       tap: dragging,
       zoomControl: zoomControl,
-      attributionControl: false, // Clean look
-      worldCopyJump: true // Seamless panning
+      attributionControl: false, 
+      worldCopyJump: true // Seamless continuous panning
     });
     
     window[mapKey] = map;
 
     // Determine Map Style based on Tile Provider
-    let tileUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'; // Light default
-    {% if section.settings.map_style == 'dark' %}
+    let tileUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png'; // Clean light map
+    
+    {% if section.settings.map_style == 'light_clean' %}
+      tileUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png';
+    {% elsif section.settings.map_style == 'light_labels' %}
+      tileUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+    {% elsif section.settings.map_style == 'dark' %}
       tileUrl = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
-    {% elsif section.settings.map_style == 'satellite' %}
-      tileUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
     {% elsif section.settings.map_style == 'osm' %}
       tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
     {% endif %}
 
     L.tileLayer(tileUrl, {
       maxZoom: maxZoom,
-      subdomains: 'abcd'
+      subdomains: 'abcd',
+      noWrap: false // Allow continuous scrolling
     }).addTo(map);
 
     // Parse Marker Data from Shopify Blocks
@@ -398,7 +526,6 @@
     let validMarkersCount = 0;
 
     locations.forEach((loc, index) => {
-      // Skip if coordinates are invalid or zero
       if (loc.lat === 0 && loc.lng === 0) return; 
 
       validMarkersCount++;
@@ -416,7 +543,6 @@
 
       const marker = L.marker([loc.lat, loc.lng], { icon: svgIcon }).addTo(map);
       
-      // Apply staggered animation delay to SVG via DOM mutation
       setTimeout(() => {
         if(marker._icon) {
           const svgEl = marker._icon.querySelector('svg');
@@ -426,81 +552,50 @@
         }
       }, 50);
 
-      // Construct Popup HTML
       let popupHtml = '<div class="map-popup-container">';
-      
       if (loc.image) {
         popupHtml += `<img src="${loc.image}" alt="${loc.storeName || 'Store'}" class="map-popup-image" loading="lazy">`;
       }
-      
       popupHtml += '<div class="map-popup-body">';
-      
-      if (loc.storeName) {
-        popupHtml += `<h4 class="map-popup-title">${loc.storeName}</h4>`;
-      }
-      
+      if (loc.storeName) popupHtml += `<h4 class="map-popup-title">${loc.storeName}</h4>`;
       if (loc.city || loc.country) {
-        popupHtml += `<div class="map-popup-location">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-          ${[loc.city, loc.country].filter(Boolean).join(', ')}
-        </div>`;
+        popupHtml += `<div class="map-popup-location"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>${[loc.city, loc.country].filter(Boolean).join(', ')}</div>`;
       }
-      
-      if (loc.address) {
-        popupHtml += `<div class="map-popup-address">${loc.address.replace(/\n/g, '<br>')}</div>`;
-      }
-      
+      if (loc.address) popupHtml += `<div class="map-popup-address">${loc.address.replace(/\n/g, '<br>')}</div>`;
       if (loc.phone || loc.email) {
         popupHtml += `<div class="map-popup-contact">`;
         if (loc.phone) popupHtml += `<div><strong>P:</strong> <a href="tel:${loc.phone}" style="color:inherit;text-decoration:none;">${loc.phone}</a></div>`;
         if (loc.email) popupHtml += `<div><strong>E:</strong> <a href="mailto:${loc.email}" style="color:inherit;text-decoration:none;">${loc.email}</a></div>`;
         popupHtml += `</div>`;
       }
-      
-      if (loc.description) {
-        popupHtml += `<div class="map-popup-desc">${loc.description}</div>`;
-      }
-      
+      if (loc.description) popupHtml += `<div class="map-popup-desc">${loc.description}</div>`;
       if ((loc.btnLabel && loc.btnUrl) || loc.website) {
         popupHtml += `<div class="map-popup-buttons">`;
         if (loc.btnLabel && loc.btnUrl) popupHtml += `<a href="${loc.btnUrl}" class="map-popup-btn">${loc.btnLabel}</a>`;
         if (loc.website) popupHtml += `<a href="${loc.website}" target="_blank" class="map-popup-btn map-popup-btn-outline">Visit Website</a>`;
         popupHtml += `</div>`;
       }
-      
       popupHtml += '</div></div>';
 
       marker.bindPopup(popupHtml);
 
-      // Hover effects
-      marker.on('mouseover', function(e) {
-        this._icon.style.zIndex = 1000;
-      });
-      marker.on('mouseout', function(e) {
-        this._icon.style.zIndex = 0;
-      });
+      marker.on('mouseover', function(e) { this._icon.style.zIndex = 1000; });
+      marker.on('mouseout', function(e) { this._icon.style.zIndex = 0; });
 
-      // Center map on marker click smoothly
       marker.on('click', function(e) {
         const currentZoom = map.getZoom();
         const targetZoom = Math.max(currentZoom, 12);
-        map.flyTo(e.target.getLatLng(), targetZoom, {
-          animate: true,
-          duration: 0.8
-        });
+        map.flyTo(e.target.getLatLng(), targetZoom, { animate: true, duration: 0.8 });
       });
 
       markers.push(marker);
       bounds.extend([loc.lat, loc.lng]);
     });
 
-    // Auto fit bounds logic
     if (validMarkersCount > 0) {
       {% if section.settings.auto_fit %}
-        // Fit all markers nicely inside the globe view
         map.fitBounds(bounds, { padding: [80, 80], maxZoom: defaultZoom });
       {% else %}
-        // Just center on the first marker but respect default zoom
         map.setView([locations[0].lat, locations[0].lng], defaultZoom);
       {% endif %}
     }
@@ -527,19 +622,19 @@
           btn.onclick = function(e) {
             e.stopPropagation();
             e.preventDefault();
-            const container = document.getElementById('globe-container-{{ section.id }}');
+            const wrapper = document.getElementById('globe-wrapper-{{ section.id }}');
             
             if (!document.fullscreenElement) {
-              if (container.requestFullscreen) {
-                container.requestFullscreen().catch(err => {
+              if (wrapper.requestFullscreen) {
+                wrapper.requestFullscreen().catch(err => {
                   console.warn(`Error attempting to enable fullscreen: ${err.message}`);
                 });
-              } else if (container.webkitRequestFullscreen) { /* Safari */
-                container.webkitRequestFullscreen();
-              } else if (container.msRequestFullscreen) { /* IE11 */
-                container.msRequestFullscreen();
+              } else if (wrapper.webkitRequestFullscreen) { /* Safari */
+                wrapper.webkitRequestFullscreen();
+              } else if (wrapper.msRequestFullscreen) { /* IE11 */
+                wrapper.msRequestFullscreen();
               }
-              container.classList.add('is-fullscreen');
+              wrapper.classList.add('is-fullscreen');
             } else {
               if (document.exitFullscreen) {
                 document.exitFullscreen();
@@ -555,28 +650,20 @@
       });
       map.addControl(new FullscreenControl());
       
-      // Listen for fullscreen changes to toggle classes and fix map size
       const fullscreenEvents = ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'];
       fullscreenEvents.forEach(event => {
         document.addEventListener(event, () => {
-          const container = document.getElementById('globe-container-{{ section.id }}');
+          const wrapper = document.getElementById('globe-wrapper-{{ section.id }}');
           if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
-            container.classList.remove('is-fullscreen');
+            wrapper.classList.remove('is-fullscreen');
           }
           setTimeout(() => { map.invalidateSize(); }, 300);
         });
       });
     {% endif %}
 
-    // Ensure map renders correctly immediately (helps with hidden overflow clipping bugs)
-    setTimeout(() => {
-      map.invalidateSize();
-    }, 200);
-    
-    // Invalidate size on window resize for responsiveness
-    window.addEventListener('resize', () => {
-       map.invalidateSize();
-    });
+    setTimeout(() => { map.invalidateSize(); }, 200);
+    window.addEventListener('resize', () => { map.invalidateSize(); });
   }
 </script>
 
@@ -586,25 +673,63 @@
   "settings": [
     {
       "type": "header",
+      "content": "Layout Settings"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Desktop Layout",
+      "options": [
+        {
+          "value": "center",
+          "label": "Center Aligned"
+        },
+        {
+          "value": "split",
+          "label": "Split (Text Left, Globe Right)"
+        }
+      ],
+      "default": "split"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_screen_section",
+      "label": "Make section full screen height",
+      "default": true
+    },
+    {
+      "type": "header",
       "content": "Content Settings"
     },
     {
       "type": "text",
       "id": "title",
       "label": "Heading",
-      "default": "Find a Store Near You"
+      "default": "Good afternoon!\nLet’s continue growing your business."
     },
     {
       "type": "text",
       "id": "subtitle",
       "label": "Subheading",
-      "default": "Global Locations"
+      "default": "Find a Store Near You"
     },
     {
       "type": "richtext",
       "id": "description",
       "label": "Description",
       "default": "<p>Discover our global network of stores and partners.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stats",
+      "label": "Show quick stats below text",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#111111"
     },
     {
       "type": "header",
@@ -614,11 +739,11 @@
       "type": "range",
       "id": "globe_size_desktop",
       "min": 400,
-      "max": 1200,
+      "max": 1400,
       "step": 20,
       "unit": "px",
-      "label": "Globe Size (Desktop)",
-      "default": 760
+      "label": "Globe Max Size (Desktop)",
+      "default": 900
     },
     {
       "type": "range",
@@ -627,7 +752,7 @@
       "max": 800,
       "step": 10,
       "unit": "px",
-      "label": "Globe Size (Tablet)",
+      "label": "Globe Max Size (Tablet)",
       "default": 600
     },
     {
@@ -637,14 +762,14 @@
       "max": 500,
       "step": 10,
       "unit": "px",
-      "label": "Globe Size (Mobile)",
+      "label": "Globe Max Size (Mobile)",
       "default": 350
     },
     {
       "type": "color",
       "id": "border_color",
       "label": "Border Color",
-      "default": "#f0f0f0"
+      "default": "#ffffff"
     },
     {
       "type": "range",
@@ -654,13 +779,13 @@
       "step": 1,
       "unit": "px",
       "label": "Border Width",
-      "default": 12
+      "default": 0
     },
     {
       "type": "checkbox",
       "id": "shadow_toggle",
       "label": "Enable Soft Shadow",
-      "default": true
+      "default": false
     },
     {
       "type": "header",
@@ -672,8 +797,12 @@
       "label": "Map Style",
       "options": [
         {
-          "value": "light",
-          "label": "Light / Voyager (Default)"
+          "value": "light_clean",
+          "label": "Light (No Labels - Clean)"
+        },
+        {
+          "value": "light_labels",
+          "label": "Light (With Labels)"
         },
         {
           "value": "dark",
@@ -682,13 +811,9 @@
         {
           "value": "osm",
           "label": "OpenStreetMap"
-        },
-        {
-          "value": "satellite",
-          "label": "Satellite"
         }
       ],
-      "default": "light"
+      "default": "light_clean"
     },
     {
       "type": "range",
@@ -697,7 +822,7 @@
       "max": 18,
       "step": 1,
       "label": "Default Zoom Level",
-      "default": 3
+      "default": 2
     },
     {
       "type": "range",
@@ -706,7 +831,7 @@
       "max": 10,
       "step": 1,
       "label": "Minimum Zoom",
-      "default": 2
+      "default": 1
     },
     {
       "type": "range",
@@ -755,7 +880,7 @@
       "type": "color",
       "id": "background_color",
       "label": "Background Color",
-      "default": "#ffffff"
+      "default": "#fafafa"
     },
     {
       "type": "range",
@@ -765,7 +890,7 @@
       "step": 5,
       "unit": "px",
       "label": "Padding Top",
-      "default": 80
+      "default": 60
     },
     {
       "type": "range",
@@ -775,7 +900,7 @@
       "step": 5,
       "unit": "px",
       "label": "Padding Bottom",
-      "default": 80
+      "default": 60
     }
   ],
   "blocks": [
@@ -791,7 +916,7 @@
           "type": "text",
           "id": "latitude",
           "label": "Latitude",
-          "info": "e.g., 40.7128. Tip: Right-click on Google Maps to copy coordinates."
+          "info": "e.g., 40.7128"
         },
         {
           "type": "text",
@@ -902,7 +1027,7 @@
             "city": "New York",
             "latitude": "40.7128",
             "longitude": "-74.0060",
-            "marker_color": "#ff3366"
+            "marker_color": "#800080"
           }
         },
         {
@@ -913,7 +1038,7 @@
             "city": "London",
             "latitude": "51.5074",
             "longitude": "-0.1278",
-            "marker_color": "#3366ff"
+            "marker_color": "#000000"
           }
         },
         {
