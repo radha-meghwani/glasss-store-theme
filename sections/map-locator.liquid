@@ -362,26 +362,28 @@
       .backgroundColor('rgba(0,0,0,0)')
       .showGlobe(true)
       .showAtmosphere(true)
-      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-water.png') // Fallback texture before hex loads
       .atmosphereColor('{{ section.settings.atmosphere_color }}')
       .atmosphereAltitude(0.15)
       .width(container.clientWidth)
       .height(container.clientHeight);
 
-    // Fetch GeoJSON and render Dotted Hex Globe
+    // Apply bright shading to the globe to prevent it from turning black
+    const material = globe.globeMaterial();
+    material.color = new THREE.Color('{{ section.settings.water_color }}'); 
+    material.emissive = new THREE.Color('{{ section.settings.water_color }}'); 
+    material.emissiveIntensity = 0.5; // Keeps it bright but retains some 3D spherical shading
+
+    // Fetch GeoJSON and render proper map polygons (no longer dotted)
     fetch('https://unpkg.com/world-atlas/countries-110m.json')
       .then(res => res.json())
       .then(world => {
-        // Remove fallback image to make it clean
-        globe.globeImageUrl(null);
-        globe.globeColor('rgba(255, 255, 255, 0.9)'); // White/transparent base globe
-        
         const countries = topojson.feature(world, world.objects.countries).features;
         
-        globe.hexPolygonsData(countries)
-          .hexPolygonResolution(3) // Creates the dotted look
-          .hexPolygonMargin(0.3)
-          .hexPolygonColor(() => '{{ section.settings.hex_color }}');
+        globe.polygonsData(countries)
+          .polygonCapColor(() => '{{ section.settings.land_color }}') // Solid land color
+          .polygonSideColor(() => 'rgba(255, 255, 255, 0.4)')
+          .polygonStrokeColor(() => '{{ section.settings.map_border_color }}')
+          .polygonAltitude(0.01);
       });
 
     // Add HTML Markers
@@ -424,6 +426,10 @@
     globe.controls().enableZoom = {{ section.settings.enable_zoom }};
     globe.controls().autoRotate = {{ section.settings.auto_rotate }};
     globe.controls().autoRotateSpeed = 0.5;
+    
+    // Restrict zoom distances to prevent the camera from clipping/cutting into the globe
+    globe.controls().minDistance = 140; 
+    globe.controls().maxDistance = 600;
 
     // Focus on first marker if available
     if (locations.length > 0) {
@@ -596,16 +602,28 @@
     },
     {
       "type": "color",
-      "id": "hex_color",
-      "label": "Map Hex/Dots Color",
-      "default": "#5ec3bd",
-      "info": "Color of the dotted countries."
+      "id": "water_color",
+      "label": "Water Color",
+      "default": "#e0f2fe",
+      "info": "Base color of the globe."
+    },
+    {
+      "type": "color",
+      "id": "land_color",
+      "label": "Land Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "map_border_color",
+      "label": "Country Border Color",
+      "default": "#bae6fd"
     },
     {
       "type": "color",
       "id": "atmosphere_color",
       "label": "Atmosphere Glow Color",
-      "default": "#5ec3bd"
+      "default": "#bae6fd"
     },
     {
       "type": "header",
