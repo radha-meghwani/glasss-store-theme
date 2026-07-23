@@ -1,0 +1,490 @@
+<section class="money-back-section">
+    <div class="money-back-main">
+        {% comment %} left logo {% endcomment %}
+        <div class="main-top-content">
+            <div class="mbg-left-logo">
+                {% if section.settings. logo_left != blank %}
+                    <img src="{{ section.settings.logo_left | img_url: 'master' }}" alt="image" loading="lazy">
+                {% endif %}
+            </div>
+            <div class="right-side-content">
+                <h2>{{ section.settings.heading }}</h2>
+                <h4>{{ section.settings.subheading }}</h4>
+                <h5 class="desc">{{ section.settings.description }}</h5>
+                <div class="icon-text">
+                    <span class="icon-img">
+                        {% if section.settings.icon_img != blank %}
+                            <img src="{{ section.settings.icon_img | img_url:'master' }}" alt="image" loading="lazy">
+                        {% endif %}
+                    </span>
+                    <h6>{{ section.settings.icon_text }}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="below-container">
+            {% for block in section.blocks %}
+                {% case block.type %}
+                    {% when 'icons_with_text' %}
+                    <div class="mbg-below-container">
+                        <div class="mbg-below-content">
+                            <div class="mbg-below-icon">
+                                {% if block.settings.logo_below != blank %}
+                                    <img src="{{ block.settings.logo_below | img_url: 'master' }}" alt="image" loading="lazy">
+                                {% endif %}
+                            </div>
+                            <div class="mbg-below-text">
+                                <h4>{{ block.settings.below_heading }}</h4>
+                                <h6>{{ block.settings.below_description }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                {% endcase %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<style>
+    .money-back-section{
+        max-width:1500px;
+        margin:auto;
+        padding: 80px 0px;
+    }
+    .mbg-left-logo img{
+        height:280px;
+        width:280px;
+    }
+    .icon-img img{
+        height:40px;
+        width:40px;
+    }
+    .mbg-below-icon img{
+        height:40px;
+        width:40px;
+    }
+
+    .desc strong{
+        color:#A039CE;
+    }
+
+    .main-top-content {
+    display: flex;
+    align-items: center;
+    justify-content: center!important;
+    gap: 50px;
+    padding-bottom: 35px;
+    width: 100%;
+    max-width: 900px;
+    margin: auto;
+    }
+    .below-container{
+        display:flex;
+    }
+    .mbg-below-content{
+        display:flex;
+    }
+    .icon-text{
+        display: flex;
+        align-items: center;
+    }
+    .icon-text h6{
+        margin:0;
+    }
+    .mbg-below-text h4{
+        margin:0;
+        font-size: 18px;
+    }
+    .mbg-below-text h6{
+        margin:0;
+    }
+    money-back-main{
+        border
+    }
+   .right-side-content h4 {
+        margin: 0;
+        color: #A039CE;
+        font-family: ui-sans-serif;
+        font-weight: bold;
+        font-size: 35px;
+    }
+   .right-side-content h2 {
+        margin: 0;
+        font-family: ui-sans-serif;
+        font-size: 43px;
+    }
+    .right-side-content .desc{
+        font-size:18px;
+    }
+    /* ===========================
+   Premium Money Back Styling
+   Add BELOW your existing CSS
+=========================== */
+
+.money-back-main{
+    position: relative;
+    background: linear-gradient(180deg,#14091d 0%,#09050d 100%);
+    border: 1px solid rgba(162,61,255,.45);
+    border-radius: 16px;
+    padding: 40px 45px 0;
+    overflow: hidden;
+    box-shadow: 0 0 25px #9357c5, inset 0 0 0 1px #654185;
+    max-width: 1200px;
+    margin: auto;
+    width: 100%;
+}
+
+.money-back-main::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        radial-gradient(circle at top left,
+        rgba(162,61,255,.12),
+        transparent 45%);
+    pointer-events:none;
+}
+
+/* Left Logo */
+
+.mbg-left-logo {
+    position: relative;
+    {% comment %} flex: 0 0 260px; {% endcomment %}
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-right: 35px;
+}
+
+.mbg-left-logo::after{
+    content:"";
+    position:absolute;
+    right:0;
+    top:50%;
+    transform:translateY(-50%);
+    width:1px;
+    height:300px;
+    background:#7d24bd;
+}
+
+.mbg-left-logo img{
+    display:block;
+    object-fit:contain;
+}
+
+/* Right Content */
+
+.right-side-content{
+    {% comment %} flex:1; {% endcomment %}
+    max-width:700px;
+    color:#fff;
+}
+
+.right-side-content h2,
+.right-side-content h2 p{
+    margin:0;
+    font-size:44px;
+    line-height:1;
+    font-weight:800;
+    color:#fff;
+}
+
+.right-side-content h4,
+.right-side-content h4 p{
+    margin:0;
+    font-size:44px;
+    line-height:1;
+    font-weight:800;
+    color:#A039CE;
+}
+
+.right-side-content .desc{
+    margin:18px 0 24px;
+    max-width:560px;
+    color:#bfbfbf;
+    font-size:18px;
+    line-height:1.8;
+}
+
+.right-side-content .desc p{
+    margin:0;
+}
+
+/* Satisfaction Badge */
+
+.icon-text{
+    display:inline-flex;
+    align-items:center;
+    gap:12px;
+    border:1px solid rgba(162,61,255,.45);
+    border-radius:40px;
+    padding:9px 18px;
+    background:rgba(162,61,255,.08);
+}
+
+.icon-text h6,
+.icon-text h6 p{
+    margin:0;
+    color:#fff;
+    text-transform:uppercase;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.4px;
+}
+
+.icon-img img{
+    width:50px;
+    height:50px;
+}
+
+/* Bottom */
+
+.below-container{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    border-top:1px solid rgba(255,255,255,.08);
+}
+
+.mbg-below-container{
+    padding:22px 18px;
+    border-right:1px solid rgba(255,255,255,.08);
+}
+
+.mbg-below-container:last-child{
+    border-right:none;
+}
+
+.mbg-below-content{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.mbg-below-icon{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border:1px solid rgba(162,61,255,.35);
+    background:rgba(162,61,255,.08);
+    flex-shrink:0;
+    box-shadow: 0 0 25px #d1bee1, inset 0 0 0 1px #654185;
+}
+
+.mbg-below-icon img{
+    width:50px;
+    height:50px;
+    object-fit:contain;
+}
+
+.mbg-below-text h4,
+.mbg-below-text h4 p{
+    margin:0;
+    color:#fff;
+    font-size:13px;
+    font-weight:700;
+    text-transform:uppercase;
+    line-height:1.2;
+}
+
+.mbg-below-text h6,
+.mbg-below-text h6 p{
+    margin-top:5px;
+    color:#bcbcbc;
+    font-size:12px;
+    line-height:1.5;
+}
+
+/* ===========================
+        Tablet
+=========================== */
+
+@media(max-width:991px){
+
+.money-back-main{
+    padding:35px 25px 0;
+}
+
+.main-top-content{
+    gap:30px;
+}
+
+.mbg-left-logo{
+    padding-right:30px;
+}
+
+.mbg-left-logo::after{
+    height:140px;
+}
+
+.right-side-content h2,
+.right-side-content h2 p{
+    font-size:34px;
+}
+
+.right-side-content h4,
+.right-side-content h4 p{
+    font-size:34px;
+}
+
+.below-container{
+    grid-template-columns:repeat(2,1fr);
+}
+
+.mbg-below-container:nth-child(2){
+    border-right:none;
+}
+
+.mbg-below-container:nth-child(-n+2){
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+}
+
+/* ===========================
+        Mobile
+=========================== */
+
+@media(max-width:767px){
+
+.money-back-main{
+    padding:25px 18px 0;
+}
+
+.money-back-section{
+    padding: 50px 10px;
+}
+
+.main-top-content{
+    flex-direction:column;
+    text-align:center;
+    gap:25px;
+}
+
+.mbg-left-logo{
+    padding-right:0;
+    {% comment %} padding-bottom:20px; {% endcomment %}
+}
+
+.mbg-left-logo::after{
+    display:none;
+}
+
+.mbg-left-logo img{
+    width:180px;
+    height:180px;
+    margin:auto;
+}
+
+.right-side-content{
+    max-width:100%;
+}
+
+.right-side-content h2,
+.right-side-content h2 p{
+    font-size:30px;
+}
+
+.right-side-content h4,
+.right-side-content h4 p{
+    font-size:30px;
+}
+
+.right-side-content .desc{
+    font-size:14px;
+    margin:15px auto 20px;
+}
+
+.icon-text{
+    justify-content:center;
+}
+
+.below-container{
+    grid-template-columns:1fr;
+}
+
+.mbg-below-container{
+    border-right:none;
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.mbg-below-container:last-child{
+    border-bottom:none;
+}
+
+.mbg-below-content{
+    justify-content:flex-start;
+}
+
+}
+</style>
+{% schema %}
+{
+    "name": "Money Back Guarantee",
+    "settings": [
+        {
+            "type": "image_picker",
+            "id": "logo_left",
+            "label": "Select Image"
+        },
+        {
+            "type": "header",
+            "content": "Right Side Content"
+        },
+        {
+            "type": "richtext",
+            "id": "heading",
+            "label": "Heading"
+        },
+        {
+            "type": "richtext",
+            "id": "subheading",
+            "label": "Subheading"
+        },
+        {
+            "type": "richtext",
+            "id": "description",
+            "label": "Description"
+        },
+        {
+            "type": "image_picker",
+            "id": "icon_img",
+            "label": "Select Icon"
+        },
+        {
+            "type": "richtext",
+            "id": "icon_text",
+            "label": "Text"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "icons_with_text",
+            "name": "Icons with Text",
+            "settings": [
+                {
+                    "type": "image_picker",
+                    "id": "logo_below",
+                    "label": "Select logo"
+                },
+                {
+                    "type": "richtext",
+                    "id": "below_heading",
+                    "label": "Heading"
+                },
+                {
+                    "type": "richtext",
+                    "id": "below_description",
+                    "label": "Description"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Money Back Guarantee",
+            "category": "custom"
+        }
+    ]
+}
+{% endschema %}

@@ -1,0 +1,328 @@
+<div class="wishlist-page-container">
+  <div class="wishlist-page-header">
+    <h1 class="wishlist-page-title">{{ section.settings.title | default: 'My Wishlist' }}</h1>
+    <p class="wishlist-page-subtitle">{{ section.settings.subtitle | default: 'Save your favorite items here.' }}</p>
+  </div>
+  
+  <div id="wishlist-grid" class="wishlist-grid">
+    <!-- Wishlist items will be rendered here dynamically via JS -->
+  </div>
+  
+  <div id="wishlist-empty" class="wishlist-empty-state">
+    <svg class="empty-icon" xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+    <h2>{{ section.settings.empty_title | default: 'Your wishlist is empty.' }}</h2>
+    <p>{{ section.settings.empty_subtitle | default: 'Explore our store and add some items you love!' }}</p>
+    <a href="{{ section.settings.continue_shopping_url | default: '/collections/all' }}" class="wishlist-continue-btn">
+      {{ section.settings.continue_shopping_text | default: 'Continue Shopping' }}
+    </a>
+  </div>
+</div>
+
+<style>
+.wishlist-page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 20px;
+  font-family: var(--font-body-family), sans-serif;
+}
+
+.wishlist-page-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.wishlist-page-title {
+  font-size: 36px;
+  margin-bottom: 10px;
+  font-weight: 700;
+  color: var(--color-foreground, #000);
+}
+
+.wishlist-page-subtitle {
+  color: #666;
+  font-size: 16px;
+}
+
+.wishlist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.wishlist-card {
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.wishlist-card:hover {
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.wishlist-card-image {
+  position: relative;
+  width: 100%;
+  padding-top: 100%; /* 1:1 Aspect ratio */
+  background: #f9f9f9;
+}
+
+.wishlist-card-image img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.wishlist-card-info {
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.wishlist-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+  text-decoration: none;
+  color: #333;
+}
+
+.wishlist-card-title:hover {
+  color: #000;
+}
+
+.wishlist-card-price {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.wishlist-card-actions {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wishlist-view-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  text-align: center;
+  background: #111;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.wishlist-view-btn:hover {
+  background: #333;
+  color: #fff;
+}
+
+.wishlist-remove-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  text-align: center;
+  background: transparent;
+  color: #d62828;
+  border: 1px solid #d62828;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.wishlist-remove-btn:hover {
+  background: #d62828;
+  color: #fff;
+}
+
+.wishlist-empty-state {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.empty-icon {
+  color: #ccc;
+  margin-bottom: 20px;
+  display:none;
+}
+
+.wishlist-empty-state h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: var(--color-foreground, #000);
+}
+
+.wishlist-empty-state p {
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.wishlist-continue-btn {
+  display: inline-block;
+  padding: 12px 30px;
+  background: #111;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.wishlist-continue-btn:hover {
+  background: #333;
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .wishlist-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const gridContainer = document.getElementById('wishlist-grid');
+  const emptyState = document.getElementById('wishlist-empty');
+
+  function renderWishlistPage() {
+    // If window.Wishlist is not defined yet, wait and try again
+    if (typeof window.Wishlist === 'undefined') {
+      setTimeout(renderWishlistPage, 100);
+      return;
+    }
+
+    const items = window.Wishlist.get();
+    
+    if (!items || items.length === 0) {
+      gridContainer.style.display = 'none';
+      emptyState.style.display = 'block';
+      gridContainer.innerHTML = '';
+      return;
+    }
+
+    emptyState.style.display = 'none';
+    gridContainer.style.display = 'grid';
+    gridContainer.innerHTML = '';
+
+    items.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'wishlist-card';
+      
+      // Fallback image in case the product has no image
+      const imageUrl = item.image || '//cdn.shopify.com/s/images/themes/product-1.png';
+      
+      card.innerHTML = `
+        <div class="wishlist-card-image">
+          <a href="${item.url}">
+            <img src="${imageUrl}" alt="${item.title}" loading="lazy">
+          </a>
+        </div>
+        <div class="wishlist-card-info">
+          <a href="${item.url}" class="wishlist-card-title">${item.title}</a>
+          <div class="wishlist-card-price">${item.price}</div>
+          
+          <div class="wishlist-card-actions">
+            <a href="${item.url}" class="wishlist-view-btn">View Product</a>
+            <button type="button" class="wishlist-remove-btn" data-remove-id="${item.id}">
+              Remove
+            </button>
+          </div>
+        </div>
+      `;
+      gridContainer.appendChild(card);
+    });
+
+    // Add event listeners to remove buttons
+    const removeButtons = document.querySelectorAll('.wishlist-remove-btn');
+    removeButtons.forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const idToRemove = this.dataset.removeId;
+        window.Wishlist.remove(idToRemove);
+        
+        // Remove card element directly for a smoother interaction
+        const cardToRemove = this.closest('.wishlist-card');
+        cardToRemove.remove();
+        
+        // Re-check if empty
+        const remainingItems = window.Wishlist.get();
+        if (remainingItems.length === 0) {
+          gridContainer.style.display = 'none';
+          emptyState.style.display = 'block';
+        }
+      });
+    });
+  }
+
+  // Initial render
+  renderWishlistPage();
+
+  // Listen to wishlist updates from other tabs or components
+  document.addEventListener('wishlist:updated', function() {
+    renderWishlistPage();
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "Wishlist Page",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Page Title",
+      "default": "My Wishlist"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Page Subtitle",
+      "default": "Save your favorite items here."
+    },
+    {
+      "type": "text",
+      "id": "empty_title",
+      "label": "Empty State Title",
+      "default": "Your wishlist is empty."
+    },
+    {
+      "type": "text",
+      "id": "empty_subtitle",
+      "label": "Empty State Subtitle",
+      "default": "Explore our store and add some items you love!"
+    },
+    {
+      "type": "text",
+      "id": "continue_shopping_text",
+      "label": "Continue Shopping Button Text",
+      "default": "Continue Shopping"
+    },
+    {
+      "type": "url",
+      "id": "continue_shopping_url",
+      "label": "Continue Shopping Link",
+      "default": "/collections/all"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Wishlist Page"
+    }
+  ]
+}
+{% endschema %}

@@ -1,735 +1,957 @@
-{% comment %}
-  3D Map Locator Section
-  A premium reusable 3D world map locator section using Globe.gl
-{% endcomment %}
-
-New globe
-
-<!-- Three.js & Globe.gl -->
-<script src="//unpkg.com/three"></script>
-<script src="//unpkg.com/globe.gl"></script>
-<!-- TopoJSON for country borders/dots -->
-<script src="//unpkg.com/topojson-client"></script>
-
-<style>
-  .map-locator-section-{{ section.id }} {
-    padding: {{ section.settings.padding_top }}px 20px {{ section.settings.padding_bottom }}px;
+{% stylesheet %}
+  .map-locator-v2-section {
     background-color: {{ section.settings.background_color }};
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
     overflow: hidden;
     position: relative;
-    {% if section.settings.full_screen_section %}
-    min-height: 100vh;
-    {% endif %}
-    font-family: inherit;
   }
 
-  .map-locator-inner-{{ section.id }} {
-    display: flex;
-    width: 100%;
+  .map-locator-v2-container {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    align-items: center;
     max-width: 1400px;
     margin: 0 auto;
-    align-items: center;
-    gap: 40px;
-    flex-direction: row;
-    text-align: left;
-    justify-content: space-between;
+    gap: 2rem;
     position: relative;
-    z-index: 2;
+    z-index: 1;
   }
 
-  .map-locator-header-{{ section.id }} {
-    flex: 1;
-    max-width: 450px;
-  }
-
-  .map-locator-title {
-    margin: 0 0 15px;
-    font-size: 3rem;
-    font-weight: 700;
+  .map-locator-v2-content {
+    padding: 0 2rem;
     color: {{ section.settings.text_color }};
-    line-height: 1.2;
+    z-index: 10;
+    position: relative;
   }
 
-  .map-locator-subtitle {
-    margin: 0 0 20px;
-    font-size: 1.2rem;
-    color: {{ section.settings.text_color }};
-    opacity: 0.8;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
+  .map-locator-v2-content-small-heading {
+    font-size: 0.875rem;
     font-weight: 600;
-  }
-  
-  .map-locator-description {
-    color: {{ section.settings.text_color }};
-    opacity: 0.9;
-    line-height: 1.7;
-    font-size: 1.15rem;
-    margin-bottom: 40px;
-  }
-
-  /* Stats View */
-  .map-locator-stats {
-    display: flex;
-    gap: 30px;
-    margin-top: 40px;
-    animation: fadeIn 0.4s ease;
-  }
-
-  .map-locator-stat {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  .map-locator-stat-label {
-    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
     color: {{ section.settings.text_color }};
     opacity: 0.7;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    margin-bottom: 1rem;
   }
 
-  .map-locator-stat-value {
-    font-size: 1.5rem;
+  .map-locator-v2-content-heading {
+    font-size: 2.5rem;
     font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1rem;
     color: {{ section.settings.text_color }};
   }
 
-  /* Location Details View (Dynamic) */
-  .map-locator-details {
-    display: none;
-    background: #fff;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
-    animation: slideUp 0.4s ease;
-    border: 1px solid #f0f0f0;
-    position: relative;
+  .map-locator-v2-content-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    opacity: 0.85;
   }
-  
-  .map-locator-details-close {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: #f5f5f5;
-    border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    cursor: pointer;
+
+  .map-locator-v2-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .map-locator-v2-stat {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .map-locator-v2-stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: {{ section.settings.text_color }};
+    margin-bottom: 0.5rem;
+  }
+
+  .map-locator-v2-stat-label {
+    font-size: 0.9rem;
+    opacity: 0.7;
+  }
+
+  .map-locator-v2-globe-wrapper {
+    position: relative;
+    width: 100%;
+    height: {{ section.settings.globe_size_desktop }}px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
-    color: #333;
-    transition: background 0.2s;
-  }
-  
-  .map-locator-details-close:hover {
-    background: #e0e0e0;
   }
 
-  .map-loc-image {
+  #map-locator-v2-canvas {
+    display: block;
     width: 100%;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 20px;
+    height: 100%;
   }
 
-  .map-loc-title {
-    font-size: 1.6rem;
-    margin: 0 0 10px;
-    font-weight: 700;
-    color: #111;
+  .map-locator-v2-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease-in-out;
   }
 
-  .map-loc-address {
-    font-size: 1rem;
-    color: #555;
-    margin-bottom: 20px;
-    line-height: 1.5;
-  }
-
-  .map-loc-contact {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
-  }
-
-  .map-loc-contact-item {
+  .map-locator-v2-modal.active {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
+  }
+
+  .map-locator-v2-modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease-in-out;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  .map-locator-v2-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+    float: right;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .map-locator-v2-modal-close:hover {
+    color: #000;
+  }
+
+  .map-locator-v2-modal-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+  }
+
+  .map-locator-v2-modal-name {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #000;
+  }
+
+  .map-locator-v2-modal-meta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    color: #666;
+  }
+
+  .map-locator-v2-modal-info {
+    margin-bottom: 1.5rem;
+  }
+
+  .map-locator-v2-modal-info-row {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1rem;
     font-size: 0.95rem;
+  }
+
+  .map-locator-v2-modal-info-label {
+    font-weight: 600;
+    min-width: 80px;
     color: #333;
   }
-  
-  .map-loc-contact-item svg {
-    color: {{ section.settings.hex_color }};
-  }
 
-  .map-loc-desc {
-    font-size: 0.95rem;
+  .map-locator-v2-modal-info-value {
     color: #666;
-    line-height: 1.6;
-    margin-bottom: 20px;
+    word-break: break-word;
   }
 
-  .map-loc-btn {
+  .map-locator-v2-modal-description {
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .map-locator-v2-modal-button {
     display: inline-block;
-    width: 100%;
-    text-align: center;
-    background: #111;
-    color: #fff;
-    padding: 12px 20px;
-    border-radius: 8px;
+    background-color: {{ section.settings.text_color }};
+    color: {{ section.settings.background_color }};
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
     text-decoration: none;
     font-weight: 600;
-    transition: background 0.3s;
-    box-sizing: border-box;
+    transition: opacity 0.3s;
+    border: none;
+    cursor: pointer;
   }
 
-  .map-loc-btn:hover {
-    background: #333;
-  }
-
-  /* Globe Container */
-  .map-globe-wrapper-{{ section.id }} {
-    flex: 1;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    position: relative;
-    width: 100%;
-  }
-
-  .map-globe-container-{{ section.id }} {
-    position: relative;
-    width: 100%;
-    max-width: {{ section.settings.globe_size_desktop }}px;
-    aspect-ratio: 1 / 1;
-    cursor: grab;
-    transform: scale(1.1); /* Make it bleed nicely off right edge */
-  }
-  
-  .map-globe-container-{{ section.id }}:active {
-    cursor: grabbing;
-  }
-
-  /* Responsive adjustments */
-  @media (min-width: 990px) {
-    .map-globe-wrapper-{{ section.id }} {
-      width: 55%;
-      margin-right: -10%; /* Bleed off the right edge */
-    }
-  }
-
-  @media (max-width: 989px) {
-    .map-locator-inner-{{ section.id }} {
-      flex-direction: column;
-      text-align: center;
-      gap: 30px;
-    }
-    .map-locator-header-{{ section.id }} {
-      max-width: 100%;
-    }
-    .map-locator-stats {
-      justify-content: center;
-    }
-    .map-globe-wrapper-{{ section.id }} {
-      justify-content: center;
-      margin-right: 0;
-      width: 100%;
-    }
-    .map-globe-container-{{ section.id }} {
-      max-width: {{ section.settings.globe_size_tablet }}px;
-      transform: none;
-    }
-  }
-
-  @media (max-width: 749px) {
-    .map-locator-title {
-      font-size: 2.2rem;
-    }
-    .map-globe-container-{{ section.id }} {
-      max-width: {{ section.settings.globe_size_mobile }}px;
-    }
+  .map-locator-v2-modal-button:hover {
+    opacity: 0.9;
   }
 
   @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
-  
+
   @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      transform: translateY(30px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
-</style>
 
-<div class="map-locator-section-{{ section.id }}">
-  <div class="map-locator-inner-{{ section.id }}">
-    
-    <div class="map-locator-header-{{ section.id }}">
-      {%- if section.settings.subtitle != blank -%}
-        <h3 class="map-locator-subtitle">{{ section.settings.subtitle }}</h3>
-      {%- endif -%}
-      {%- if section.settings.title != blank -%}
-        <h2 class="map-locator-title">{{ section.settings.title }}</h2>
-      {%- endif -%}
-      {%- if section.settings.description != blank -%}
-        <div class="map-locator-description">{{ section.settings.description }}</div>
-      {%- endif -%}
+  @media (max-width: 1024px) {
+    .map-locator-v2-container {
+      grid-template-columns: 1fr;
+    }
 
-      <!-- Default Stats View -->
-      <div id="locator-stats-{{ section.id }}" class="map-locator-stats" {% if section.settings.show_stats == false %}style="display:none;"{% endif %}>
-        <div class="map-locator-stat">
-          <span class="map-locator-stat-label">Total Locations</span>
-          <span class="map-locator-stat-value">{{ section.blocks.size }}</span>
+    .map-locator-v2-globe-wrapper {
+      height: {{ section.settings.globe_size_tablet }}px;
+      margin-top: 2rem;
+    }
+
+    .map-locator-v2-content {
+      padding: 0;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .map-locator-v2-section {
+      padding-top: {{ section.settings.padding_top | times: 0.5 | round }}px;
+      padding-bottom: {{ section.settings.padding_bottom | times: 0.5 | round }}px;
+    }
+
+    .map-locator-v2-content-heading {
+      font-size: 1.75rem;
+    }
+
+    .map-locator-v2-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .map-locator-v2-globe-wrapper {
+      height: {{ section.settings.globe_size_mobile }}px;
+    }
+
+    .map-locator-v2-modal-content {
+      width: 95%;
+      padding: 1.5rem;
+    }
+  }
+{% endstylesheet %}
+
+<div class="map-locator-v2-section">
+  <div class="map-locator-v2-container">
+    <div class="map-locator-v2-content">
+      {% if section.settings.small_heading != blank %}
+        <div class="map-locator-v2-content-small-heading">{{ section.settings.small_heading }}</div>
+      {% endif %}
+
+      {% if section.settings.main_heading != blank %}
+        <h2 class="map-locator-v2-content-heading">{{ section.settings.main_heading }}</h2>
+      {% endif %}
+
+      {% if section.settings.description != blank %}
+        <p class="map-locator-v2-content-description">{{ section.settings.description }}</p>
+      {% endif %}
+
+      {% if section.blocks.size > 0 %}
+        <div class="map-locator-v2-stats">
+          {% for block in section.blocks %}
+            {% if block.type == 'stat' %}
+              <div class="map-locator-v2-stat" {{ block.shopify_attributes }}>
+                <div class="map-locator-v2-stat-number">{{ block.settings.stat_number }}</div>
+                <div class="map-locator-v2-stat-label">{{ block.settings.stat_label }}</div>
+              </div>
+            {% endif %}
+          {% endfor %}
         </div>
-        <div class="map-locator-stat">
-          <span class="map-locator-stat-label">Global Presence</span>
-          <span class="map-locator-stat-value">Worldwide</span>
-        </div>
-      </div>
-
-      <!-- Dynamic Location Details View -->
-      <div id="locator-details-{{ section.id }}" class="map-locator-details">
-        <!-- Content injected via JS -->
-      </div>
+      {% endif %}
     </div>
 
-    <div id="globe-wrapper-{{ section.id }}" class="map-globe-wrapper-{{ section.id }}">
-      <div id="globe-container-{{ section.id }}" class="map-globe-container-{{ section.id }}">
-        <!-- Globe Canvas will be injected here -->
-      </div>
+    <div class="map-locator-v2-globe-wrapper">
+      <canvas id="map-locator-v2-canvas"></canvas>
     </div>
+  </div>
+</div>
 
+<!-- Modal for store details -->
+<div id="map-locator-v2-modal" class="map-locator-v2-modal">
+  <div class="map-locator-v2-modal-content">
+    <button class="map-locator-v2-modal-close" id="map-locator-v2-modal-close">&times;</button>
+    <div id="map-locator-v2-modal-body"></div>
   </div>
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    init3DGlobe_{{ section.id | replace: '-', '_' }}();
-  });
+  (function() {
+    'use strict';
 
-  // Handle Shopify Theme Editor events cleanly
-  document.addEventListener('shopify:section:load', function(event) {
-    if (event.detail.sectionId === '{{ section.id }}') {
-      init3DGlobe_{{ section.id | replace: '-', '_' }}();
-    }
-  });
+    class MapLocatorV2 {
+      constructor(container, canvasId, config) {
+        this.container = container;
+        this.canvasId = canvasId;
+        this.config = config;
+        this.globe = null;
+        this.scene = null;
+        this.camera = null;
+        this.renderer = null;
+        this.controls = null;
+        this.markers = [];
+        this.autoRotateSpeed = config.rotationSpeed || 0.5;
+        this.enableAutoRotate = config.autoRotate !== false;
+        this.enableDrag = config.enableDrag !== false;
+        this.isInitialized = false;
+        this.animationFrameId = null;
 
-  function init3DGlobe_{{ section.id | replace: '-', '_' }}() {
-    const container = document.getElementById('globe-container-{{ section.id }}');
-    if (!container) return;
-
-    // Clear previous instances if any
-    container.innerHTML = '';
-
-    // Gather block locations
-    const locations = [
-      {%- for block in section.blocks -%}
-        {
-          id: "{{ block.id }}",
-          lat: parseFloat("{{ block.settings.latitude | default: '0' }}") || 0,
-          lng: parseFloat("{{ block.settings.longitude | default: '0' }}") || 0,
-          storeName: {{ block.settings.store_name | json }},
-          country: {{ block.settings.country | json }},
-          city: {{ block.settings.city | json }},
-          address: {{ block.settings.address | json }},
-          phone: {{ block.settings.phone | json }},
-          email: {{ block.settings.email | json }},
-          website: {{ block.settings.website | json }},
-          description: {{ block.settings.description | json }},
-          image: {% if block.settings.image %}{{ block.settings.image | image_url: width: 600 | json }}{% else %}null{% endif %},
-          btnLabel: {{ block.settings.button_label | json }},
-          btnUrl: {{ block.settings.button_url | json }},
-          color: "{{ block.settings.marker_color | default: '#000000' }}",
-          size: {{ block.settings.marker_size | default: 34 }}
-        }{% unless forloop.last %},{% endunless %}
-      {%- endfor -%}
-    ].filter(l => l.lat !== 0 || l.lng !== 0);
-
-    // Safe fallbacks in case Theme Editor hasn't saved the new settings yet
-    const waterColor = '{{ section.settings.water_color }}' || '#e0f2fe';
-    const landColor = '{{ section.settings.land_color }}' || '#ffffff';
-    const borderColor = '{{ section.settings.map_border_color }}' || '#bae6fd';
-    const atmosColor = '{{ section.settings.atmosphere_color }}' || '#bae6fd';
-
-    // Initialize Globe
-    const globe = Globe()(container)
-      .backgroundColor('rgba(0,0,0,0)')
-      .showGlobe(true)
-      .showAtmosphere(true)
-      .globeColor(waterColor)
-      .atmosphereColor(atmosColor)
-      .atmosphereAltitude(0.15)
-      .width(container.clientWidth)
-      .height(container.clientHeight);
-
-    // Apply bright shading to the globe to prevent any black shadows
-    const material = globe.globeMaterial();
-    material.color = new THREE.Color(waterColor); 
-    material.emissive = new THREE.Color(waterColor); 
-    material.emissiveIntensity = 0.5;
-
-    // Ensure scene is brightly lit unconditionally
-    setTimeout(() => {
-      if (globe.scene) {
-        const scene = globe.scene();
-        scene.add(new THREE.AmbientLight(0xffffff, 2.0)); // Strong white ambient light
+        this.init();
       }
-    }, 100);
 
-    // Fetch GeoJSON and render proper map polygons (no longer dotted)
-    fetch('https://unpkg.com/world-atlas/countries-110m.json')
-      .then(res => res.json())
-      .then(world => {
-        const countries = topojson.feature(world, world.objects.countries).features;
-        
-        globe.polygonsData(countries)
-          .polygonCapColor(() => landColor)
-          .polygonSideColor(() => 'rgba(255, 255, 255, 0.4)')
-          .polygonStrokeColor(() => borderColor)
-          .polygonAltitude(0.01);
-      });
+      async init() {
+        if (this.isInitialized) return;
 
-    // Add HTML Markers
-    globe.htmlElementsData(locations)
-      .htmlElement(d => {
-        const el = document.createElement('div');
-        // Center bottom tip on coordinate
-        el.style.transform = 'translate(-50%, -100%)';
-        el.style.pointerEvents = 'none';
-        
-        const svgWrapper = document.createElement('div');
-        svgWrapper.innerHTML = `
-          <svg width="${d.size}" height="${d.size * 1.3}" viewBox="0 0 24 34" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 0C5.373 0 0 5.373 0 12c0 7.857 11.233 21.285 11.583 21.71a.5.5 0 00.834 0C12.767 33.285 24 19.857 24 12c0-6.627-5.373-12-12-12zm0 17.5a5.5 5.5 0 110-11 5.5 5.5 0 010 11z" fill="${d.color}"/>
-          </svg>
-        `;
-        svgWrapper.style.pointerEvents = 'auto';
-        svgWrapper.style.cursor = 'pointer';
-        svgWrapper.style.transition = 'transform 0.2s';
-        
-        svgWrapper.onmouseenter = () => {
-          svgWrapper.style.transform = 'scale(1.2) translateY(-5px)';
+        try {
+          await this.loadScripts();
+          this.createScene();
+          this.createGlobe();
+          this.addMarkers();
+          this.setupInteraction();
+          this.animate();
+          this.isInitialized = true;
+        } catch (error) {
+          console.error('MapLocatorV2 initialization error:', error);
+        }
+      }
+
+      loadScripts() {
+        return new Promise((resolve, reject) => {
+          const requiredScripts = [
+            { name: 'three', url: 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js', global: 'THREE' },
+            { name: 'globe', url: 'https://unpkg.com/globe.gl@2.30.0/dist/globe.gl.min.js', global: 'Globe' }
+          ];
+
+          let loaded = 0;
+          let errors = [];
+
+          requiredScripts.forEach(script => {
+            if (window[script.global]) {
+              loaded++;
+              if (loaded === requiredScripts.length) resolve();
+              return;
+            }
+
+            const s = document.createElement('script');
+            s.src = script.url;
+            s.async = true;
+            s.onload = () => {
+              loaded++;
+              if (loaded === requiredScripts.length) resolve();
+            };
+            s.onerror = () => {
+              errors.push(`Failed to load ${script.name}`);
+              if (errors.length >= requiredScripts.length) {
+                reject(new Error(errors.join(', ')));
+              }
+            };
+            document.head.appendChild(s);
+          });
+        });
+      }
+
+      createScene() {
+        const canvas = document.getElementById(this.canvasId);
+        if (!canvas) {
+          throw new Error('Canvas element not found');
+        }
+
+        const width = canvas.parentElement.clientWidth;
+        const height = canvas.parentElement.clientHeight;
+
+        this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(0xffffff);
+        this.scene.background.alpha = 0;
+
+        this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 10000);
+        this.camera.position.z = 2.5;
+
+        this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        this.renderer.setSize(width, height);
+        this.renderer.setPixelRatio(window.devicePixelRatio || 1);
+        this.renderer.setClearColor(0xffffff, 0);
+
+        window.addEventListener('resize', () => this.onWindowResize());
+      }
+
+      createGlobe() {
+        this.globe = new Globe(this.scene, {
+          waitForGlobeReady: true,
+          animateIn: true
+        });
+
+        // Create custom globe texture with white oceans and light blue countries
+        const canvas = document.createElement('canvas');
+        canvas.width = 2048;
+        canvas.height = 1024;
+        const ctx = canvas.getContext('2d');
+
+        // Fill with white (oceans)
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Add light blue countries - simple pattern
+        ctx.fillStyle = '#e8f4f8';
+        for (let i = 0; i < canvas.width; i += 256) {
+          for (let j = 0; j < canvas.height; j += 256) {
+            if ((i / 256 + j / 256) % 2 === 0) {
+              ctx.fillRect(i, j, 256, 256);
+            }
+          }
+        }
+
+        const texture = new THREE.CanvasTexture(canvas);
+        this.globe.globeMaterial().map = texture;
+        this.globe.globeMaterial().color.set(0xffffff);
+
+        // Add atmosphere glow
+        this.globe.atmosphereColor(this.config.atmosphereColor || '#b3d9ff');
+        this.globe.atmosphereAltitude(0.15);
+
+        // Set rotation
+        this.globe.rotation.x = -0.3;
+        this.globe.rotation.y = 0.5;
+      }
+
+      addMarkers() {
+        const markersData = this.config.markers || [];
+
+        markersData.forEach((marker, index) => {
+          const geometry = new THREE.SphereGeometry(this.config.markerSize || 0.15, 32, 32);
+          const material = new THREE.MeshStandardMaterial({
+            color: new THREE.Color(marker.color || this.config.markerColor || '#ff6b6b'),
+            emissive: new THREE.Color(marker.color || this.config.markerColor || '#ff6b6b'),
+            emissiveIntensity: 0.5
+          });
+
+          const markerMesh = new THREE.Mesh(geometry, material);
+          const coords = this.latLngToXyz(marker.latitude, marker.longitude);
+          markerMesh.position.copy(coords);
+          markerMesh.scale.set(1, 1, 1);
+
+          this.globe.scene().add(markerMesh);
+
+          this.markers.push({
+            mesh: markerMesh,
+            originalScale: 1,
+            data: marker,
+            index
+          });
+
+          // Add click event
+          markerMesh.userData = { markerId: index };
+        });
+      }
+
+      latLngToXyz(lat, lng) {
+        const radius = 1;
+        const phi = (90 - lat) * (Math.PI / 180);
+        const theta = (lng + 180) * (Math.PI / 180);
+
+        const x = -radius * Math.sin(phi) * Math.cos(theta);
+        const y = radius * Math.cos(phi);
+        const z = radius * Math.sin(phi) * Math.sin(theta);
+
+        return new THREE.Vector3(x, y, z);
+      }
+
+      setupInteraction() {
+        const canvas = this.renderer.domElement;
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+
+        if (this.enableDrag) {
+          canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            previousMousePosition = { x: e.clientX, y: e.clientY };
+          });
+
+          canvas.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+              const deltaX = e.clientX - previousMousePosition.x;
+              const deltaY = e.clientY - previousMousePosition.y;
+
+              this.globe.rotation.y += deltaX * 0.01;
+              this.globe.rotation.x += deltaY * 0.01;
+
+              previousMousePosition = { x: e.clientX, y: e.clientY };
+            }
+          });
+
+          canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+          });
+
+          canvas.addEventListener('mouseleave', () => {
+            isDragging = false;
+          });
+        }
+
+        // Marker hover and click
+        canvas.addEventListener('click', (e) => this.onCanvasClick(e));
+        canvas.addEventListener('mousemove', (e) => this.onCanvasMouseMove(e));
+      }
+
+      onCanvasClick(event) {
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        const rect = this.renderer.domElement.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, this.camera);
+
+        const markerMeshes = this.markers.map(m => m.mesh);
+        const intersects = raycaster.intersectObjects(markerMeshes);
+
+        if (intersects.length > 0) {
+          const clickedMarker = this.markers.find(m => m.mesh === intersects[0].object);
+          if (clickedMarker) {
+            this.rotateToMarker(clickedMarker);
+            this.showMarkerModal(clickedMarker);
+          }
+        }
+      }
+
+      onCanvasMouseMove(event) {
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        const rect = this.renderer.domElement.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, this.camera);
+
+        const markerMeshes = this.markers.map(m => m.mesh);
+        const intersects = raycaster.intersectObjects(markerMeshes);
+
+        this.markers.forEach(marker => {
+          if (intersects.find(i => i.object === marker.mesh)) {
+            marker.mesh.scale.set(1.3, 1.3, 1.3);
+            this.renderer.domElement.style.cursor = 'pointer';
+          } else {
+            marker.mesh.scale.set(marker.originalScale, marker.originalScale, marker.originalScale);
+            this.renderer.domElement.style.cursor = 'default';
+          }
+        });
+      }
+
+      rotateToMarker(marker) {
+        const targetPosition = marker.mesh.position;
+        const duration = 1000; // 1 second
+        const startTime = Date.now();
+        const startRotation = {
+          x: this.globe.rotation.x,
+          y: this.globe.rotation.y
         };
-        svgWrapper.onmouseleave = () => {
-          svgWrapper.style.transform = 'scale(1) translateY(0)';
-        };
-        
-        // On Click
-        svgWrapper.onclick = () => {
-          // Zoom into point
-          globe.pointOfView({ lat: d.lat, lng: d.lng, altitude: 0.8 }, 1000);
-          showLocationDetails(d);
-        };
-        
-        el.appendChild(svgWrapper);
-        return el;
-      });
 
-    // Controls setup
-    globe.controls().enableZoom = {{ section.settings.enable_zoom }};
-    globe.controls().autoRotate = {{ section.settings.auto_rotate }};
-    globe.controls().autoRotateSpeed = 0.5;
-    
-    // Restrict zoom distances to prevent the camera from clipping/cutting into the globe
-    globe.controls().minDistance = 140; 
-    globe.controls().maxDistance = 600;
+        const targetRotation = this.getRotationToFacePoint(targetPosition);
+        const initialAutoRotate = this.enableAutoRotate;
+        this.enableAutoRotate = false;
 
-    // Focus on first marker if available
-    if (locations.length > 0) {
-      setTimeout(() => {
-        globe.pointOfView({ lat: locations[0].lat, lng: locations[0].lng, altitude: 2 }, 1500);
-      }, 500);
+        const animate = () => {
+          const elapsed = Date.now() - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const easeProgress = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
+
+          this.globe.rotation.x = startRotation.x + (targetRotation.x - startRotation.x) * easeProgress;
+          this.globe.rotation.y = startRotation.y + (targetRotation.y - startRotation.y) * easeProgress;
+
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          } else {
+            this.enableAutoRotate = initialAutoRotate;
+          }
+        };
+
+        animate();
+      }
+
+      getRotationToFacePoint(point) {
+        const target = new THREE.Vector3();
+        target.copy(point).normalize();
+
+        const rotation = {
+          x: Math.asin(-target.y),
+          y: Math.atan2(-target.x, -target.z)
+        };
+
+        return rotation;
+      }
+
+      showMarkerModal(marker) {
+        const modal = document.getElementById('map-locator-v2-modal');
+        const modalBody = document.getElementById('map-locator-v2-modal-body');
+        const data = marker.data;
+
+        let html = '';
+
+        if (data.image) {
+          html += `<img src="${data.image}" alt="${data.name}" class="map-locator-v2-modal-image">`;
+        }
+
+        html += `<div class="map-locator-v2-modal-name">${data.name}</div>`;
+        html += `<div class="map-locator-v2-modal-meta"><span>${data.city}</span> • <span>${data.country}</span></div>`;
+
+        if (data.description) {
+          html += `<div class="map-locator-v2-modal-description">${data.description}</div>`;
+        }
+
+        html += '<div class="map-locator-v2-modal-info">';
+
+        if (data.address) {
+          html += `<div class="map-locator-v2-modal-info-row">
+            <div class="map-locator-v2-modal-info-label">Address</div>
+            <div class="map-locator-v2-modal-info-value">${data.address}</div>
+          </div>`;
+        }
+
+        if (data.phone) {
+          html += `<div class="map-locator-v2-modal-info-row">
+            <div class="map-locator-v2-modal-info-label">Phone</div>
+            <div class="map-locator-v2-modal-info-value"><a href="tel:${data.phone}">${data.phone}</a></div>
+          </div>`;
+        }
+
+        if (data.email) {
+          html += `<div class="map-locator-v2-modal-info-row">
+            <div class="map-locator-v2-modal-info-label">Email</div>
+            <div class="map-locator-v2-modal-info-value"><a href="mailto:${data.email}">${data.email}</a></div>
+          </div>`;
+        }
+
+        if (data.website) {
+          html += `<div class="map-locator-v2-modal-info-row">
+            <div class="map-locator-v2-modal-info-label">Website</div>
+            <div class="map-locator-v2-modal-info-value"><a href="${data.website}" target="_blank">Visit</a></div>
+          </div>`;
+        }
+
+        html += '</div>';
+
+        if (data.button_label && data.button_url) {
+          html += `<a href="${data.button_url}" class="map-locator-v2-modal-button">${data.button_label}</a>`;
+        }
+
+        modalBody.innerHTML = html;
+        modal.classList.add('active');
+      }
+
+      hideModal() {
+        const modal = document.getElementById('map-locator-v2-modal');
+        modal.classList.remove('active');
+      }
+
+      animate() {
+        this.animationFrameId = requestAnimationFrame(() => this.animate());
+
+        if (this.enableAutoRotate) {
+          this.globe.rotation.y += this.autoRotateSpeed * 0.001;
+        }
+
+        this.renderer.render(this.scene, this.camera);
+      }
+
+      onWindowResize() {
+        if (!this.renderer) return;
+
+        const width = this.container.clientWidth;
+        const height = this.container.clientHeight;
+
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(width, height);
+      }
+
+      destroy() {
+        if (this.animationFrameId) {
+          cancelAnimationFrame(this.animationFrameId);
+        }
+
+        if (this.renderer) {
+          this.renderer.dispose();
+          this.renderer.domElement.remove();
+        }
+
+        if (this.scene) {
+          this.scene.clear();
+        }
+
+        this.markers = [];
+        this.isInitialized = false;
+      }
     }
 
-    // Handle Window Resize
-    window.addEventListener('resize', () => {
-      globe.width(container.clientWidth);
-      globe.height(container.clientHeight);
+    // Initialize on page load
+    function initializeMapLocator() {
+      const canvas = document.getElementById('map-locator-v2-canvas');
+      if (!canvas) return;
+
+      const globeWrapper = canvas.parentElement;
+
+      // Gather marker data from blocks
+      const markers = [];
+      const statBlocks = document.querySelectorAll('[data-map-locator-marker]');
+
+      statBlocks.forEach(block => {
+        markers.push({
+          name: block.dataset.storeName || '',
+          latitude: parseFloat(block.dataset.latitude) || 0,
+          longitude: parseFloat(block.dataset.longitude) || 0,
+          country: block.dataset.country || '',
+          city: block.dataset.city || '',
+          address: block.dataset.address || '',
+          phone: block.dataset.phone || '',
+          email: block.dataset.email || '',
+          website: block.dataset.website || '',
+          image: block.dataset.image || '',
+          description: block.dataset.description || '',
+          button_label: block.dataset.buttonLabel || '',
+          button_url: block.dataset.buttonUrl || '',
+          color: block.dataset.markerColor || ''
+        });
+      });
+
+      const config = {
+        markers: markers,
+        autoRotate: {{ section.settings.auto_rotate | default: true }},
+        rotationSpeed: {{ section.settings.rotation_speed | default: 0.5 }},
+        enableDrag: {{ section.settings.enable_drag | default: true }},
+        markerColor: '{{ section.settings.marker_default_color }}',
+        markerSize: 0.15,
+        atmosphereColor: '{{ section.settings.atmosphere_color }}'
+      };
+
+      window.mapLocatorInstance = new MapLocatorV2(globeWrapper, 'map-locator-v2-canvas', config);
+    }
+
+    // Modal close handlers
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeMapLocator();
+
+      const modal = document.getElementById('map-locator-v2-modal');
+      const closeBtn = document.getElementById('map-locator-v2-modal-close');
+
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+          if (window.mapLocatorInstance) {
+            window.mapLocatorInstance.hideModal();
+          }
+        });
+      }
+
+      if (modal) {
+        modal.addEventListener('click', function(event) {
+          if (event.target === modal) {
+            if (window.mapLocatorInstance) {
+              window.mapLocatorInstance.hideModal();
+            }
+          }
+        });
+      }
     });
-    
-    // UI Logic to show details on left panel
-    function showLocationDetails(loc) {
-      const statsDiv = document.getElementById(`locator-stats-{{ section.id }}`);
-      const detailsDiv = document.getElementById(`locator-details-{{ section.id }}`);
-      
-      if (statsDiv) statsDiv.style.display = 'none';
-      
-      let html = `
-        <button class="map-locator-details-close" onclick="closeLocationDetails_{{ section.id | replace: '-', '_' }}()" title="Back to overview">&times;</button>
-      `;
-      
-      if (loc.image) {
-        html += `<img src="${loc.image}" alt="${loc.storeName}" class="map-loc-image" loading="lazy">`;
-      }
-      
-      html += `<h4 class="map-loc-title">${loc.storeName}</h4>`;
-      
-      if (loc.address || loc.city || loc.country) {
-        let addr = loc.address ? loc.address.replace(/\n/g, '<br>') : '';
-        if (loc.city && loc.country) {
-          addr += (addr ? '<br>' : '') + `${loc.city}, ${loc.country}`;
-        }
-        html += `<div class="map-loc-address">${addr}</div>`;
-      }
-      
-      if (loc.phone || loc.email) {
-        html += `<div class="map-loc-contact">`;
-        if (loc.phone) {
-          html += `<div class="map-loc-contact-item">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-            <a href="tel:${loc.phone}" style="color:inherit;text-decoration:none;">${loc.phone}</a>
-          </div>`;
-        }
-        if (loc.email) {
-          html += `<div class="map-loc-contact-item">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-            <a href="mailto:${loc.email}" style="color:inherit;text-decoration:none;">${loc.email}</a>
-          </div>`;
-        }
-        html += `</div>`;
-      }
-      
-      if (loc.description) {
-        html += `<div class="map-loc-desc">${loc.description}</div>`;
-      }
-      
-      if ((loc.btnLabel && loc.btnUrl) || loc.website) {
-        if (loc.btnLabel && loc.btnUrl) {
-          html += `<a href="${loc.btnUrl}" class="map-loc-btn">${loc.btnLabel}</a>`;
-        } else if (loc.website) {
-          html += `<a href="${loc.website}" target="_blank" class="map-loc-btn">Visit Website</a>`;
-        }
-      }
-      
-      detailsDiv.innerHTML = html;
-      detailsDiv.style.display = 'block';
-    }
 
-    // Global function to close details
-    window['closeLocationDetails_{{ section.id | replace: "-", "_" }}'] = function() {
-      const statsDiv = document.getElementById(`locator-stats-{{ section.id }}`);
-      const detailsDiv = document.getElementById(`locator-details-{{ section.id }}`);
-      
-      detailsDiv.style.display = 'none';
-      {% if section.settings.show_stats %}
-      if (statsDiv) statsDiv.style.display = 'flex';
-      {% endif %}
-      
-      // Zoom out slightly to see more of the globe
-      globe.pointOfView({ altitude: 2 }, 1000);
-    };
-  }
+    // Handle Shopify theme editor reloads
+    document.addEventListener('shopify:section:load', function() {
+      if (window.mapLocatorInstance) {
+        window.mapLocatorInstance.destroy();
+        window.mapLocatorInstance = null;
+      }
+      initializeMapLocator();
+    });
+
+    document.addEventListener('shopify:section:unload', function() {
+      if (window.mapLocatorInstance) {
+        window.mapLocatorInstance.destroy();
+        window.mapLocatorInstance = null;
+      }
+    });
+  })();
 </script>
 
 {% schema %}
 {
-  "name": "3D Map Locator",
+  "name": "Map Locator V2",
   "settings": [
     {
-      "type": "header",
-      "content": "Layout Settings"
-    },
-    {
-      "type": "checkbox",
-      "id": "full_screen_section",
-      "label": "Make section full screen height",
-      "default": true
-    },
-    {
-      "type": "header",
-      "content": "Content Settings"
-    },
-    {
       "type": "text",
-      "id": "title",
-      "label": "Heading",
-      "default": "Good afternoon!\nLet’s continue growing your business."
-    },
-    {
-      "type": "text",
-      "id": "subtitle",
-      "label": "Subheading",
+      "id": "small_heading",
+      "label": "Small Heading",
       "default": "Find a Store Near You"
+    },
+    {
+      "type": "text",
+      "id": "main_heading",
+      "label": "Main Heading",
+      "default": "Good afternoon! Let's continue growing your business."
     },
     {
       "type": "richtext",
       "id": "description",
       "label": "Description",
-      "default": "<p>Discover our global network of stores and partners. Select a pin to view details.</p>"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_stats",
-      "label": "Show quick stats when no location is selected",
-      "default": true
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "Text Color",
-      "default": "#111111"
-    },
-    {
-      "type": "header",
-      "content": "Globe Aesthetics"
-    },
-    {
-      "type": "range",
-      "id": "globe_size_desktop",
-      "min": 400,
-      "max": 1400,
-      "step": 20,
-      "unit": "px",
-      "label": "Globe Max Size (Desktop)",
-      "default": 1000
-    },
-    {
-      "type": "range",
-      "id": "globe_size_tablet",
-      "min": 300,
-      "max": 800,
-      "step": 10,
-      "unit": "px",
-      "label": "Globe Max Size (Tablet)",
-      "default": 600
-    },
-    {
-      "type": "range",
-      "id": "globe_size_mobile",
-      "min": 250,
-      "max": 500,
-      "step": 10,
-      "unit": "px",
-      "label": "Globe Max Size (Mobile)",
-      "default": 350
-    },
-    {
-      "type": "color",
-      "id": "water_color",
-      "label": "Water Color",
-      "default": "#e0f2fe",
-      "info": "Base color of the globe."
-    },
-    {
-      "type": "color",
-      "id": "land_color",
-      "label": "Land Color",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "map_border_color",
-      "label": "Country Border Color",
-      "default": "#bae6fd"
-    },
-    {
-      "type": "color",
-      "id": "atmosphere_color",
-      "label": "Atmosphere Glow Color",
-      "default": "#bae6fd"
-    },
-    {
-      "type": "header",
-      "content": "Globe Controls"
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_zoom",
-      "label": "Enable Scroll Wheel Zoom",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "auto_rotate",
-      "label": "Auto Rotate Globe",
-      "default": true
-    },
-    {
-      "type": "header",
-      "content": "Section Padding"
+      "default": "<p>Discover our global network of stores and partners.</p>"
     },
     {
       "type": "color",
       "id": "background_color",
       "label": "Background Color",
-      "default": "#fafafa"
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "globe_size_desktop",
+      "min": 300,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "label": "Globe Size Desktop",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "globe_size_tablet",
+      "min": 200,
+      "max": 600,
+      "step": 50,
+      "unit": "px",
+      "label": "Globe Size Tablet",
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "globe_size_mobile",
+      "min": 150,
+      "max": 400,
+      "step": 50,
+      "unit": "px",
+      "label": "Globe Size Mobile",
+      "default": 250
+    },
+    {
+      "type": "color",
+      "id": "atmosphere_color",
+      "label": "Atmosphere Color",
+      "default": "#b3d9ff"
+    },
+    {
+      "type": "color",
+      "id": "marker_default_color",
+      "label": "Marker Default Color",
+      "default": "#ff6b6b"
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_rotate",
+      "label": "Enable Auto Rotate",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "rotation_speed",
+      "min": 0.1,
+      "max": 2,
+      "step": 0.1,
+      "label": "Rotation Speed",
+      "default": 0.5
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_drag",
+      "label": "Enable Drag",
+      "default": true
     },
     {
       "type": "range",
       "id": "padding_top",
       "min": 0,
-      "max": 150,
-      "step": 5,
+      "max": 100,
+      "step": 10,
       "unit": "px",
       "label": "Padding Top",
-      "default": 60
+      "default": 40
     },
     {
       "type": "range",
       "id": "padding_bottom",
       "min": 0,
-      "max": 150,
-      "step": 5,
+      "max": 100,
+      "step": 10,
       "unit": "px",
       "label": "Padding Bottom",
-      "default": 60
+      "default": 40
     }
   ],
   "blocks": [
     {
-      "type": "location",
-      "name": "Location Marker",
+      "type": "store_location",
+      "name": "Store Location",
       "settings": [
         {
-          "type": "header",
-          "content": "Coordinates"
+          "type": "text",
+          "id": "store_name",
+          "label": "Store Name",
+          "default": "Store Name"
         },
         {
           "type": "text",
           "id": "latitude",
           "label": "Latitude",
-          "info": "e.g., 40.7128"
+          "default": "40.7128"
         },
         {
           "type": "text",
           "id": "longitude",
           "label": "Longitude",
-          "info": "e.g., -74.0060"
-        },
-        {
-          "type": "header",
-          "content": "Store Details"
-        },
-        {
-          "type": "text",
-          "id": "store_name",
-          "label": "Store Name",
-          "default": "Flagship Store"
-        },
-        {
-          "type": "image_picker",
-          "id": "image",
-          "label": "Store Image"
+          "default": "-74.0060"
         },
         {
           "type": "text",
           "id": "country",
           "label": "Country",
-          "default": "United States"
+          "default": "USA"
         },
         {
           "type": "text",
@@ -738,104 +960,145 @@ New globe
           "default": "New York"
         },
         {
-          "type": "textarea",
+          "type": "text",
           "id": "address",
-          "label": "Street Address",
-          "default": "123 Commerce St\nNew York, NY 10001"
+          "label": "Address",
+          "default": "123 Main Street"
         },
         {
           "type": "text",
           "id": "phone",
-          "label": "Phone Number"
+          "label": "Phone",
+          "default": "+1 (555) 123-4567"
         },
         {
           "type": "text",
           "id": "email",
-          "label": "Email Address"
+          "label": "Email",
+          "default": "store@example.com"
         },
         {
-          "type": "url",
+          "type": "text",
           "id": "website",
-          "label": "Website URL"
+          "label": "Website",
+          "default": "https://example.com"
         },
         {
-          "type": "textarea",
+          "type": "image_picker",
+          "id": "image",
+          "label": "Store Image"
+        },
+        {
+          "type": "richtext",
           "id": "description",
-          "label": "Short Description"
-        },
-        {
-          "type": "header",
-          "content": "Action Button"
+          "label": "Description",
+          "default": "<p>Visit our store for a premium shopping experience.</p>"
         },
         {
           "type": "text",
           "id": "button_label",
-          "label": "Custom Button Label",
-          "default": "Get Directions"
+          "label": "Button Label",
+          "default": "Visit Store"
         },
         {
           "type": "url",
           "id": "button_url",
-          "label": "Custom Button URL"
-        },
-        {
-          "type": "header",
-          "content": "Marker Aesthetics"
+          "label": "Button URL"
         },
         {
           "type": "color",
           "id": "marker_color",
           "label": "Marker Color",
-          "default": "#111111"
+          "default": "#ff6b6b"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "name": "Statistic",
+      "settings": [
+        {
+          "type": "text",
+          "id": "stat_number",
+          "label": "Number",
+          "default": "150+"
         },
         {
-          "type": "range",
-          "id": "marker_size",
-          "min": 15,
-          "max": 80,
-          "step": 1,
-          "unit": "px",
-          "label": "Marker Size",
-          "default": 34
+          "type": "text",
+          "id": "stat_label",
+          "label": "Label",
+          "default": "Total Locations"
         }
       ]
     }
   ],
   "presets": [
     {
-      "name": "3D Map Locator",
+      "name": "Map Locator V2",
       "blocks": [
         {
-          "type": "location",
+          "type": "stat",
           "settings": {
-            "store_name": "New York Flagship",
-            "country": "United States",
-            "city": "New York",
+            "stat_number": "150+",
+            "stat_label": "Total Locations"
+          }
+        },
+        {
+          "type": "stat",
+          "settings": {
+            "stat_number": "45",
+            "stat_label": "Global Presence"
+          }
+        },
+        {
+          "type": "store_location",
+          "settings": {
+            "store_name": "New York Store",
             "latitude": "40.7128",
             "longitude": "-74.0060",
-            "marker_color": "#800080"
+            "country": "USA",
+            "city": "New York",
+            "address": "123 Fifth Avenue, New York, NY 10003",
+            "phone": "+1 (212) 555-0123",
+            "email": "nyc@example.com",
+            "website": "https://example.com/nyc",
+            "description": "<p>Our flagship store in the heart of Manhattan.</p>",
+            "button_label": "Visit Store",
+            "button_url": "https://example.com"
           }
         },
         {
-          "type": "location",
+          "type": "store_location",
           "settings": {
             "store_name": "London Store",
-            "country": "United Kingdom",
-            "city": "London",
             "latitude": "51.5074",
             "longitude": "-0.1278",
-            "marker_color": "#000000"
+            "country": "UK",
+            "city": "London",
+            "address": "456 Oxford Street, London, UK",
+            "phone": "+44 (20) 7123 4567",
+            "email": "london@example.com",
+            "website": "https://example.com/london",
+            "description": "<p>Experience our premium collection in historic London.</p>",
+            "button_label": "Visit Store",
+            "button_url": "https://example.com"
           }
         },
         {
-          "type": "location",
+          "type": "store_location",
           "settings": {
-            "store_name": "Tokyo Branch",
-            "country": "Japan",
-            "city": "Tokyo",
+            "store_name": "Tokyo Store",
             "latitude": "35.6762",
             "longitude": "139.6503",
-            "marker_color": "#33ff66"
+            "country": "Japan",
+            "city": "Tokyo",
+            "address": "789 Shibuya, Tokyo, Japan",
+            "phone": "+81 (3) 1234 5678",
+            "email": "tokyo@example.com",
+            "website": "https://example.com/tokyo",
+            "description": "<p>Discover modern design in Japan's vibrant capital.</p>",
+            "button_label": "Visit Store",
+            "button_url": "https://example.com"
           }
         }
       ]

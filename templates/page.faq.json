@@ -51,6 +51,222 @@
         "padding-block-end": 20
       }
     },
+    "map_locator_wJFJYX": {
+      "type": "map-locator",
+      "blocks": {
+        "stat_7RchA8": {
+          "type": "stat",
+          "settings": {
+            "stat_number": "150+",
+            "stat_label": "Total Locations"
+          }
+        },
+        "store_location_hVcgd3": {
+          "type": "store_location",
+          "settings": {
+            "store_name": "glass store",
+            "latitude": "40.7128",
+            "longitude": "-74.0060",
+            "country": "United States",
+            "city": "New York",
+            "address": "123 Main Street",
+            "phone": "+1 (555) 123-4567",
+            "email": "store@example.com",
+            "website": "https://example.com",
+            "image": "shopify://shop_images/ivory-cream-gift-card.png",
+            "description": "<p>Visit our store for a premium shopping experience.</p>",
+            "button_label": "Visit Store",
+            "button_url": "",
+            "marker_color": "#ff6b6b"
+          }
+        }
+      },
+      "block_order": [
+        "stat_7RchA8",
+        "store_location_hVcgd3"
+      ],
+      "disabled": true,
+      "name": "new map locator",
+      "settings": {
+        "small_heading": "Find a Store Near You",
+        "main_heading": "Let's continue growing your business.",
+        "description": "<p>Discover our global network of stores and partners. Select a pin to view details.</p>",
+        "background_color": "#fff6f6",
+        "text_color": "#111111",
+        "globe_size_desktop": 500,
+        "globe_size_tablet": 400,
+        "globe_size_mobile": 250,
+        "atmosphere_color": "#b3d9ff",
+        "marker_default_color": "#ff6b6b",
+        "auto_rotate": true,
+        "rotation_speed": 2,
+        "enable_drag": true,
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "primal_testimonial_cwCnTK": {
+      "type": "primal-testimonial",
+      "blocks": {
+        "quote_dcjaTW": {
+          "type": "quote",
+          "settings": {
+            "rating": 5,
+            "verified_buyer": true,
+            "quote": "<p>The colour is absolutely stunning like amethyst with variations of the shade. The black outer ring draws focus into the eyes. Comfortable, beautiful, well-packaged.</p>",
+            "author": "Lindsay A.",
+            "product_name": "Succubus Purple",
+            "img": "shopify://shop_images/banner2.webp"
+          }
+        },
+        "quote_yPbqA3": {
+          "type": "quote",
+          "settings": {
+            "rating": 5,
+            "verified_buyer": true,
+            "quote": "<p>The colour is absolutely stunning like amethyst with variations of the shade. The black outer ring draws focus into the eyes. Comfortable, beautiful, well-packaged.</p>",
+            "author": "Lindsay A.",
+            "product_name": "Succubus Purple",
+            "img": "shopify://shop_images/blog-11.webp"
+          }
+        },
+        "quote_VPzU4B": {
+          "type": "quote",
+          "settings": {
+            "rating": 5,
+            "verified_buyer": true,
+            "quote": "<p>The colour is absolutely stunning like amethyst with variations of the shade. The black outer ring draws focus into the eyes. Comfortable, beautiful, well-packaged.</p>",
+            "author": "Lindsay A.",
+            "product_name": "Succubus Purple",
+            "img": "shopify://shop_images/254b8de8-56fb-4f9b-89ea-cf70f7fa34d6.jpg"
+          }
+        },
+        "quote_r8aUXr": {
+          "type": "quote",
+          "settings": {
+            "rating": 5,
+            "verified_buyer": true,
+            "quote": "<p>The colour is absolutely stunning like amethyst with variations of the shade. The black outer ring draws focus into the eyes. Comfortable, beautiful, well-packaged.</p>",
+            "author": "Lindsay A.",
+            "product_name": "Succubus Purple",
+            "img": "shopify://shop_images/Rectangle_3_copy_2_770281f8-773c-427b-bed7-fc1d96d0d328.webp"
+          }
+        },
+        "stat_B3bC8w": {
+          "type": "stat",
+          "settings": {
+            "icon_svg": "shopify://shop_images/f039931c-c536-4e31-853d-907d7b53aeac.png",
+            "value": "5000+",
+            "label": "Happy Customers"
+          }
+        },
+        "stat_pwwweN": {
+          "type": "stat",
+          "settings": {
+            "icon_svg": "shopify://shop_images/662ca78a-8a26-4d89-978b-82c517727707.png",
+            "value": "5000+",
+            "label": "Happy Customers"
+          }
+        },
+        "stat_a9GRQR": {
+          "type": "stat",
+          "settings": {
+            "icon_svg": "shopify://shop_images/2be52c86-de92-421e-8613-06cc36deb242.png",
+            "value": "5000+",
+            "label": "Happy Customers"
+          }
+        },
+        "stat_ThA3hH": {
+          "type": "stat",
+          "settings": {
+            "icon_svg": "shopify://shop_images/5d2a6972-31da-4e17-8f01-d518647dc16d.png",
+            "value": "5000+",
+            "label": "Happy Customers"
+          }
+        }
+      },
+      "block_order": [
+        "quote_dcjaTW",
+        "quote_yPbqA3",
+        "quote_VPzU4B",
+        "quote_r8aUXr",
+        "stat_B3bC8w",
+        "stat_pwwweN",
+        "stat_a9GRQR",
+        "stat_ThA3hH"
+      ],
+      "disabled": true,
+      "name": "Primal Testimonials",
+      "settings": {
+        "bg_color": "",
+        "badge": "✦ TRUSTED BY THOUSANDS ✦",
+        "title": "Loved by 5000 + customers",
+        "subtitle": "See why cosplayers and fantasy lovers choose our lenses.",
+        "rating-stars": "★★★★★",
+        "rating_score": "4.9/5",
+        "rating_reviews": "2,000+ Reviews",
+        "verified": "Verified by Judge.me",
+        "judge_me": "shopify://shop_images/e595700d-98e4-4fc8-9c61-6d67bd47d7da_1.png",
+        "image_position": "left",
+        "padding_top": 36,
+        "padding_bottom": 36,
+        "button_label": "View All",
+        "link": "shopify://products/0-75-carat-round-brilliant-diamond-solitaire-ring"
+      }
+    },
+    "money_back_KjndPa": {
+      "type": "money-back",
+      "blocks": {
+        "icons_with_text_iFrwmy": {
+          "type": "icons_with_text",
+          "settings": {
+            "logo_below": "shopify://shop_images/7d38b306-fde7-4788-bbb2-31c6f908412d.png",
+            "below_heading": "<p>Easy Returns</p>",
+            "below_description": "<p>Hassle-free returns</p>"
+          }
+        },
+        "icons_with_text_VCnBTr": {
+          "type": "icons_with_text",
+          "settings": {
+            "logo_below": "shopify://shop_images/e595700d-98e4-4fc8-9c61-6d67bd47d7da.png",
+            "below_heading": "<p>Risk Free</p>",
+            "below_description": "<p>Try with complete peace of mind</p>"
+          }
+        },
+        "icons_with_text_djyzfy": {
+          "type": "icons_with_text",
+          "settings": {
+            "logo_below": "shopify://shop_images/8ea4fe3f-7254-40e0-b7f9-8fc87c351348.png",
+            "below_heading": "<p>Dedicated Support</p>",
+            "below_description": "<p>We're here to help you anytime</p>"
+          }
+        },
+        "icons_with_text_n847Ft": {
+          "type": "icons_with_text",
+          "settings": {
+            "logo_below": "shopify://shop_images/5fe0a44d-e460-4d7f-bf35-7f95c0af6030.png",
+            "below_heading": "<p>30 Days</p>",
+            "below_description": "<p>Love it or get your money back</p>"
+          }
+        }
+      },
+      "block_order": [
+        "icons_with_text_iFrwmy",
+        "icons_with_text_VCnBTr",
+        "icons_with_text_djyzfy",
+        "icons_with_text_n847Ft"
+      ],
+      "disabled": true,
+      "name": "Money Back Guarantee",
+      "settings": {
+        "logo_left": "shopify://shop_images/e293148f-a919-423d-a5bf-3aececa1a171.png",
+        "heading": "<p>30 DAYS MONEY BACK</p>",
+        "subheading": "<p>GUARANTEE</p>",
+        "description": "<p>We're confident you'll love your PRIMAL® contact lenses.<br/>But if for any reason you're not 100% satisfied,<br/>return them within <strong>30 days</strong> for a full refund – no questions asked!</p>",
+        "icon_img": "shopify://shop_images/e595700d-98e4-4fc8-9c61-6d67bd47d7da_1.png",
+        "icon_text": "<p>YOUR SATISFACTION IS OUR TOP PRIORITY.</p>"
+      }
+    },
     "custom_faq_jRETRU": {
       "type": "custom-faq",
       "blocks": {
@@ -187,6 +403,9 @@
   },
   "order": [
     "main",
+    "map_locator_wJFJYX",
+    "primal_testimonial_cwCnTK",
+    "money_back_KjndPa",
     "custom_faq_jRETRU",
     "custom_form_QVKqcH",
     "custom_pop_up_form_RJdfFR"

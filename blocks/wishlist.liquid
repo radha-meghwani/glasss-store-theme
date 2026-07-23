@@ -1,0 +1,160 @@
+<div class="wishlist-wrapper">
+  <button
+    type="button"
+    class="wishlist-btn"
+    data-product-id="{{ product.id }}"
+    data-product-handle="{{ product.handle }}"
+    data-product-url="{{ product.url }}"
+    data-product-title="{{ product.title | escape }}"
+    data-product-image="{{ product.featured_image | image_url: width: 400 }}"
+    data-product-price="{{ product.price | money | escape }}"
+    data-text-add="{{ block.settings.button_text | default: 'Add to Wishlist' | escape }}"
+    data-text-added="Added to Wishlist"
+    data-icon-add="{{ block.settings.wishlist_icon | default: '♡' | escape }}"
+    data-icon-added="♥"
+    aria-label="Add to Wishlist"
+  >
+    <span class="wishlist-icon">
+        {{ block.settings.wishlist_icon | default: '♡' }}
+    </span>
+
+    <span class="wishlist-text">
+        {{ block.settings.button_text | default: 'Add to Wishlist' }}
+    </span>
+  </button>
+</div>
+
+<style>
+.wishlist-wrapper{
+  width:100%;
+  margin-top:16px;
+}
+
+.wishlist-btn{
+  width:100%;
+  min-height:52px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+
+  background:#fff;
+  border:1px solid #d8d8d8;
+  border-radius:8px;
+
+  cursor:pointer;
+  transition:.25s ease;
+}
+
+.wishlist-btn:hover{
+  background:#f7f7f7;
+}
+
+.wishlist-icon{
+  font-size:26px;
+  transition:.25s;
+}
+
+.wishlist-btn.active .wishlist-icon{
+  color:#d62828;
+}
+
+.wishlist-text{
+  font-size:17px;
+  font-weight:600;
+}
+</style>
+
+<script>
+// Wishlist Global Functions
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  
+  // Cleanup legacy format (array of strings/ids)
+  const legacyData = localStorage.getItem('wishlist');
+  if (legacyData) {
+    try {
+      const parsed = JSON.parse(legacyData);
+      if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === 'string') {
+        localStorage.removeItem('wishlist');
+      }
+    } catch (e) {}
+  }
+
+  // Initial count update
+  window.Wishlist.updateCount();
+
+  const buttons = document.querySelectorAll('.wishlist-btn');
+  
+  buttons.forEach(button => {
+    // Only attach once
+    if (button.dataset.wishlistInitialized) return;
+    button.dataset.wishlistInitialized = 'true';
+
+    const productId = button.dataset.productId;
+    if (!productId) return; // if no product is available on this page
+    
+    function updateUI() {
+      if (window.Wishlist.has(productId)) {
+        button.classList.add('active');
+        const iconEl = button.querySelector('.wishlist-icon');
+        const textEl = button.querySelector('.wishlist-text');
+        if (iconEl) iconEl.innerHTML = button.dataset.iconAdded || '♥';
+        if (textEl) textEl.textContent = button.dataset.textAdded || 'Added to Wishlist';
+      } else {
+        button.classList.remove('active');
+        const iconEl = button.querySelector('.wishlist-icon');
+        const textEl = button.querySelector('.wishlist-text');
+        if (iconEl) iconEl.innerHTML = button.dataset.iconAdd || '♡';
+        if (textEl) textEl.textContent = button.dataset.textAdd || 'Add to Wishlist';
+      }
+    }
+
+    // Initial Load UI
+    updateUI();
+    
+    // Listen for custom event to update UI across multiple buttons if needed
+    document.addEventListener('wishlist:updated', updateUI);
+
+    button.addEventListener('click', function (e) {
+      e.preventDefault(); // prevent default form submission if wrapped in a form
+      const product = {
+        id: productId,
+        handle: button.dataset.productHandle || '',
+        url: button.dataset.productUrl || '',
+        title: button.dataset.productTitle || '',
+        image: button.dataset.productImage || '',
+        price: button.dataset.productPrice || ''
+      };
+      
+      window.Wishlist.toggle(product);
+      updateUI();
+    });
+  });
+});
+</script>
+
+{% schema %}
+{
+    "name": "wishlist",
+    "settings": [
+        {
+            "type": "text",
+            "id": "wishlist_icon",
+            "label": "wishlist icon"
+        },
+        {
+            "type": "text",
+            "id": "button_text",
+            "label": "Button Text"
+        }
+    ],
+    "presets": [
+        {
+            "name": "wishlist",
+            "category": "product"
+        }
+    ]
+}
+{% endschema %}

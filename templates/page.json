@@ -57,8 +57,21 @@
         "padding-block-end": 80
       }
     },
+    "wishlist_page_Cj8MCw": {
+      "type": "wishlist-page",
+      "name": "wishlist page",
+      "settings": {
+        "title": "My Wishlist",
+        "subtitle": "Save your favorite items here.",
+        "empty_title": "Your wishlist is empty.",
+        "empty_subtitle": "Explore our store and add some items you love!",
+        "continue_shopping_text": "Continue Shopping",
+        "continue_shopping_url": "https://glasss-store.myshopify.com/collections/all"
+      }
+    },
     "custom_section_9mbjiy": {
       "type": "custom-section",
+      "disabled": true,
       "name": "Complete the look",
       "settings": {
         "heading": "Complete the Look",
@@ -111,6 +124,7 @@
         "accordion_block_fMMQAg",
         "accordion_block_eDbHKG"
       ],
+      "disabled": true,
       "name": "custom-FAQ",
       "settings": {
         "faq_heading": "Frequently Asked Questions",
@@ -120,6 +134,7 @@
   },
   "order": [
     "main",
+    "wishlist_page_Cj8MCw",
     "custom_section_9mbjiy",
     "custom_faq_jj7hhY"
   ]

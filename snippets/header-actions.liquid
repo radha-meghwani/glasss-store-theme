@@ -77,6 +77,106 @@
     </dialog-component>
   {% endif %}
 
+  <a
+    href="/pages/wishlist"
+    class="header-actions__action action__wishlist"
+    aria-label="Wishlist"
+  >
+    <span class="header-actions__cart-icon" style="position:relative; display:flex; align-items:center;">
+      <span class="svg-wrapper" aria-hidden="true" style="font-size: 24px; line-height: 1; align-items:center; justify-content:center;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+      </span>
+      <div class="cart-bubble" style="display:flex;">
+        <div class="cart-bubble__background"></div>
+        <span class="cart-bubble__text header-wishlist__count" style="position:relative; z-index:1;">0</span>
+      </div>
+    </span>
+  </a>
+
+  <script>
+    if (!window.Wishlist) {
+      window.Wishlist = {
+        STORAGE_KEY: 'wishlist_v2',
+        
+        get: function() {
+          try {
+            const data = localStorage.getItem(this.STORAGE_KEY);
+            return data ? JSON.parse(data) : [];
+          } catch (e) {
+            return [];
+          }
+        },
+        
+        save: function(wishlist) {
+          localStorage.setItem(this.STORAGE_KEY, JSON.stringify(wishlist));
+          this.updateCount();
+          document.dispatchEvent(new CustomEvent('wishlist:updated', { detail: wishlist }));
+        },
+        
+        has: function(productId) {
+          if (!productId) return false;
+          const wishlist = this.get();
+          return wishlist.some(item => String(item.id) === String(productId));
+        },
+        
+        add: function(product) {
+          if (!product || !product.id) return;
+          const wishlist = this.get();
+          if (!this.has(product.id)) {
+            wishlist.push(product);
+            this.save(wishlist);
+          }
+        },
+        
+        remove: function(productId) {
+          if (!productId) return;
+          let wishlist = this.get();
+          wishlist = wishlist.filter(item => String(item.id) !== String(productId));
+          this.save(wishlist);
+        },
+        
+        toggle: function(product) {
+          if (this.has(product.id)) {
+            this.remove(product.id);
+            return false;
+          } else {
+            this.add(product);
+            return true;
+          }
+        },
+        
+        updateCount: function() {
+          const counts = document.querySelectorAll('.header-wishlist__count');
+          const wishlist = this.get();
+          counts.forEach(count => {
+            count.textContent = wishlist.length;
+            const bubble = count.closest('.cart-bubble');
+            if (bubble) {
+              bubble.style.display = wishlist.length > 0 ? 'flex' : 'none';
+            }
+          });
+        }
+      };
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      try {
+        const legacyData = localStorage.getItem('wishlist');
+        if (legacyData) {
+          const parsed = JSON.parse(legacyData);
+          if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === 'string') {
+            localStorage.removeItem('wishlist');
+          }
+        }
+        window.Wishlist.updateCount();
+      } catch(e) {}
+    });
+    
+    document.addEventListener('wishlist:updated', function() {
+      window.Wishlist.updateCount();
+    });
+  </script>
+
   {% if settings.cart_type == 'drawer' and template.name != 'cart' %}
     <script
       src="{{ 'cart-drawer.js' | asset_url }}"

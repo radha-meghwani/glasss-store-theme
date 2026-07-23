@@ -1,0 +1,172 @@
+{% schema %}
+{
+    "name": "360 product viewer",
+    "settings": [],
+    "presets": [
+        {
+            "name": "360 product viewer",
+            "category": "custom",
+        }
+    ]
+}
+{% endschema %}
+
+<section class="product-360" id="viewer-360">
+  {% assign frames = product.metafields.custom.viewer_360.value %}
+
+  {% if frames != blank %}
+    <div class="viewer-360-wrapper">
+      <div class="viewer-stage">
+        {% for image in frames %}
+          <img
+            src="{{ image | image_url: width: 1200 }}"
+            class="viewer-frame{% if forloop.first %} active{% endif %}"
+            loading="lazy"
+            alt="{{ product.title }}">
+        {% endfor %}
+      </div>
+
+      <div class="viewer-overlay">
+        <span>Drag to Rotate</span>
+      </div>
+
+      <button class="viewer-prev" type="button">&#10094;</button>
+      <button class="viewer-next" type="button">&#10095;</button>
+    </div>
+  {% else %}
+    <p>No 360° images found. Add images to product metafield:
+      <strong>custom.viewer_360</strong>
+    </p>
+  {% endif %}
+</section>
+
+<style>
+.product-360{
+  max-width:900px;
+  margin:auto;
+}
+.viewer-360-wrapper{
+  position:relative;
+  user-select:none;
+  overflow:hidden;
+  border-radius:12px;
+}
+.viewer-stage{
+  position:relative;
+  aspect-ratio:1/1;
+  background:#fff;
+  cursor:grab;
+  cursor: -webkit-grab;
+}
+.viewer-stage.dragging {
+    cursor: grabbing;
+    cursor: -webkit-grabbing;
+}
+.viewer-frame{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  opacity:0;
+  transition:opacity .15s;
+  pointer-events:none;
+}
+.viewer-frame.active{
+  opacity:1;
+}
+.viewer-overlay{
+  position:absolute;
+  left:50%;
+  bottom:15px;
+  transform:translateX(-50%);
+  background:rgba(0,0,0,.65);
+  color:#fff;
+  padding:8px 14px;
+  border-radius:30px;
+  font-size:13px;
+}
+.viewer-prev,
+.viewer-next{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:42px;
+  height:42px;
+  border:none;
+  border-radius:50%;
+  cursor:pointer;
+  background:#fff;
+  box-shadow:0 3px 12px rgba(0,0,0,.2);
+  font-size:20px;
+}
+.viewer-prev{left:10px;}
+.viewer-next{right:10px;}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+
+const viewer=document.querySelector("#viewer-360");
+if(!viewer) return;
+
+const frames=[...viewer.querySelectorAll(".viewer-frame")];
+
+let index=0;
+let startX=0;
+let dragging=false;
+
+function show(i){
+ frames.forEach(f=>f.classList.remove("active"));
+ frames[i].classList.add("active");
+}
+
+viewer.querySelector(".viewer-next")?.addEventListener("click",()=>{
+ index=(index+1)%frames.length;
+ show(index);
+});
+
+viewer.querySelector(".viewer-prev")?.addEventListener("click",()=>{
+ index=(index-1+frames.length)%frames.length;
+ show(index);
+});
+
+viewer.addEventListener("mousedown",(e)=>{
+ dragging=true;
+ startX=e.clientX;
+});
+
+window.addEventListener("mouseup",()=>dragging=false);
+
+viewer.addEventListener("mousemove",(e)=>{
+ if(!dragging) return;
+ if(Math.abs(e.clientX-startX)>20){
+   if(e.clientX>startX){
+      index=(index-1+frames.length)%frames.length;
+   }else{
+      index=(index+1)%frames.length;
+   }
+   show(index);
+   startX=e.clientX;
+ }
+});
+
+viewer.addEventListener("touchstart",(e)=>{
+ startX=e.touches[0].clientX;
+});
+
+viewer.addEventListener("touchmove",(e)=>{
+ const x=e.touches[0].clientX;
+ if(Math.abs(x-startX)>80){
+   if(x>startX){
+      index=(index-1+frames.length)%frames.length;
+   }else{
+      index=(index+1)%frames.length;
+   }
+   show(index);
+   startX=x;
+ }
+});
+
+});
+</script>

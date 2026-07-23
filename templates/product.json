@@ -141,6 +141,15 @@
               },
               "blocks": {}
             },
+            "wishlist_ErDhzU": {
+              "type": "wishlist",
+              "name": "wishlist",
+              "settings": {
+                "wishlist_icon": "♡",
+                "button_text": "Add to Wishlist"
+              },
+              "blocks": {}
+            },
             "buy_buttons_eYQEYi": {
               "type": "buy-buttons",
               "settings": {
@@ -781,6 +790,7 @@
             "reviews",
             "price_a7krng",
             "variant_picker_R3rGDr",
+            "wishlist_ErDhzU",
             "buy_buttons_eYQEYi",
             "product_description_LfDYCg",
             "group_X39hBc",
@@ -799,6 +809,11 @@
         "padding-block-start": 0,
         "padding-block-end": 32
       }
+    },
+    "product_360_viewer_pkU3mw": {
+      "type": "product-360-viewer",
+      "name": "360 product viewer",
+      "settings": {}
     },
     "product_list_zR9Cym": {
       "type": "product-list",
@@ -1040,6 +1055,7 @@
   },
   "order": [
     "main",
+    "product_360_viewer_pkU3mw",
     "product_list_zR9Cym"
   ]
 }
