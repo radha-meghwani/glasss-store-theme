@@ -207,9 +207,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const response = await fetch(uploadUrl, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
         body: formData
       });
       
