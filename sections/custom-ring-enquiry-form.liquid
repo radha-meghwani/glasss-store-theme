@@ -1,0 +1,295 @@
+{{ 'custom-ring-enquiry-form.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'custom-ring-enquiry-form.js' | asset_url }}" defer="defer"></script>
+
+<div class="custom-ring-enquiry-section">
+  <div class="page-width">
+    {%- if section.settings.title != blank -%}
+      <h2 class="enquiry-form-title">{{ section.settings.title | escape }}</h2>
+    {%- endif -%}
+
+    {%- form 'contact', id: 'ContactFormRingEnquiry', class: 'custom-ring-enquiry-form' -%}
+      {%- if form.posted_successfully? -%}
+        <div class="form-status form-status-list form__message" tabindex="-1" autofocus>
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 13 13">
+            <path d="M6.5 12.35C9.73087 12.35 12.35 9.73086 12.35 6.5C12.35 3.26913 9.73087 0.65 6.5 0.65C3.26913 0.65 0.65 3.26913 0.65 6.5C0.65 9.73086 3.26913 12.35 6.5 12.35Z" fill="#428445" stroke="white" stroke-width="0.7"/>
+            <path d="M5.53271 8.66357L9.25203 4.68197" stroke="white"/>
+            <path d="M4.10645 6.7688L6.13766 8.62553" stroke="white"/>
+          </svg>
+          {{ section.settings.success_message }}
+        </div>
+      {%- elsif form.errors -%}
+        <div class="form__message">
+          <h2 class="form-status caption-large text-body" role="alert" tabindex="-1" autofocus>
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 13 13">
+              <circle cx="6.5" cy="6.50049" r="5.5" stroke="white" stroke-width="2"/>
+              <circle cx="6.5" cy="6.5" r="5.5" fill="#EB001B" stroke="#EB001B" stroke-width="0.7"/>
+              <path d="M5.87413 3.52832L5.97439 7.57216H7.02713L7.12739 3.52832H5.87413ZM6.50076 9.66091C6.88091 9.66091 7.18169 9.37267 7.18169 9.00504C7.18169 8.63742 6.88091 8.34917 6.50076 8.34917C6.12061 8.34917 5.81982 8.63742 5.81982 9.00504C5.81982 9.37267 6.12061 9.66091 6.50076 9.66091Z" fill="white"/>
+              <path d="M5.87413 3.17832H5.51535L5.52424 3.537L5.6245 7.58083L5.63296 7.92216H5.97439H7.02713H7.36856L7.37702 7.58083L7.47728 3.537L7.48617 3.17832H7.12739H5.87413ZM6.50076 10.0109C7.06121 10.0109 7.5317 9.57872 7.5317 9.00504C7.5317 8.43137 7.06121 7.99918 6.50076 7.99918C5.94031 7.99918 5.46982 8.43137 5.46982 9.00504C5.46982 9.57872 5.94031 10.0109 6.50076 10.0109Z" fill="white" stroke="#EB001B" stroke-width="0.7">
+            </svg>
+            Please adjust the following:
+          </h2>
+        </div>
+        <ul class="form-status-list caption-large" role="list">
+          {%- for field in form.errors -%}
+            <li>
+              <a href="#ContactForm-{{ field }}" class="link">
+                {%- if field == 'form' -%}
+                  {{ form.errors.messages[field] }}
+                {%- else -%}
+                  {{ form.errors.translated_fields[field] | capitalize }}
+                  {{ form.errors.messages[field] }}
+                {%- endif -%}
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+
+      <input type="hidden" name="contact[Reference Images]" id="EnquiryFormHiddenImages" value="">
+
+      <div class="form-section">
+        <h3 class="form-section-title">CONTACT DETAILS</h3>
+        <div class="form-grid">
+          <div class="field-group">
+            <label for="EnquiryForm-Name">Full Name{% if section.settings.enable_required %} *{% endif %}</label>
+            <input class="field__input" autocomplete="name" type="text" id="EnquiryForm-Name" name="contact[Full Name]" value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}" placeholder="Full Name" {% if section.settings.enable_required %}required{% endif %}>
+          </div>
+          <div class="field-group">
+            <label for="EnquiryForm-Email">Email{% if section.settings.enable_required %} *{% endif %}</label>
+            <input autocomplete="email" type="email" id="EnquiryForm-Email" class="field__input" name="contact[email]" spellcheck="false" autocapitalize="off" value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}" placeholder="Email" {% if section.settings.enable_required %}required{% endif %}>
+          </div>
+          <div class="field-group">
+            <label for="EnquiryForm-Phone">Phone Number</label>
+            <input type="tel" id="EnquiryForm-Phone" class="field__input" autocomplete="tel" name="contact[Phone]" pattern="[0-9\-]*" value="{% if form.phone %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}" placeholder="Phone Number">
+          </div>
+          <div class="field-group">
+            <label for="EnquiryForm-DesignLink">Link to design you like (add multiple links separated by comma)</label>
+            <input type="text" id="EnquiryForm-DesignLink" class="field__input" name="contact[Design Links]" placeholder="Link to design you like">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <label class="upload-label">Upload reference images (Maximum file size is {{ section.settings.max_upload_size }}MB, Upto {{ section.settings.max_upload_count }} files allowed)</label>
+        <div class="file-upload-area" id="FileUploadArea" data-max-files="{{ section.settings.max_upload_count }}" data-max-size="{{ section.settings.max_upload_size }}">
+          <div class="upload-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          </div>
+          <div class="upload-text"><strong>Browse Files</strong><br>Drag and drop files here</div>
+          <input type="file" id="EnquiryForm-FileInput" multiple accept=".jpg,.jpeg,.png,.webp,.pdf" class="visually-hidden">
+        </div>
+        <div id="FileUploadPreview" class="file-upload-preview"></div>
+        <div id="FileUploadError" class="file-upload-error"></div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="form-section-title">DIAMOND DETAILS</h3>
+        <div class="form-grid">
+          <div class="field-group select-group">
+            <label for="EnquiryForm-DiamondType">Type of Diamond{% if section.settings.enable_required %} *{% endif %}</label>
+            <div class="select">
+              <select id="EnquiryForm-DiamondType" name="contact[Type of Diamond]" class="select__select" {% if section.settings.enable_required %}required{% endif %}>
+                <option value="" disabled selected>Please Select</option>
+                {%- assign types = section.settings.diamond_types | split: ',' -%}
+                {%- for type in types -%}
+                  <option value="{{ type | strip }}">{{ type | strip }}</option>
+                {%- endfor -%}
+              </select>
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 10 6">
+                <use href="#icon-caret" />
+              </svg>
+            </div>
+          </div>
+          <div class="field-group select-group">
+            <label for="EnquiryForm-DiamondShape">Diamond Shape{% if section.settings.enable_required %} *{% endif %}</label>
+             <div class="select">
+              <select id="EnquiryForm-DiamondShape" name="contact[Diamond Shape]" class="select__select" {% if section.settings.enable_required %}required{% endif %}>
+                <option value="" disabled selected>Diamond Shape</option>
+                {%- assign shapes = section.settings.diamond_shapes | split: ',' -%}
+                {%- for shape in shapes -%}
+                  <option value="{{ shape | strip }}">{{ shape | strip }}</option>
+                {%- endfor -%}
+              </select>
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 10 6">
+                <use href="#icon-caret" />
+              </svg>
+            </div>
+          </div>
+          
+          <div class="field-group select-group">
+            <label for="EnquiryForm-DiamondColor">Diamond Color{% if section.settings.enable_required %} *{% endif %}</label>
+             <div class="select">
+              <select id="EnquiryForm-DiamondColor" name="contact[Diamond Color]" class="select__select" {% if section.settings.enable_required %}required{% endif %}>
+                <option value="" disabled selected>Please Select</option>
+                <option value="White Diamonds">White Diamonds</option>
+                <option value="Fancy Color Diamonds">Fancy Color Diamonds</option>
+              </select>
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 10 6">
+                <use href="#icon-caret" />
+              </svg>
+            </div>
+          </div>
+          <div class="field-group select-group">
+            <label for="EnquiryForm-DiamondClarity">Diamond Clarity{% if section.settings.enable_required %} *{% endif %}</label>
+             <div class="select">
+              <select id="EnquiryForm-DiamondClarity" name="contact[Diamond Clarity]" class="select__select" {% if section.settings.enable_required %}required{% endif %}>
+                <option value="" disabled selected>Please Select Color First</option>
+              </select>
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 10 6">
+                <use href="#icon-caret" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="form-section-title">SETTING DETAILS</h3>
+        <div class="form-grid">
+          <div class="field-group select-group">
+            <label for="EnquiryForm-MetalType">Metal Type{% if section.settings.enable_required %} *{% endif %}</label>
+             <div class="select">
+              <select id="EnquiryForm-MetalType" name="contact[Metal Type]" class="select__select" {% if section.settings.enable_required %}required{% endif %}>
+                <option value="" disabled selected>Please Select</option>
+                {%- assign metals = section.settings.metal_types | split: ',' -%}
+                {%- for metal in metals -%}
+                  <option value="{{ metal | strip }}">{{ metal | strip }}</option>
+                {%- endfor -%}
+              </select>
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 10 6">
+                <use href="#icon-caret" />
+              </svg>
+            </div>
+          </div>
+          <div class="field-group">
+            <label for="EnquiryForm-RingSize">Ring Size</label>
+            <input type="text" id="EnquiryForm-RingSize" class="field__input" name="contact[Ring Size]" placeholder="Ring Size">
+          </div>
+          <div class="field-group select-group">
+            <label for="EnquiryForm-BudgetRange">Budget Range{% if section.settings.enable_required %} *{% endif %}</label>
+             <div class="select">
+              <select id="EnquiryForm-BudgetRange" name="contact[Budget Range]" class="select__select" {% if section.settings.enable_required %}required{% endif %}>
+                <option value="" disabled selected>Please Select</option>
+                {%- assign budgets = section.settings.budget_options | split: ',' -%}
+                {%- for budget in budgets -%}
+                  <option value="{{ budget | strip }}">{{ budget | strip }}</option>
+                {%- endfor -%}
+              </select>
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 10 6">
+                <use href="#icon-caret" />
+              </svg>
+            </div>
+          </div>
+          <div class="field-group">
+            <label for="EnquiryForm-Comments">Additional Comments</label>
+            <input type="text" id="EnquiryForm-Comments" class="field__input" name="contact[Additional Comments]" placeholder="Additional Comments">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-submit-wrapper">
+        <button type="submit" class="button button--primary" id="EnquiryFormSubmit">
+          <span class="submit-text">{{ section.settings.submit_button_text }}</span>
+          <span class="loading-spinner hidden">
+            <svg aria-hidden="true" focusable="false" role="presentation" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+              <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+            </svg>
+          </span>
+        </button>
+      </div>
+    {%- endform -%}
+  </div>
+</div>
+
+<svg class="visually-hidden">
+  <symbol id="icon-caret" viewBox="0 0 10 6">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor">
+  </symbol>
+</svg>
+
+{% schema %}
+{
+  "name": "Custom Ring Enquiry",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Main Heading",
+      "default": "Custom Ring Enquiry"
+    },
+    {
+      "type": "text",
+      "id": "submit_button_text",
+      "label": "Submit Button Text",
+      "default": "SUBMIT"
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success Message",
+      "default": "Thanks for contacting us. We'll get back to you as soon as possible."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_required",
+      "label": "Enable Required Fields",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "File Upload Settings"
+    },
+    {
+      "type": "number",
+      "id": "max_upload_count",
+      "label": "Maximum Upload Count",
+      "default": 3
+    },
+    {
+      "type": "number",
+      "id": "max_upload_size",
+      "label": "Maximum Upload Size (MB)",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Dropdown Options"
+    },
+    {
+      "type": "textarea",
+      "id": "diamond_types",
+      "label": "Diamond Types",
+      "info": "Comma-separated values",
+      "default": "Natural Diamond, Lab Grown Diamond, Moissanite"
+    },
+    {
+      "type": "textarea",
+      "id": "diamond_shapes",
+      "label": "Diamond Shapes",
+      "info": "Comma-separated values",
+      "default": "Round, Princess, Cushion, Emerald, Oval, Radiant, Pear, Marquise, Asscher, Heart"
+    },
+    {
+      "type": "textarea",
+      "id": "metal_types",
+      "label": "Metal Types",
+      "info": "Comma-separated values",
+      "default": "14K White Gold, 14K Yellow Gold, 14K Rose Gold, 18K White Gold, 18K Yellow Gold, 18K Rose Gold, Platinum"
+    },
+    {
+      "type": "textarea",
+      "id": "budget_options",
+      "label": "Budget Options",
+      "info": "Comma-separated values",
+      "default": "$1,000 - $3,000, $3,000 - $5,000, $5,000 - $10,000, $10,000+"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Ring Enquiry"
+    }
+  ]
+}
+{% endschema %}
