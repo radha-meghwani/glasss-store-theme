@@ -193,15 +193,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function uploadFilesToGoFile(files) {
     const server = await getGoFileServer();
-    const uploadUrl = `https://${server}.gofile.io/uploadFile`;
+    // Using the latest GoFile API upload endpoint
+    const uploadUrl = `https://${server}.gofile.io/contents/uploadfile`;
     const downloadLinks = [];
+
+    // Retrieve token if already defined globally in JS, or use a placeholder
+    const token = window.gofileToken || window.GOFILE_TOKEN || 'YOUR_GOFILE_ACCOUNT_TOKEN';
 
     for (let i = 0; i < files.length; i++) {
       const formData = new FormData();
       formData.append('file', files[i]);
+      formData.append('token', token);
 
       const response = await fetch(uploadUrl, {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
         body: formData
       });
       
